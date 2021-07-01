@@ -1,2 +1,2 @@
 # leibniz
- a R7RS Scheme implementation in java
+ a R5RS Scheme implementation in java
