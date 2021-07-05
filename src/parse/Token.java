@@ -2,6 +2,10 @@ package parse;
 
 import exception.LexerException;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+
 public class Token<T> {
     private final TokenType type;
     private final T value;
@@ -123,30 +127,32 @@ class StringToken extends Token<String> {
         super(TokenType.String, value, lineNum, colNum, end);
     }
 
-    protected static boolean isOpenString(String line, int start) {
-        return line.charAt(start) == '\"';
+    protected static boolean isString(String line, int start) {
+        return line.charAt(start) == '\"' &&
+                (start == 0 || line.charAt(start - 1) != '\\');
     }
 
-    protected static int isStringClosed(String line) {
-        for (int i = 0; i < line.length(); i++) {
+    private static boolean isEscape(char c) {
+        return c == '\"' ||
+                c == '\\';
+    }
+
+    protected static StringToken lex(String line, int start, int lineNum) {
+        for (int i = start; i < line.length(); i++) {
+            if (line.charAt(i) == '\"') {
+                int end = i + 1;
+                return new StringToken(line.substring(start, end-1), lineNum, start, end);
+            }
             if (line.charAt(i) == '\\') {
                 char next = line.charAt(i + 1);
-                if (next == '\"' || next == '\\') {
+                if (isEscape(next)) {
                     i++;
                 } else {
                     throw new LexerException("unrecognized escape sequence");
                 }
             }
-            if (line.charAt(i) == '\"') {
-                return i + 1;
-            }
         }
-        return -1;
-    }
-
-    protected static StringToken lex(String line, int lineNum, int start , int end) {
-        return new StringToken(line, lineNum, start, end);
-//        throw new LexerException("bad string at (" + lineNum + ", " + start + ")");
+        throw new LexerException("bad String token");
     }
 }
 

@@ -1,0 +1,5 @@
+"whatever\"Hello World!\""
+"\"Hello \\World!\""
+"Hello World!"
+"\"Hello \nWorld!\""
+"\"Hello \r\nWorld!\""

@@ -4,21 +4,19 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class CharTokenTest {
 
     String[] lines;
+    String fileName = "./test-resources/token-char-test0.scm";
+
     @Before
-    public void setUp()  {
-        lines = new String[] {
-                "whatever#\\space whatever",
-                "whatever#\\newline whatever",
-                "whatever#\\spacewhatever",
-                "whatever#\\newlinewhatever",
-                "whatever#\\@",
-                "#\\@whatever",
-        };
+    public void setUp() throws IOException {
+        lines = ReadTestFile.getTestContents(fileName);
     }
 
     @After
@@ -39,17 +37,17 @@ public class CharTokenTest {
     @Test
     public void lex() {
         CharToken token1 = CharToken.lex(lines[0], 8,1 );
-        assertEquals(16, token1.getEnd());
+        assertEquals(15, token1.getEnd());
         assertEquals("#\\space", token1.getValue());
         assertEquals(8, token1.getColNum());
 
         CharToken token2 = CharToken.lex(lines[1], 8,2 );
-        assertEquals(18, token2.getEnd());
+        assertEquals(17, token2.getEnd());
         assertEquals("#\\newline", token2.getValue());
         assertEquals(2, token2.getLineNum());
 
         CharToken token5 = CharToken.lex(lines[4],8, 1 );
-        assertEquals(12,token5.getEnd());
+        assertEquals(11,token5.getEnd());
         assertEquals("#\\@", token5.getValue());
     }
     @Test(expected = IllegalArgumentException.class)

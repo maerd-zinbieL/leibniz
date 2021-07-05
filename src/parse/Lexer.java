@@ -45,36 +45,8 @@ public class Lexer {
                 tokensBuffer.add(token);
                 current = token.getEnd();
             }
-            if (StringToken.isOpenString(line, current)) {
-                // 因为一个StringToken可能存在多行，所以写得有点复杂。
-                int startColNum = current;
-                int startLineNum = lineNum;
-
-                int end = StringToken.isStringClosed(line.substring(current + 1));
-                StringBuilder finalSting = new StringBuilder();
-                if (end == -1) {
-                    finalSting.append(line.substring(current + 1));
-                    while (end == -1) {
-                        line = nextLine();
-                        lineNum++;
-                        if (line == null) {
-                            throw new LexerException("bad string at (" + startLineNum + ", " + startColNum + ")");
-                        }
-                        end = StringToken.isStringClosed(line);
-                        if (end == -1) {
-                            finalSting.append(line);
-                        } else {
-                            finalSting.append(line, 0, end);
-                        }
-                    }
-                } else {
-                    finalSting.append(line, current + 1, end);
-                }
-
-                StringToken token =
-                        StringToken.lex(finalSting.toString(), startLineNum, startColNum, end);
-                tokensBuffer.add(token);
-                current = end;
+            if (StringToken.isString(line, current)) {
+//
                 continue;
             }
         }

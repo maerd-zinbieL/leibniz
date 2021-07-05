@@ -4,23 +4,24 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+
 import static org.junit.Assert.*;
 
 public class BooleanTokenTest {
 
     String[] lines;
+    String fileName = "./test-resources/token-boolean-test0.scm";
 
     @Before
-    public void setUp() {
-        lines = new String[]{
-                "(define true #t) (define false #f)",
-                "(define (square x) (* x x))",
-                "whatever#t"
-        };
+    public void setUp() throws IOException {
+        lines = ReadTestFile.getTestContents(fileName);
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
         lines = null;
     }
 
@@ -32,6 +33,7 @@ public class BooleanTokenTest {
         assertEquals(33, token2.getEnd());
 
     }
+
     @Test
     public void isBoolean() {
         assertTrue(BooleanToken.isBoolean(lines[0], 13));
