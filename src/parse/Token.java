@@ -2,10 +2,6 @@ package parse;
 
 import exception.LexerException;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
-
 public class Token<T> {
     private final TokenType type;
     private final T value;
@@ -68,9 +64,13 @@ enum TokenType {
     EOF
 }
 
-class BooleanToken extends Token<Boolean> {
-    private int end = 0;
+class EOFToken extends Token<Object> {
+    protected EOFToken(int lineNum) {
+        super(TokenType.EOF, null, lineNum, 0, 0);
+    }
+}
 
+class BooleanToken extends Token<Boolean> {
     private BooleanToken(boolean value, int lineNum, int colNum, int end) {
         super(TokenType.Boolean, value, lineNum, colNum, end);
     }
@@ -141,7 +141,7 @@ class StringToken extends Token<String> {
         for (int i = start; i < line.length(); i++) {
             if (line.charAt(i) == '\"') {
                 int end = i + 1;
-                return new StringToken(line.substring(start, end-1), lineNum, start, end);
+                return new StringToken(line.substring(start, end - 1), lineNum, start, end);
             }
             if (line.charAt(i) == '\\') {
                 char next = line.charAt(i + 1);
@@ -156,8 +156,42 @@ class StringToken extends Token<String> {
     }
 }
 
-class EOFToken extends Token<Object> {
-    protected EOFToken(int lineNum) {
-        super(TokenType.EOF, null, lineNum, 0, 0);
+class PunctuatorToken extends Token<String> {
+
+    PunctuatorToken(String value, int lineNum, int colNum, int end) {
+        super(TokenType.Punctuator, value, lineNum, colNum, end);
+    }
+
+    private static boolean isTwoCharPunctuator(String line, int start) {
+        return line.startsWith("#(", start) ||
+                line.startsWith(",@", start);
+    }
+
+    private static boolean isSingleCharPunctuator(String line, int start) {
+        char c = line.charAt(start);
+        return c == '(' ||
+                c == ')' ||
+                c == ',' ||
+                c == '\'' ||
+                c == '`' ||
+                c == ';';
+    }
+
+    protected static boolean isPunctuator(String line, int start) {
+        return isSingleCharPunctuator(line, start) ||
+                isTwoCharPunctuator(line, start);
+    }
+
+    protected static PunctuatorToken lex(String line, int start, int lineNum) {
+        if(!isPunctuator(line, start))
+            throw new IllegalArgumentException();
+        int end = start;
+        if (isSingleCharPunctuator(line, start)) {
+            end = start + 1;
+        }
+        if (isTwoCharPunctuator(line, start)){
+            end = start + 2;
+        }
+        return new PunctuatorToken(line.substring(start, end), lineNum, start, end);
     }
 }

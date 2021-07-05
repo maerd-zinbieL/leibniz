@@ -25,6 +25,7 @@ public class Lexer {
         if (line == null)
             throw new IllegalArgumentException();
         int current = 0;
+        Token<?> token;
         while (current < line.length()) {
             char c = Character.toLowerCase(line.charAt(current));
             if (Character.isWhitespace(c)) {
@@ -35,18 +36,20 @@ public class Lexer {
                 break;
             }
             if (BooleanToken.isBoolean(line, current)) {
-                BooleanToken token = BooleanToken.lex(line, current, lineNum);
+                token = BooleanToken.lex(line, current, lineNum);
                 tokensBuffer.add(token);
                 current = token.getEnd();
                 continue;
             }
             if (CharToken.isCharacter(line, current)) {
-                CharToken token = CharToken.lex(line, current, lineNum);
+                token = CharToken.lex(line, current, lineNum);
                 tokensBuffer.add(token);
                 current = token.getEnd();
             }
             if (StringToken.isString(line, current)) {
-//
+                token= StringToken.lex(line, current+1, lineNum);
+                tokensBuffer.add(token);
+                current = token.getEnd();
                 continue;
             }
         }
@@ -74,18 +77,6 @@ public class Lexer {
             lexLine(line, lineNum);
         }
         return tokensBuffer.poll();
-    }
-
-    public static void main(String[] args) throws IOException {
-        String fileName = "/home/toorevitimirp/Desktop/leibniz/leibniz/test-resources/"
-                + "string-token-test0.scm";
-        Lexer lexer = Lexer.getInstance(fileName);
-        Token<?> token = lexer.nextToken();
-        while (token.getType() != TokenType.EOF) {
-            System.out.println("fuck");
-            System.out.println(token.getValue());
-            token = lexer.nextToken();
-        }
     }
 
 }
