@@ -42,12 +42,15 @@ public class PunctuatorTest {
         assertEquals(2, token1.getLineNum());
         assertEquals(0, token1.getColNum());
         assertEquals("(", token1.getValue());
+        assertEquals(1, token1.getEnd());
 
         Token<String> token2 = PunctuatorToken.lex(lines[0], 12, 1);
         assertEquals(")", token2.getValue());
+        assertEquals(13, token2.getEnd());
 
         Token<String> token3 = PunctuatorToken.lex(lines[1], 0, 1);
         assertEquals("#(", token3.getValue());
+        assertEquals(2, token3.getEnd());
 
         Token<String> token4 = PunctuatorToken.lex(lines[2], 0, 1);
         assertEquals("'", token4.getValue());

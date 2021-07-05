@@ -1,5 +1,6 @@
 package parse;
 
+import exception.LexerException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +54,7 @@ public class BooleanTokenTest {
         assertEquals(1, token2.getLineNum());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = LexerException.class)
     public void lexError() {
         BooleanToken.lex(lines[1], 0, 1);
     }

@@ -1,5 +1,6 @@
 package parse;
 
+import exception.LexerException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,15 +51,15 @@ public class CharTokenTest {
         assertEquals(11,token5.getEnd());
         assertEquals("#\\@", token5.getValue());
     }
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = LexerException.class)
     public void lexError1() {
         CharToken.lex(lines[2],8, 1 );
     }
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = LexerException.class)
     public void lexError2() {
         CharToken.lex(lines[3],8, 1 );
     }
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = LexerException.class)
     public void lexError3() {
         CharToken.lex(lines[5],0, 1 );
     }

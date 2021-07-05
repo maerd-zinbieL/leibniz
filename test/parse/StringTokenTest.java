@@ -39,17 +39,17 @@ public class StringTokenTest {
 
     @Test
     public void lex() {
-//        "whatever\"Hello World!\""
-//        "\"Hello \\World!\""
-//        "Hello World!"
         Token<String> token1 = StringToken.lex(lines[0], 1, 0);
         assertEquals("whatever\\\"Hello World!\\\"", token1.getValue());
+        assertEquals(26, token1.getEnd());
 
         Token<String> token2 = StringToken.lex(lines[1], 1, 1);
         assertEquals("\\\"Hello \\\\World!\\\"", token2.getValue());
 
         Token<String> token3 = StringToken.lex(lines[2], 1, 0);
         assertEquals("Hello World!", token3.getValue());
+        assertEquals(14, token3.getEnd());
+
     }
 
     @Test(expected = LexerException.class)

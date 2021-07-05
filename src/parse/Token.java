@@ -1,6 +1,9 @@
 package parse;
 
 import exception.LexerException;
+import io.ReadFile;
+
+import java.io.IOException;
 
 public class Token<T> {
     private final TokenType type;
@@ -81,7 +84,7 @@ class BooleanToken extends Token<Boolean> {
     }
 
     protected static BooleanToken lex(String line, int start, int lineNum) {
-        if (!isBoolean(line, start)) throw new IllegalArgumentException();
+        if (!isBoolean(line, start)) throw new LexerException("not a boolean");
         int end = start + 2;
         if (line.charAt(start + 1) == 't') {
             return new BooleanToken(true, lineNum, start, end);
@@ -103,7 +106,7 @@ class CharToken extends Token<String> {
     }
 
     protected static CharToken lex(String line, int start, int lineNum) {
-        if (!isCharacter(line, start)) throw new IllegalArgumentException();
+        if (!isCharacter(line, start)) throw new LexerException("not a character");
         int end = 0;
         String value = null;
         if (isDelimiterOrEOF(line, start + 3)) {
@@ -183,15 +186,112 @@ class PunctuatorToken extends Token<String> {
     }
 
     protected static PunctuatorToken lex(String line, int start, int lineNum) {
-        if(!isPunctuator(line, start))
-            throw new IllegalArgumentException();
+        if (!isPunctuator(line, start))
+            throw new LexerException("not a punctuator");
         int end = start;
         if (isSingleCharPunctuator(line, start)) {
             end = start + 1;
         }
-        if (isTwoCharPunctuator(line, start)){
+        if (isTwoCharPunctuator(line, start)) {
             end = start + 2;
         }
         return new PunctuatorToken(line.substring(start, end), lineNum, start, end);
     }
+}
+
+class IdentifierToken extends Token<String> {
+
+    IdentifierToken(String value, int lineNum, int colNum, int end) {
+        super(TokenType.Identifier, value, lineNum, colNum, end);
+    }
+
+    private static boolean isLetter(char c) {
+        return (c <= 'z' && c >= 'a') ||
+                (c <= 'Z' && c >= 'A');
+    }
+
+    private static boolean isDigit(char c) {
+        return c <= '9' && c >= '0';
+    }
+
+    private static boolean isSpecialInitial(char c) {
+        return c == '!' ||
+                c == '$' ||
+                c == '%' ||
+                c == '&' ||
+                c == '*' ||
+                c == '/' ||
+                c == ':' ||
+                c == '<' ||
+                c == '=' ||
+                c == '>' ||
+                c == '?' ||
+                c == '^' ||
+                c == '_' ||
+                c == '~' ||
+                c == '+' ||
+                c == '-' ||
+                c == '.' ||
+                c == '@';
+
+    }
+
+    private static boolean isInitial(char c) {
+        return isLetter(c) || isSpecialInitial(c);
+    }
+
+    private static boolean isSpecialSubsequent(char c) {
+        return c == '+' ||
+                c == '-' ||
+                c == '.' ||
+                c == '@';
+    }
+
+    private static int isPeculiarId(String line, int start) {
+        if ((line.charAt(start) == '+' || line.charAt(start) == '-') &&
+                isDelimiterOrEOF(line, start + 1)) {
+            return start+1;
+        }
+        if (line.startsWith("...", start) && isDelimiterOrEOF(line, start + 3)) {
+            return start+3;
+        }
+        return -1;
+    }
+
+    private static int isNormalId(String line, int start) {
+        int i;
+        if (!isInitial(line.charAt(start)))
+            return -1;
+        char c;
+        for (i = start + 1; i < line.length(); i++) {
+            c = line.charAt(i);
+            if (isInitial(c))
+                continue;
+            if (isDigit(c))
+                continue;
+            if (isSpecialSubsequent(c))
+                continue;
+            if (isDelimiter(c))
+                return i;
+            return -1;
+        }
+        return i;
+    }
+
+    protected static boolean isIdentifier(String line, int start) {
+        return isPeculiarId(line, start) != -1 ||
+                isNormalId(line, start) != -1;
+    }
+
+    protected static IdentifierToken lex(String line, int start, int lineNum) {
+        int end = isPeculiarId(line, start);
+        if (end == -1) {
+            end = isNormalId(line, start);
+        }
+        if (end == -1) {
+            throw new LexerException("not an identifier");
+        }
+        return new IdentifierToken(line.substring(start, end).toLowerCase(), lineNum, start, end);
+    }
+
 }

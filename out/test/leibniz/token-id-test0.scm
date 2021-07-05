@@ -1,0 +1,8 @@
+(define He++o 0)
+(define hEl.o 1)
+(define .... 2)
+(define ... 3)
+(define @whAtever 4)
+(define +whatever 5)
+(define asdf, 6)
+(define 7 7)
