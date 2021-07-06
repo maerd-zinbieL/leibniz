@@ -1,9 +1,7 @@
 package parse;
 
+import core.number.SchemeNumber;
 import exception.LexerException;
-import io.ReadFile;
-
-import java.io.IOException;
 
 public class Token<T> {
     private final TokenType type;
@@ -63,7 +61,7 @@ enum TokenType {
     Number,
     Character,
     String,
-    Punctuator,
+    Punctuator ,
     EOF
 }
 
@@ -294,4 +292,10 @@ class IdentifierToken extends Token<String> {
         return new IdentifierToken(line.substring(start, end).toLowerCase(), lineNum, start, end);
     }
 
+}
+class NumberToken extends Token<SchemeNumber>  {
+
+    NumberToken(SchemeNumber value, int lineNum, int colNum, int end) {
+        super(TokenType.Number, value, lineNum, colNum, end);
+    }
 }
