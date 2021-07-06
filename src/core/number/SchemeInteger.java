@@ -8,6 +8,11 @@ public class SchemeInteger implements SchemeNumber<SchemeRational,SchemeInteger>
     }
 
     @Override
+    public boolean isExact() {
+        return true;
+    }
+
+    @Override
     public SchemeRational up() {
         return new SchemeRational(value, 1);
     }
@@ -15,5 +20,10 @@ public class SchemeInteger implements SchemeNumber<SchemeRational,SchemeInteger>
     @Override
     public SchemeInteger down() {
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return Long.toString(value);
     }
 }
