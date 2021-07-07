@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 7.1.--><structure>
+	<type>fa</type>
+	<automaton>
+		<!--The list of states.-->
+		<state id="0" name="start">
+			<x>996.0</x>
+			<y>18.0</y>
+			<initial/>
+		</state>
+		<state id="1" name="read prefix">
+			<x>1486.0</x>
+			<y>268.0</y>
+		</state>
+		<state id="2" name="inexact">
+			<x>1589.0</x>
+			<y>456.0</y>
+		</state>
+		<state id="3" name="exact">
+			<x>1740.0</x>
+			<y>256.0</y>
+		</state>
+		<state id="4" name="read decimal after prefix">
+			<x>1986.0</x>
+			<y>582.0</y>
+		</state>
+		<state id="6" name="before dot">
+			<x>172.0</x>
+			<y>272.0</y>
+			<final/>
+		</state>
+		<state id="7" name="after dot">
+			<x>1200.0</x>
+			<y>795.0</y>
+			<final/>
+		</state>
+		<state id="8" name="read #">
+			<x>284.0</x>
+			<y>615.0</y>
+			<final/>
+		</state>
+		<state id="9" name="after suffix">
+			<x>1818.0</x>
+			<y>824.0</y>
+			<final/>
+		</state>
+		<state id="10" name="read suffix">
+			<x>886.0</x>
+			<y>912.0</y>
+		</state>
+		<state id="11" name="read suffix need digit">
+			<x>1425.0</x>
+			<y>927.0</y>
+		</state>
+		<state id="12" name="after dot need digit">
+			<x>956.0</x>
+			<y>561.0</y>
+		</state>
+		<state id="13" name="after read sign">
+			<x>748.0</x>
+			<y>217.0</y>
+		</state>
+		<state id="14" name="read decimal need exact info">
+			<x>1723.0</x>
+			<y>396.0</y>
+		</state>
+		<!--The list of transitions.-->
+		<transition>
+			<from>12</from>
+			<to>7</to>
+			<read>digit</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>7</to>
+			<read>dot</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>2</to>
+			<read>i</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>4</to>
+			<read>#d</read>
+		</transition>
+		<transition>
+			<from>8</from>
+			<to>10</to>
+			<read>exponent marker</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>4</to>
+			<read>#d</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>8</to>
+			<read>#</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>13</to>
+			<read>sign</read>
+		</transition>
+		<transition>
+			<from>7</from>
+			<to>8</to>
+			<read>#</read>
+		</transition>
+		<transition>
+			<from>14</from>
+			<to>4</to>
+			<read>#i|#e|empty</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>3</to>
+			<read>e</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>6</to>
+			<read>digit</read>
+		</transition>
+		<transition>
+			<from>9</from>
+			<to>9</to>
+			<read>digit</read>
+		</transition>
+		<transition>
+			<from>7</from>
+			<to>7</to>
+			<read>digit</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>6</to>
+			<read>digit</read>
+		</transition>
+		<transition>
+			<from>13</from>
+			<to>6</to>
+			<read>digit</read>
+		</transition>
+		<transition>
+			<from>8</from>
+			<to>8</to>
+			<read>#</read>
+		</transition>
+		<transition>
+			<from>13</from>
+			<to>12</to>
+			<read>dot</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>14</to>
+			<read>d</read>
+		</transition>
+		<transition>
+			<from>10</from>
+			<to>11</to>
+			<read>sign|empty</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>#</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>6</to>
+			<read>digit</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>12</to>
+			<read>dot</read>
+		</transition>
+		<transition>
+			<from>7</from>
+			<to>10</to>
+			<read>exponent marker</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>10</to>
+			<read>exponent marker</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>7</to>
+			<read>dot</read>
+		</transition>
+		<transition>
+			<from>11</from>
+			<to>9</to>
+			<read>digit</read>
+		</transition>
+		<transition>
+			<from>13</from>
+			<to>1</to>
+			<read>#</read>
+		</transition>
+	</automaton>
+</structure>

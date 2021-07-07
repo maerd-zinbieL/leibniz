@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 7.1.--><structure>
+	<type>fa</type>
+	<automaton>
+		<!--The list of states.-->
+		<state id="0" name="start">
+			<x>767.0</x>
+			<y>323.0</y>
+			<initial/>
+		</state>
+		<state id="1" name="sign">
+			<x>633.0</x>
+			<y>432.0</y>
+		</state>
+		<state id="2" name="dot2">
+			<x>547.0</x>
+			<y>352.0</y>
+		</state>
+		<state id="3" name="dot1">
+			<x>634.0</x>
+			<y>318.0</y>
+		</state>
+		<state id="4" name="dot3">
+			<x>489.0</x>
+			<y>411.0</y>
+		</state>
+		<state id="5" name="peculiar identifier">
+			<x>439.0</x>
+			<y>535.0</y>
+			<final/>
+		</state>
+		<state id="6" name="identifier">
+			<x>1053.0</x>
+			<y>377.0</y>
+			<final/>
+		</state>
+		<!--The list of transitions.-->
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>+</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>5</to>
+			<read>delimiter</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>6</to>
+			<read>&lt;letter&gt;</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>6</to>
+			<read>&lt;special initial&gt;</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>-</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>6</to>
+			<read>&lt;special initial&gt;</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>6</to>
+			<read>&lt;letter&gt;</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>4</to>
+			<read>.</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>6</to>
+			<read>&lt;special subsequent&gt;</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>2</to>
+			<read>.</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>3</to>
+			<read>.</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>5</to>
+			<read>delimiter</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>6</to>
+			<read>&lt;digit&gt;</read>
+		</transition>
+	</automaton>
+</structure>
