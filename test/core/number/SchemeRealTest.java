@@ -9,9 +9,10 @@ public class SchemeRealTest {
     @Test
     public void testToString() {
         SchemeReal schemeReal0 = new SchemeReal(3);
-        System.out.println(schemeReal0);
+        assertEquals("3", schemeReal0.toString());
 
         SchemeReal schemeReal1 = new SchemeReal(3.0);
-        System.out.println(schemeReal1);
+        assertEquals("3.0", schemeReal1.toString());
+
     }
 }

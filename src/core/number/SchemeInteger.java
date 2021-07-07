@@ -1,6 +1,6 @@
 package core.number;
 
-public class SchemeInteger implements SchemeNumber<SchemeRational,SchemeInteger>{
+public class SchemeInteger extends SchemeNumber{
     private final long value;
 
     public SchemeInteger(long value) {

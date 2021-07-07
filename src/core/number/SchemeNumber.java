@@ -1,11 +1,20 @@
 package core.number;
 
-public interface SchemeNumber<Up, Down> {
-    boolean isExact();
+public abstract class SchemeNumber {
+    protected int getExponent10(double value) {
+        String valueStr = Double.toString(value);
+        for (int i = 1; i < valueStr.length(); i++) {
+            if (valueStr.charAt(i) == '.')
+                return valueStr.length() - i - 1;
+        }
+        return 0;
+    }
 
-    Up up();
+    public abstract boolean isExact();
 
-    Down down();
+    public abstract SchemeNumber up();
+
+    public abstract SchemeNumber down();
 
 }
 

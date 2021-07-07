@@ -18,6 +18,11 @@ public class Token<T> {
         this.end = end;
     }
 
+    static boolean isLetter(char c) {
+        return (c <= 'z' && c >= 'a') ||
+                (c <= 'Z' && c >= 'A');
+    }
+
     protected static boolean isDelimiter(char c) {
         return Character.isWhitespace(c) ||
                 c == '(' ||
@@ -26,6 +31,10 @@ public class Token<T> {
                 c == ';' ||
                 c == '\r' ||
                 c == '\n';
+    }
+
+    protected static boolean isDigit(char c) {
+        return c <= '9' && c >= '0';
     }
 
     protected static boolean isDelimiterOrEOF(String line, int index) {
@@ -61,7 +70,7 @@ enum TokenType {
     Number,
     Character,
     String,
-    Punctuator ,
+    Punctuator,
     EOF
 }
 
@@ -203,14 +212,6 @@ class IdentifierToken extends Token<String> {
         super(TokenType.Identifier, value, lineNum, colNum, end);
     }
 
-    private static boolean isLetter(char c) {
-        return (c <= 'z' && c >= 'a') ||
-                (c <= 'Z' && c >= 'A');
-    }
-
-    private static boolean isDigit(char c) {
-        return c <= '9' && c >= '0';
-    }
 
     private static boolean isSpecialInitial(char c) {
         return c == '!' ||
@@ -248,10 +249,10 @@ class IdentifierToken extends Token<String> {
     private static int isPeculiarId(String line, int start) {
         if ((line.charAt(start) == '+' || line.charAt(start) == '-') &&
                 isDelimiterOrEOF(line, start + 1)) {
-            return start+1;
+            return start + 1;
         }
         if (line.startsWith("...", start) && isDelimiterOrEOF(line, start + 3)) {
-            return start+3;
+            return start + 3;
         }
         return -1;
     }
@@ -293,9 +294,19 @@ class IdentifierToken extends Token<String> {
     }
 
 }
-class NumberToken extends Token<SchemeNumber>  {
+
+class NumberToken extends Token<SchemeNumber> {
 
     NumberToken(SchemeNumber value, int lineNum, int colNum, int end) {
         super(TokenType.Number, value, lineNum, colNum, end);
+    }
+
+    public boolean isNumber(String line, int start) {
+        return line.startsWith("#b", start) ||
+                line.startsWith("#o", start) ||
+                line.startsWith("#d",start) ||
+                line.startsWith("#x",start) ||
+                isDigit(line.charAt(start)) ||
+                (line.charAt(start)=='.' && isDigit(line.charAt(start+1)));
     }
 }

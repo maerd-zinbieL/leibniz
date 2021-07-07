@@ -1,8 +1,6 @@
 package core.number;
 
-import org.jetbrains.annotations.Contract;
-
-public class SchemeComplex implements SchemeNumber<SchemeComplex, SchemeReal> {
+public class SchemeComplex extends SchemeNumber {
     private final SchemeReal real;
     private final SchemeReal imag;
 
@@ -92,13 +90,28 @@ public class SchemeComplex implements SchemeNumber<SchemeComplex, SchemeReal> {
     }
 
     @Override
-    public SchemeReal down() {
-        return new SchemeReal(real.getValue());
+    public SchemeNumber down() {
+        if (imag.getValue() == 0)
+            return new SchemeReal(real.getValue()).down();
+        return this;
     }
 
     @Override
     public String toString() {
-        String sign = imag.getValue() > 0 ? "+" : "-";
-        return real.toString() + sign + imag.toString()+"i";
+
+        // 如果虚数和实数都是exact的，返回两者的exact的表示。
+        if (isExact()) {
+            String sign = imag.getValue() >= 0 ? "+" : "-";
+            return real + sign +  imag + "i";
+        }
+
+        // 如果虚数是exact的，并且为0,去掉虚数部分。
+        if (imag.isExact() && imag.getValue()==0)
+            return real.toString();
+
+        //只要虚数或实数有一个不是exact的，虚数和实数就都是inexact的。
+        String sign = imag.getValue() >= 0 ? "+" : "-";
+        return real.getValue() + sign+ imag.getValue() + "i";
     }
+
 }

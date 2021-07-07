@@ -1,6 +1,6 @@
 package core.number;
 
-public class SchemeReal implements SchemeNumber<SchemeComplex, SchemeRational> {
+public class SchemeReal extends SchemeNumber {
     private final double value;
     private final boolean isExact;
 
@@ -18,15 +18,6 @@ public class SchemeReal implements SchemeNumber<SchemeComplex, SchemeRational> {
         return value;
     }
 
-    private int getExponent10() {
-        String valueStr = Double.toString(value);
-        for (int i = 1; i < valueStr.length(); i++) {
-            if (valueStr.charAt(i) == '.')
-                return valueStr.length() - i - 1;
-        }
-        return 0;
-    }
-
     @Override
     public boolean isExact() {
         return isExact;
@@ -38,10 +29,10 @@ public class SchemeReal implements SchemeNumber<SchemeComplex, SchemeRational> {
     }
 
     @Override
-    public SchemeRational down() {
-        long exp = (long) Math.pow(10, getExponent10());
+    public SchemeNumber down() {
+        long exp = (long) Math.pow(10, getExponent10(value));
         long p = Math.round(value * exp);
-        return new SchemeRational(p, exp);
+        return new SchemeRational(p, exp).down();
     }
 
     @Override

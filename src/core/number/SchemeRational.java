@@ -1,6 +1,6 @@
 package core.number;
 
-public class SchemeRational implements SchemeNumber<SchemeReal, SchemeInteger> {
+public class SchemeRational extends SchemeNumber {
     private final long numerator;
     private final long denominator;
 
@@ -33,8 +33,10 @@ public class SchemeRational implements SchemeNumber<SchemeReal, SchemeInteger> {
     }
 
     @Override
-    public SchemeInteger down() {
-        return new SchemeInteger((int) (numerator / denominator));
+    public SchemeNumber down() {
+        if (denominator==1)
+            return new SchemeInteger(numerator);
+        return this;
     }
 
     @Override
