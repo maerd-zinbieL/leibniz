@@ -1,10 +1,20 @@
 package core.number;
 
-public class SchemeInteger extends SchemeNumber{
+public class SchemeInteger extends SchemeNumber {
     private final long value;
 
     public SchemeInteger(long value) {
         this.value = value;
+    }
+
+    @Override
+    SchemeInteger copy() {
+        return new SchemeInteger(value);
+    }
+
+    @Override
+    public double getValue() {
+        return value;
     }
 
     @Override
@@ -19,7 +29,17 @@ public class SchemeInteger extends SchemeNumber{
 
     @Override
     public SchemeInteger down() {
-        return this;
+        return copy();
+    }
+
+    @Override
+    public SchemeInteger toExact() {
+        return copy();
+    }
+
+    @Override
+    public SchemeReal toInexact() {
+        return new SchemeReal((double) value);
     }
 
     @Override

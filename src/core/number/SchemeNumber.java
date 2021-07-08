@@ -9,12 +9,17 @@ public abstract class SchemeNumber {
         }
         return 0;
     }
-
+    abstract SchemeNumber copy();
+    public abstract double getValue();
     public abstract boolean isExact();
 
     public abstract SchemeNumber up();
 
     public abstract SchemeNumber down();
+
+    public abstract SchemeNumber toExact();
+
+    public abstract SchemeNumber toInexact();
 
 }
 

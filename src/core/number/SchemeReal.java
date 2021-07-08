@@ -2,15 +2,8 @@ package core.number;
 
 public class SchemeReal extends SchemeNumber {
     private final double value;
-    private final boolean isExact;
 
     public SchemeReal(double value) {
-        isExact = false;
-        this.value = value;
-    }
-
-    public SchemeReal(int value) {
-        isExact = true;
         this.value = value;
     }
 
@@ -19,8 +12,12 @@ public class SchemeReal extends SchemeNumber {
     }
 
     @Override
+    SchemeReal copy() {
+        return new SchemeReal(value);
+    }
+    @Override
     public boolean isExact() {
-        return isExact;
+        return false;
     }
 
     @Override
@@ -29,18 +26,27 @@ public class SchemeReal extends SchemeNumber {
     }
 
     @Override
-    public SchemeNumber down() {
+    public SchemeRational down() {
         long exp = (long) Math.pow(10, getExponent10(value));
         long p = Math.round(value * exp);
-        return new SchemeRational(p, exp).down();
+        return new SchemeRational(p, exp);
+    }
+
+    @Override
+    public SchemeNumber toExact() {
+        if (value % 1 == 0)
+            return new SchemeInteger(Math.round(value));
+        else return down();
+    }
+
+    @Override
+    public SchemeNumber toInexact() {
+        return copy();
     }
 
     @Override
     public String toString() {
-        if (isExact)
-            return Long.toString(Math.round(value));
-        else
-            return Double.toString(value);
+        return Double.toString(value);
     }
 
 }

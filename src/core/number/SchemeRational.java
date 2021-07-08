@@ -11,6 +11,8 @@ public class SchemeRational extends SchemeNumber {
     }
 
     private long gcd(long a, long b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
         if (a == 0)
             return b;
         while (b != 0) {
@@ -20,6 +22,16 @@ public class SchemeRational extends SchemeNumber {
                 b = b - a;
         }
         return a;
+    }
+
+    @Override
+    SchemeRational copy() {
+        return new SchemeRational(numerator, denominator);
+    }
+
+    @Override
+    public double getValue() {
+        return (double) numerator / (double) denominator;
     }
 
     @Override
@@ -33,14 +45,25 @@ public class SchemeRational extends SchemeNumber {
     }
 
     @Override
-    public SchemeNumber down() {
-        if (denominator==1)
-            return new SchemeInteger(numerator);
-        return this;
+    public SchemeInteger down() {
+        return new SchemeInteger(numerator / denominator);
+    }
+
+    @Override
+    public SchemeRational toExact() {
+        return copy();
+    }
+
+    @Override
+    public SchemeReal toInexact() {
+        return new SchemeReal((double) numerator / (double) denominator);
     }
 
     @Override
     public String toString() {
+        if (denominator == 1) {
+            return Long.toString(numerator);
+        }
         return numerator + "/" + denominator;
     }
 }

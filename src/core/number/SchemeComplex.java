@@ -1,54 +1,44 @@
 package core.number;
 
 public class SchemeComplex extends SchemeNumber {
-    private final SchemeReal real;
-    private final SchemeReal imag;
+    private final SchemeNumber real;
+    private final SchemeNumber imag;
 
-    protected SchemeComplex(double real, double imag) {
-        this.real = new SchemeReal(real);
-        this.imag = new SchemeReal(imag);
+    public SchemeComplex(SchemeNumber real, SchemeNumber imag) {
+        if (real.getClass() == SchemeComplex.class ||
+                imag.getClass() == SchemeComplex.class) {
+            throw new IllegalArgumentException();
+        }
+        this.real = real;
+        this.imag = imag;
     }
 
-    protected SchemeComplex(int real, double imag) {
-        this.real = new SchemeReal(real);
-        this.imag = new SchemeReal(imag);
-    }
-
-    protected SchemeComplex(int real, int imag) {
-        this.real = new SchemeReal(real);
-        this.imag = new SchemeReal(imag);
-    }
-
-    protected SchemeComplex(double real, int imag) {
-        this.real = new SchemeReal(real);
-        this.imag = new SchemeReal(imag);
-    }
 
     public static SchemeComplex getRectangularInstance(double real, double imag) {
-        return new SchemeComplex(real, imag);
+        return new SchemeComplex(new SchemeReal(real), new SchemeReal(imag));
     }
 
     public static SchemeComplex getRectangularInstance(int real, double imag) {
-        return new SchemeComplex(real, imag);
+        return new SchemeComplex(new SchemeInteger(real), new SchemeReal(imag));
     }
 
     public static SchemeComplex getRectangularInstance(double real, int imag) {
-        return new SchemeComplex(real, imag);
+        return new SchemeComplex(new SchemeReal(real), new SchemeInteger(imag));
     }
 
     public static SchemeComplex getRectangularInstance(int real, int imag) {
-        return new SchemeComplex(real, imag);
+        return new SchemeComplex(new SchemeInteger(real), new SchemeInteger(imag));
     }
 
     public static SchemeComplex getPolarInstance(double magnitude, double angle) {
         double real = Math.cos(angle) * magnitude;
         double imag = Math.sin(angle) * magnitude;
-        return new SchemeComplex(real, imag);
+        return new SchemeComplex(new SchemeReal(real), new SchemeReal(imag));
     }
 
     public static SchemeComplex getPolarInstance(int magnitude, int angle) {
         if (angle == 0)
-            return new SchemeComplex(magnitude, 0);
+            return new SchemeComplex(new SchemeInteger(magnitude), new SchemeInteger(0));
         return getPolarInstance((double) magnitude, (double) angle);
     }
 
@@ -58,25 +48,22 @@ public class SchemeComplex extends SchemeNumber {
 
     public static SchemeComplex getPolarInstance(int magnitude, double angle) {
         if (magnitude == 0)
-            return new SchemeComplex(0, 0);
+            return new SchemeComplex(new SchemeInteger(0), new SchemeInteger(0));
         return getPolarInstance((double) magnitude, angle);
     }
 
-    public double getReal() {
+    @Override
+    SchemeComplex copy() {
+        if (real.getClass() == SchemeComplex.class ||
+                imag.getClass() == SchemeComplex.class) {
+            throw new IllegalArgumentException();
+        }
+        return new SchemeComplex(real.copy(), imag.copy());
+    }
+
+    @Override
+    public double getValue() {
         return real.getValue();
-    }
-
-    public double getImag() {
-        return imag.getValue();
-    }
-
-    public double getMagnitude() {
-        return Math.sqrt(real.getValue() * real.getValue() +
-                imag.getValue() * imag.getValue());
-    }
-
-    public double getAngle() {
-        return Math.atan(imag.getValue() / real.getValue());
     }
 
     @Override
@@ -86,14 +73,22 @@ public class SchemeComplex extends SchemeNumber {
 
     @Override
     public SchemeComplex up() {
-        return this;
+        return copy();
     }
 
     @Override
-    public SchemeNumber down() {
-        if (imag.getValue() == 0)
-            return new SchemeReal(real.getValue()).down();
-        return this;
+    public SchemeReal down() {
+        return new SchemeReal(real.getValue());
+    }
+
+    @Override
+    public SchemeNumber toExact() {
+        return new SchemeComplex(real.toExact(), imag.toExact());
+    }
+
+    @Override
+    public SchemeNumber toInexact() {
+        return new SchemeComplex(real.toInexact(), imag.toInexact());
     }
 
     @Override
@@ -101,17 +96,22 @@ public class SchemeComplex extends SchemeNumber {
 
         // 如果虚数和实数都是exact的，返回两者的exact的表示。
         if (isExact()) {
-            String sign = imag.getValue() >= 0 ? "+" : "-";
-            return real + sign +  imag + "i";
+            String sign = imag.getValue() >= 0 ? "+" : "";
+            return real + sign + imag + "i";
         }
 
         // 如果虚数是exact的，并且为0,去掉虚数部分。
-        if (imag.isExact() && imag.getValue()==0)
+        if (imag.isExact() && imag.getValue() == 0)
             return real.toString();
 
         //只要虚数或实数有一个不是exact的，虚数和实数就都是inexact的。
-        String sign = imag.getValue() >= 0 ? "+" : "-";
-        return real.getValue() + sign+ imag.getValue() + "i";
+        String sign = imag.getValue() >= 0 ? "+" : "";
+        return real.getValue() + sign + imag.getValue() + "i";
     }
 
+    public static void main(String[] args) {
+        SchemeComplex complex10 = new SchemeComplex(
+                new SchemeRational(3, 2),
+                new SchemeRational(-4, 3));
+    }
 }
