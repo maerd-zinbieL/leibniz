@@ -9,10 +9,12 @@ public class SchemeRealTest {
     @Test
     public void testToString() {
         SchemeReal schemeReal0 = new SchemeReal(3);
-        assertEquals("3", schemeReal0.toString());
+        assertEquals("3.0", schemeReal0.toString());
 
         SchemeReal schemeReal1 = new SchemeReal(3.0);
         assertEquals("3.0", schemeReal1.toString());
 
     }
+
+
 }
