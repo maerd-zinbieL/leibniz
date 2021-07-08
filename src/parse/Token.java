@@ -313,8 +313,8 @@ class NumberToken extends Token<SchemeNumber> {
     private static int tokenColNum;
     private static String lexLine;
     private static StringBuilder readSoFarSB;
-//    private static boolean isPositive;
-//    private static boolean isExact;
+    private static boolean isPositive;
+    private static boolean isExact;
 
     private NumberToken(SchemeNumber value, int lineNum, int colNum, int end) {
         super(TokenType.Number, value, lineNum, colNum, end);
@@ -335,7 +335,7 @@ class NumberToken extends Token<SchemeNumber> {
     }
 
     private static boolean isExponentMarker(char c) {
-        //todo 不同的marker之间有什么区别？
+        // TODO: 2021/7/8   不同的marker之间有什么区别？
         return c == 'e' ||
                 c == 's' ||
                 c == 'f' ||
@@ -364,141 +364,167 @@ class NumberToken extends Token<SchemeNumber> {
         }
     }
 
-    private static NumberToken readDecimalAfterPrefix(int start, boolean isPositive, boolean isExact) {
+    private static NumberToken readDecimalAfterPrefix(int start) {
         char c = lexLine.charAt(start);
         if (isDigit(c)) {
             readSoFarSB.append(c);
-            return beforeDot(start + 1, isPositive, digitToInt(c), isExact);
+            return beforeDot(start + 1);
         }
         if (c == '.') {
-            return afterDotNeedDigit(start + 1, isPositive, isExact);
+            readSoFarSB.append(c);
+            return afterDotNeedDigit(start + 1);
         }
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static NumberToken readDecimalNeedExactness(int start, boolean isPositive) {
-        if (lexLine.startsWith("#i", start))
-            return readDecimalAfterPrefix(start + 2, isPositive, false);
-        if (lexLine.startsWith("#e", start))
-            return readDecimalAfterPrefix(start + 2, isPositive, true);
+    private static NumberToken readDecimalNeedExactness(int start) {
+        if (lexLine.startsWith("#i", start)) {
+            isExact = false;
+            return readDecimalAfterPrefix(start + 2);
+        }
+        if (lexLine.startsWith("#e", start)) {
+            isExact = true;
+            return readDecimalAfterPrefix(start + 2);
+        }
         if (isDigit(lexLine.charAt(start))) {
-            return readDecimalAfterPrefix(start, isPositive, true);
+            isExact = true;
+            return readDecimalAfterPrefix(start);
         }
         if (lexLine.charAt(start) == '.') {
-            return readDecimalAfterPrefix(start, isPositive, false);
+            return readDecimalAfterPrefix(start);
         }
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static NumberToken readExact(int start, boolean isPositive) {
-        if (lexLine.startsWith("#d", start))
-            return readDecimalAfterPrefix(start + 2, isPositive, true);
+    private static NumberToken readExact(int start) {
+        if (lexLine.startsWith("#d", start)) {
+            isExact = true;
+            return readDecimalAfterPrefix(start + 2);
+        }
         supportInFuture(start);
         throw new LexerException("bad number at (" + tokenLineNum + ",)" + tokenColNum);
     }
 
-    private static NumberToken readInexact(int start, boolean isPositive) {
-        if (lexLine.startsWith("#d", start))
-            return readDecimalAfterPrefix(start + 2, isPositive, false);
+    private static NumberToken readInexact(int start) {
+        if (lexLine.startsWith("#d", start)) {
+            isExact = false;
+            return readDecimalAfterPrefix(start + 2);
+        }
         supportInFuture(start);
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static NumberToken afterSuffix(int start, StringBuilder readSoFarDouble, char expMarker,
-                                           boolean isPositive, int expValue, boolean isExact) {
+    private static NumberToken afterSuffix(int start, char expMarker, int expValue) {
         if (isDelimiterOrEOF(lexLine, start)) {
-            //todo return a real number
+            // TODO: 2021/7/8   return a real number
         }
         char c = lexLine.charAt(start);
         if (isDigit(c)) {
-            int newExpValue = expValue * 10 + digitToInt(c);
-            return afterSuffix(start + 1, readSoFar, expMarker, isPositive, newExpValue, isExact);
+            int newExpValue;
+            if (expValue >= 0) {
+                newExpValue = expValue * 10 + digitToInt(c);
+            } else {
+                newExpValue = expValue * 10 - digitToInt(c);
+            }
+            return afterSuffix(start + 1, expMarker, newExpValue);
         }
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static NumberToken readSuffixNeedDigit(int start, StringBuilder readSoFarDouble, char expMarker,
-                                                   boolean isPositive, int expValueSign, boolean isExact) {
+    private static NumberToken readSuffixNeedDigit(int start, char expMarker, int expValueSign) {
         char c = lexLine.charAt(start);
         if (isDigit(c)) {
             int expValue = expValueSign * digitToInt(c);
-            return afterSuffix(start + 1, readSoFar, expMarker, isPositive, expValue, isExact);
+            return afterSuffix(start + 1, expMarker, expValue);
         }
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static NumberToken readSuffix(int start, StringBuilder readSoFarDouble, char expMarker,
-                                          boolean isPositive, boolean isExact) {
+    private static NumberToken readSuffix(int start, char expMarker) {
         char c = lexLine.charAt(start);
         if (c == '-') {
-            return readSuffixNeedDigit(start + 1, readSoFar, expMarker, isPositive, -1, isExact);
+            return readSuffixNeedDigit(start + 1, expMarker, -1);
         }
         if (c == '+') {
-            return readSuffixNeedDigit(start + 1, readSoFar, expMarker, isPositive, 1, isExact);
+            return readSuffixNeedDigit(start + 1, expMarker, 1);
         }
         if (isDigit(c)) {
-            return readSuffixNeedDigit(start, readSoFar, expMarker, isPositive, 1, isExact);
+            return readSuffixNeedDigit(start, expMarker, 1);
         }
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static NumberToken afterSharpThenDot(int start, StringBuilder readSoFarDouble, boolean isPositive,
-                                                 boolean isExact) {
+    private static NumberToken afterSharpThenDot(int start) {
         char c = lexLine.charAt(start);
+        if (c == '#') {
+            return afterSharpThenDot(start + 1);
+        }
+        if (isExponentMarker(c)) {
+            return readSuffix(start + 1, c);
+        }
         return null;
     }
 
-    private static NumberToken readSharpAfterDot(int start, StringBuilder readSoFarDouble, boolean isPositive, boolean isExact) {
+    private static NumberToken readSharpAfterDot(int start) {
         char c = lexLine.charAt(start);
         if (c == '#') {
-            return readSharpAfterDot(start + 1, readSoFar, isPositive, isExact);
+            return readSharpAfterDot(start + 1);
         }
         if (isExponentMarker(c)) {
-            return readSuffix(start + 1, readSoFar, c, isPositive, isExact);
+            return readSuffix(start + 1, c);
         }
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static NumberToken afterDot(int start, StringBuilder readSoFarDouble,
-                                        boolean isPositive, int exponent, boolean isExact) {
+    private static NumberToken afterDot(int start, int exponent) {
         char c = lexLine.charAt(start);
         if (c == '#') {
-            return readSharpAfterDot(start + 1, readSoFar, isPositive, isExact);
+            return readSharpAfterDot(start + 1);
         }
         if (isDigit(c)) {
             readSoFarSB.append(c);
-            return afterDot(start + 1, readSoFar, isPositive, exponent + 1, isExact);
+            return afterDot(start + 1, exponent + 1);
         }
         if (isExponentMarker(c)) {
-            return readSuffix(start + 1, readSoFar, c, isPositive, isExact);
+            return readSuffix(start + 1, c);
         }
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static NumberToken afterDotNeedDigit(int start, boolean isPositive, boolean isExact) {
+    private static NumberToken afterDotNeedDigit(int start) {
         char c = lexLine.charAt(start);
-        if (isDigit(c))
-            return afterDot(start + 1, digitToInt(c) / 10.0, isPositive, 1, isExact);
+        if (isDigit(c)) {
+            readSoFarSB.append(c);
+            return afterDot(start + 1, 1);
+        }
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static NumberToken readSharpBeforeDot(int start, StringBuilder readSoFarDouble, boolean isPositive, boolean isExact) {
+    private static NumberToken readSharpBeforeDot(int start) {
         char c = lexLine.charAt(start);
         if (c == '#') {
-            return readSharpBeforeDot(start + 1, readSoFar * 10, isPositive, isExact);
+            readSoFarSB.append('0');
+            return readSharpBeforeDot(start + 1);
         }
         if (c == '.') {
-            return afterSharpThenDot(start + 1, readSoFar, isPositive, isExact);
+            readSoFarSB.append(c);
+            return afterSharpThenDot(start + 1);
         }
         if (isExponentMarker(c)) {
-            return readSuffix(start + 1, readSoFar, c, isPositive, isExact);
+            return readSuffix(start + 1, c);
         }
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static NumberToken beforeDot(int start, boolean isPositive, StringBuilder readSoFarLong, boolean isExact) {
+    private static NumberToken beforeDot(int start) {
         if (isDelimiterOrEOF(lexLine, start)) {
-            SchemeNumber number = new SchemeInteger(readSoFar);
+            long value;
+            try {
+                value = Long.parseLong(readSoFarSB.toString());
+            } catch (NumberFormatException e) {
+                throw new LexerException("too large integer at (" + tokenLineNum + "," + tokenColNum + ")");
+            }
+            SchemeNumber number = new SchemeInteger(value);
             if (!isExact) {
                 number = number.toInexact();
             }
@@ -506,47 +532,60 @@ class NumberToken extends Token<SchemeNumber> {
         }
 
         char c = lexLine.charAt(start);
-        if (c == '#')
-            return readSharpBeforeDot(start + 1, readSoFar * 10, isPositive, isExact);
-        if (isExponentMarker(c))
-            return readSuffix(start + 1, readSoFar, c, isPositive, isExact);
-        if (isDigit(c))
-            return beforeDot(start + 1, isPositive, readSoFar * 10 + digitToInt(c), isExact);
+        if (c == '#') {
+            readSoFarSB.append('0');
+            return readSharpBeforeDot(start + 1);
+        }
+        if (isExponentMarker(c)) {
+            return readSuffix(start + 1, c);
+        }
+        if (isDigit(c)) {
+            readSoFarSB.append(c);
+            return beforeDot(start + 1);
+        }
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static NumberToken readPrefix(int start, boolean isPositive) {
+    private static NumberToken readPrefix(int start) {
         char first = lexLine.charAt(start);
         if (first == 'i') {
-            return readInexact(start + 1, isPositive);
+            return readInexact(start + 1);
         }
         if (first == 'e') {
-            return readExact(start + 1, isPositive);
+            return readExact(start + 1);
         }
         if (first == 'd') {
-            return readDecimalNeedExactness(start + 1, isPositive);
+            return readDecimalNeedExactness(start + 1);
         }
         supportInFuture(start - 1);
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static NumberToken afterReadSign(int start, boolean isPositive) {
+    private static NumberToken afterReadSign(int start) {
         char c = lexLine.charAt(start);
-        if (c == '#')
-            return readPrefix(start + 1, isPositive);
-        if (isDigit(c))
-            return beforeDot(start + 1, isPositive, digitToInt(c), true);
-        if (c == '.')
-            return afterDotNeedDigit(start + 1, isPositive, false);
+        if (c == '#') {
+            return readPrefix(start + 1);
+        }
+        if (isDigit(c)) {
+            readSoFarSB.append(c);
+            isExact = true;
+            return beforeDot(start + 1);
+        }
+        if (c == '.') {
+            readSoFarSB.append(c);
+            isExact = false;
+            return afterDotNeedDigit(start + 1);
+        }
         supportInFuture(start);
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
     public static NumberToken lex(String line, int start, int lineNum) {
-        //todo 终结点缺少终结处理。
-        //todo 复数,分数
-        //todo 将函数的一些局部状态转为全局状态
-        //todo 缺少溢出报错
+        // TODO: 2021/7/8   终结点缺少终结处理。
+        // TODO: 2021/7/8   复数,分数
+        // TODO: 2021/7/8   将函数的一些局部状态转为全局状态
+        // TODO: 2021/7/8   缺少溢出报错
+        // TODO: 2021/7/8 辅助函数的返回类型是SchemeNumber会不会更好？
         lexLine = line.toLowerCase();
         tokenLineNum = lineNum;
         tokenColNum = start;
@@ -554,19 +593,27 @@ class NumberToken extends Token<SchemeNumber> {
 
         char first = line.charAt(start);
         if (first == '-') {
-            return afterReadSign(start + 1, false);
+            isPositive = false;
+            return afterReadSign(start + 1);
         }
         if (first == '+') {
-            return afterReadSign(start + 1, true);
+            isPositive = true;
+            return afterReadSign(start + 1);
         }
         if (first == '#') {
-            return readPrefix(start + 1, true);
+            isPositive = true;
+            return readPrefix(start + 1);
         }
         if (isDigit(first)) {
-            return beforeDot(start + 1, true, digitToInt(first), true);
+            readSoFarSB.append(first);
+            isExact = true;
+            isPositive = true;
+            return beforeDot(start + 1);
         }
         if (first == '.') {
-            return afterDotNeedDigit(start + 1, true, false);
+            isPositive = true;
+            isExact = false;
+            return afterDotNeedDigit(start + 1);
         }
         supportInFuture(start);
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
