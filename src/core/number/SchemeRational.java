@@ -5,6 +5,8 @@ public class SchemeRational extends SchemeNumber {
     private final long denominator;
 
     public SchemeRational(long numerator, long denominator) {
+        if (denominator == 0)
+            throw new IllegalArgumentException();
         long gcd = gcd(numerator, denominator);
         this.numerator = numerator / gcd;
         this.denominator = denominator / gcd;
@@ -61,9 +63,12 @@ public class SchemeRational extends SchemeNumber {
 
     @Override
     public String toString() {
-        if (denominator == 1) {
-            return Long.toString(numerator);
+        long numeratorAbs = Math.abs(numerator);
+        long denominatorAbs = Math.abs(denominator);
+        String sign = (numerator * denominator) < 0 ? "-" : "";
+        if (denominatorAbs == 1) {
+            return sign + numerator;
         }
-        return numerator + "/" + denominator;
+        return sign + numeratorAbs + "/" + denominatorAbs;
     }
 }

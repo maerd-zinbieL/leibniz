@@ -30,6 +30,12 @@ public class SchemeComplexTest {
         assertEquals("3/2+2i", complex5.toExact().toString());
         assertEquals("1.5+2.0i", complex5.toInexact().toString());
 
+        SchemeComplex complex6 = new SchemeComplex(
+                new SchemeRational(3, 2),
+                new SchemeRational(4, -5));
+        assertEquals("3/2-4/5i", complex6.toExact().toString());
+        assertEquals("1.5-0.8i", complex6.toInexact().toString());
+
     }
 
     @Test
