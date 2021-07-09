@@ -7,23 +7,22 @@ public class SchemeRational extends SchemeNumber {
     public SchemeRational(long numerator, long denominator) {
         if (denominator == 0)
             throw new IllegalArgumentException();
-        long gcd = gcd(numerator, denominator);
+        long gcd = gcd(Math.abs(numerator), Math.abs(denominator));
         this.numerator = numerator / gcd;
         this.denominator = denominator / gcd;
     }
 
     private long gcd(long a, long b) {
-        a = Math.abs(a);
-        b = Math.abs(b);
-        if (a == 0)
-            return b;
-        while (b != 0) {
-            if (a > b)
-                a = a - b;
-            else
-                b = b - a;
-        }
-        return a;
+        if (b == 0) return a;
+        return gcd(b, a % b);
+    }
+
+    public long getNumerator() {
+        return numerator;
+    }
+
+    public long getDenominator() {
+        return denominator;
     }
 
     @Override
@@ -67,7 +66,7 @@ public class SchemeRational extends SchemeNumber {
         long denominatorAbs = Math.abs(denominator);
         String sign = (numerator * denominator) < 0 ? "-" : "";
         if (denominatorAbs == 1) {
-            return sign + numerator;
+            return sign + numeratorAbs;
         }
         return sign + numeratorAbs + "/" + denominatorAbs;
     }
