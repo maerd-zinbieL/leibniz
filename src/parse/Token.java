@@ -483,10 +483,11 @@ class NumberToken extends Token<SchemeNumber> {
         if (!isPositive) {
             readSoFarSB.insert(0, '-');
         }
+
         try {
             value = Double.parseDouble(readSoFarSB.toString());
         } catch (NumberFormatException e) {
-            throw new LexerException("too large integer at (" + tokenLineNum + "," + tokenColNum + ")");
+            throw new LexerException("too large number at (" + tokenLineNum + "," + tokenColNum + ")");
         }
         SchemeNumber number = new SchemeReal(value);
         if (mustBeExact) {
@@ -661,7 +662,7 @@ class NumberToken extends Token<SchemeNumber> {
     }
 
     public static void main(String[] args) {
-        String line = "-44547777##";
+        String line = "#d13793791#";
         System.out.println(lex(line, 0, 1).getValue());
     }
 }
