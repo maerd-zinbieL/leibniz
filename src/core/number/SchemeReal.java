@@ -82,7 +82,7 @@ public class SchemeReal extends SchemeNumber {
             }
             sb.append(absValueStr.charAt(charAtStr));
         }
-        if (charAtStr < absValueStr.length() - 2) {
+        if (charAtStr < indexOfE) {
             sb.append('.');
             for (int i = charAtStr + 1; i < absValueStr.length(); i++) {
                 char c = absValueStr.charAt(i);
