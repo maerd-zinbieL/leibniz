@@ -58,7 +58,7 @@ public class SchemeComplexTest {
         SchemeComplex complex6 = SchemeComplex.getRectangularInstance(0.0, 0);
         assertEquals("0.0", complex6.toString());
 
-        //todo ugly
+        // TODO: 2021/7/10   ugly
         SchemeComplex complex7 = SchemeComplex.getRectangularInstance(0.0, -0.0);
         assertEquals("0.0+-0.0i", complex7.toString());
 

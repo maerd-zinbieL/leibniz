@@ -72,31 +72,46 @@ public class SchemeReal extends SchemeNumber {
 
     private String scientificToString(String absValueStr, int indexOfE) {
         int exponent = Integer.parseInt(absValueStr.substring(indexOfE + 1));
-        StringBuilder sb = new StringBuilder(absValueStr.substring(0, 1));
-        int charAtStr = 0;
-        for (int i = 0; i < exponent; i++) {
-            charAtStr = i + 2;
-            if (charAtStr >= indexOfE) {
-                sb.append('0');
-                continue;
-            }
-            sb.append(absValueStr.charAt(charAtStr));
-        }
-        if (charAtStr < indexOfE) {
-            sb.append('.');
-            for (int i = charAtStr + 1; i < absValueStr.length(); i++) {
+        StringBuilder sb;
+        if (exponent < 0) {
+            sb = new StringBuilder("0.");
+            sb.append("0".repeat(-(exponent + 1)));
+            sb.append(absValueStr.charAt(0));
+            for (int i = 2; i < absValueStr.length(); i++) {
                 char c = absValueStr.charAt(i);
-                if (c == 'E' || c == 'e') {
-//                    sb.append('0');
+                if (c=='E'||c=='e') {
                     break;
                 }
                 sb.append(c);
             }
-        }
-        if (sb.indexOf(".") == -1) {
-            sb.append(".0");
+        } else {
+            sb = new StringBuilder(absValueStr.substring(0, 1));
+            int charAtStr = 0;
+            for (int i = 0; i < exponent; i++) {
+                charAtStr = i + 2;
+                if (charAtStr >= indexOfE) {
+                    sb.append('0');
+                    continue;
+                }
+                sb.append(absValueStr.charAt(charAtStr));
+            }
+            charAtStr++;
+            if (charAtStr < indexOfE) {
+                sb.append('.');
+                for (int i = charAtStr; i < absValueStr.length(); i++) {
+                    char c = absValueStr.charAt(i);
+                    if (c == 'E' || c == 'e') {
+                        break;
+                    }
+                    sb.append(c);
+                }
+            }
+            if (sb.indexOf(".") == -1) {
+                sb.append(".0");
+            }
         }
         return sb.toString();
+
     }
 
     @Override
@@ -132,8 +147,10 @@ public class SchemeReal extends SchemeNumber {
     }
 
     public static void main(String[] args) {
-        SchemeReal schemeReal5 = new SchemeReal(-4454777700.0);
-        String rep = schemeReal5.toString();
+        SchemeReal schemeReal5 = new SchemeReal(0e2323);
+        System.out.println(schemeReal5.toString());
+        SchemeRational schemeRational = schemeReal5.down();
+        String rep = schemeRational.toString();
         System.out.println(rep);
     }
 }

@@ -366,7 +366,7 @@ class NumberToken extends Token<SchemeNumber> {
         }
     }
 
-    private static SchemeNumber readDecimalAfterPrefix(int start) {
+    private static SchemeNumber afterReadSign(int start) {
         char c = lexLine.charAt(start);
         if (isDigit(c)) {
             readSoFarSB.append(c);
@@ -376,7 +376,23 @@ class NumberToken extends Token<SchemeNumber> {
             readSoFarSB.append(c);
             return afterDotNeedDigit(start + 1);
         }
+        supportInFuture(start);
+        throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
+    }
+
+    private static SchemeNumber readDecimalAfterPrefix(int start) {
+        char c = lexLine.charAt(start);
+        if (c == '.') {
+            readSoFarSB.append(c);
+            return afterDotNeedDigit(start + 1);
+        }
+        if (isDigit(c)) {
+            readSoFarSB.append(c);
+            return beforeDot(start + 1);
+        }
+
         if (c == '+') {
+            isPositive = true;
             return afterReadSign(start + 1);
         }
         if (c == '-') {
@@ -391,14 +407,18 @@ class NumberToken extends Token<SchemeNumber> {
             mustNotBeExact = true;
             return readDecimalAfterPrefix(start + 2);
         }
+        char c = lexLine.charAt(start);
         if (lexLine.startsWith("#e", start)) {
             mustBeExact = true;
             return readDecimalAfterPrefix(start + 2);
         }
-        if (isDigit(lexLine.charAt(start))) {
+        if (isDigit(c)) {
             return readDecimalAfterPrefix(start);
         }
-        if (lexLine.charAt(start) == '.') {
+        if (c == '.') {
+            return readDecimalAfterPrefix(start);
+        }
+        if (isSign(c)) {
             return readDecimalAfterPrefix(start);
         }
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
@@ -418,7 +438,9 @@ class NumberToken extends Token<SchemeNumber> {
 
     private static SchemeNumber afterSuffix(int start, char expMarker, int expValue) {
         if (isDelimiterOrEOF(lexLine, start)) {
-            // TODO: 2021/7/8   return a real number
+            if (isExponentMarker(expMarker)) {
+                return getSchemeReal(start, expValue);
+            }
         }
         char c = lexLine.charAt(start);
         if (isDigit(c)) {
@@ -457,6 +479,9 @@ class NumberToken extends Token<SchemeNumber> {
     }
 
     private static SchemeNumber afterSharpThenDot(int start) {
+        if (isDelimiterOrEOF(lexLine, start)) {
+            return getSchemeReal(start);
+        }
         char c = lexLine.charAt(start);
         if (c == '#') {
             return afterSharpThenDot(start + 1);
@@ -468,6 +493,9 @@ class NumberToken extends Token<SchemeNumber> {
     }
 
     private static SchemeNumber readSharpAfterDot(int start) {
+        if (isDelimiterOrEOF(lexLine, start)) {
+            return getSchemeReal(start);
+        }
         char c = lexLine.charAt(start);
         if (c == '#') {
             return readSharpAfterDot(start + 1);
@@ -478,17 +506,39 @@ class NumberToken extends Token<SchemeNumber> {
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static SchemeNumber getSchemeReal(int start) {
+    private static double readSoFar2Double() {
         double value;
         if (!isPositive) {
             readSoFarSB.insert(0, '-');
         }
-
         try {
             value = Double.parseDouble(readSoFarSB.toString());
         } catch (NumberFormatException e) {
             throw new LexerException("too large number at (" + tokenLineNum + "," + tokenColNum + ")");
         }
+        return value;
+    }
+
+    private static SchemeNumber getSchemeReal(int start, int expValue) {
+        double value = readSoFar2Double();
+//        System.out.println(expValue);
+        if (value != 0){
+            value = value * Math.pow(10, expValue);
+        }
+        if (Double.isInfinite(value) || Double.isNaN(value)) {
+            throw new LexerException("number at (" + tokenLineNum + "," +
+                    tokenColNum + ") " + "is too large");
+        }
+        SchemeNumber number = new SchemeReal(value);
+        if (mustBeExact) {
+            number = number.toExact();
+        }
+        tokenEnd = start;
+        return number;
+    }
+
+    private static SchemeNumber getSchemeReal(int start) {
+        double value = readSoFar2Double();
         SchemeNumber number = new SchemeReal(value);
         if (mustBeExact) {
             number = number.toExact();
@@ -601,28 +651,10 @@ class NumberToken extends Token<SchemeNumber> {
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
     }
 
-    private static SchemeNumber afterReadSign(int start) {
-        char c = lexLine.charAt(start);
-        if (c == '#') {
-            return readPrefix(start + 1);
-        }
-        if (isDigit(c)) {
-            readSoFarSB.append(c);
-            return beforeDot(start + 1);
-        }
-        if (c == '.') {
-            readSoFarSB.append(c);
-            return afterDotNeedDigit(start + 1);
-        }
-        supportInFuture(start);
-        throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
-    }
-
     public static NumberToken lex(String line, int start, int lineNum) {
-        // TODO: 2021/7/8   终结点缺少终结处理。
         // TODO: 2021/7/8   复数,分数
         // TODO: 2021/7/8   缺少一些数字的溢出报错
-        // TODO: 2021/7/8 辅助函数的返回类型是SchemeNumber会不会更好？
+        // TODO: 2021/7/10 -#i#d3141599f232 
         lexLine = line.toLowerCase();
         tokenLineNum = lineNum;
         tokenColNum = start;
@@ -662,7 +694,10 @@ class NumberToken extends Token<SchemeNumber> {
     }
 
     public static void main(String[] args) {
-        String line = "#d13793791#";
-        System.out.println(lex(line, 0, 1).getValue());
+        // TODO: 2021/7/10 fix this bug
+        String line = "#d#e314152.##d22";
+        NumberToken token = lex(line, 0, 1);
+        System.out.println(token.getValue()); //9223372036854775807
+
     }
 }

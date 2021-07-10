@@ -27,7 +27,10 @@ public class SchemeRealTest {
         assertEquals("-4454777700", schemeReal5.down().toString());
 
         SchemeReal schemeReal6 = new SchemeReal(137937910);
-//        assertEquals();
+        assertEquals("137937910", schemeReal6.down().toString());
+
+        SchemeReal schemeReal7 = new SchemeReal(-31415e-7);
+        assertEquals("-6283/2000000", schemeReal7.down().toString());
     }
     @Test
     public void testToString() {
@@ -52,6 +55,11 @@ public class SchemeRealTest {
         SchemeReal schemeReal6 = new SchemeReal(-4454777700.172);
         assertEquals("-4454777700.172",schemeReal6.toString());
 
+        SchemeReal schemeReal7 = new SchemeReal(+31182e-9);
+        assertEquals("0.000031182", schemeReal7.toString());
+
+        SchemeReal schemeReal8 = new SchemeReal(-31415e-7);
+        assertEquals("-0.0031415",schemeReal8.toString());
 
     }
 
