@@ -60,7 +60,7 @@
 			<x>856.0</x>
 			<y>262.0</y>
 		</state>
-		<state id="14" name="read decimal need exact info">
+		<state id="14" name="read decimal need exactness">
 			<x>1422.0</x>
 			<y>245.0</y>
 		</state>
@@ -71,57 +71,12 @@
 		</state>
 		<!--The list of transitions.-->
 		<transition>
-			<from>0</from>
-			<to>1</to>
-			<read>#</read>
-		</transition>
-		<transition>
 			<from>6</from>
 			<to>15</to>
 			<read>#</read>
 		</transition>
 		<transition>
-			<from>5</from>
-			<to>10</to>
-			<read>exponent marker</read>
-		</transition>
-		<transition>
-			<from>15</from>
-			<to>10</to>
-			<read>exponent marker</read>
-		</transition>
-		<transition>
-			<from>4</from>
-			<to>12</to>
-			<read>dot</read>
-		</transition>
-		<transition>
-			<from>12</from>
-			<to>7</to>
-			<read>digit</read>
-		</transition>
-		<transition>
-			<from>15</from>
-			<to>5</to>
-			<read>dot</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>6</to>
-			<read>digit</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>12</to>
-			<read>dot</read>
-		</transition>
-		<transition>
-			<from>6</from>
-			<to>7</to>
-			<read>dot</read>
-		</transition>
-		<transition>
-			<from>4</from>
+			<from>13</from>
 			<to>6</to>
 			<read>digit</read>
 		</transition>
@@ -131,14 +86,64 @@
 			<read>#d|empty</read>
 		</transition>
 		<transition>
+			<from>1</from>
+			<to>14</to>
+			<read>d</read>
+		</transition>
+		<transition>
+			<from>7</from>
+			<to>10</to>
+			<read>exponent marker</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>13</to>
+			<read>sign</read>
+		</transition>
+		<transition>
+			<from>15</from>
+			<to>5</to>
+			<read>dot</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>7</to>
+			<read>dot</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>#</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>6</to>
+			<read>digit</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>10</to>
+			<read>exponent marker</read>
+		</transition>
+		<transition>
 			<from>11</from>
 			<to>9</to>
 			<read>digit</read>
 		</transition>
 		<transition>
-			<from>1</from>
-			<to>2</to>
-			<read>i|e</read>
+			<from>0</from>
+			<to>12</to>
+			<read>dot</read>
+		</transition>
+		<transition>
+			<from>12</from>
+			<to>7</to>
+			<read>digit</read>
+		</transition>
+		<transition>
+			<from>13</from>
+			<to>12</to>
+			<read>dot</read>
 		</transition>
 		<transition>
 			<from>6</from>
@@ -157,6 +162,26 @@
 		</transition>
 		<transition>
 			<from>8</from>
+			<to>10</to>
+			<read>exponent marker</read>
+		</transition>
+		<transition>
+			<from>10</from>
+			<to>11</to>
+			<read>sign|empty</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>10</to>
+			<read>exponent marker</read>
+		</transition>
+		<transition>
+			<from>14</from>
+			<to>4</to>
+			<read>#i|#e|empty</read>
+		</transition>
+		<transition>
+			<from>8</from>
 			<to>8</to>
 			<read>#</read>
 		</transition>
@@ -171,59 +196,29 @@
 			<read>#</read>
 		</transition>
 		<transition>
-			<from>8</from>
-			<to>10</to>
-			<read>exponent marker</read>
-		</transition>
-		<transition>
 			<from>4</from>
 			<to>13</to>
 			<read>sign</read>
 		</transition>
 		<transition>
-			<from>6</from>
-			<to>10</to>
-			<read>exponent marker</read>
-		</transition>
-		<transition>
-			<from>13</from>
-			<to>12</to>
-			<read>dot</read>
-		</transition>
-		<transition>
-			<from>14</from>
-			<to>4</to>
-			<read>#i|#e|empty</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>13</to>
-			<read>sign</read>
-		</transition>
-		<transition>
-			<from>13</from>
+			<from>4</from>
 			<to>6</to>
 			<read>digit</read>
 		</transition>
 		<transition>
-			<from>1</from>
-			<to>14</to>
-			<read>d</read>
-		</transition>
-		<transition>
-			<from>10</from>
-			<to>11</to>
-			<read>sign|empty</read>
-		</transition>
-		<transition>
-			<from>7</from>
+			<from>15</from>
 			<to>10</to>
 			<read>exponent marker</read>
 		</transition>
 		<transition>
-			<from>13</from>
-			<to>1</to>
-			<read>#</read>
+			<from>4</from>
+			<to>12</to>
+			<read>dot</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>2</to>
+			<read>i|e</read>
 		</transition>
 		<transition>
 			<from>7</from>

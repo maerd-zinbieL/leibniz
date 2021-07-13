@@ -156,7 +156,10 @@ class StringToken extends Token<String> {
 
     private static boolean isEscape(char c) {
         return c == '\"' ||
-                c == '\\';
+                c == '\\' ||
+                c == 'n' ||
+                c == 't' ||
+                c == 'r';
     }
 
     static StringToken lex(String line, int start, int lineNum) {
@@ -170,11 +173,11 @@ class StringToken extends Token<String> {
                 if (isEscape(next)) {
                     i++;
                 } else {
-                    throw new LexerException("unrecognized escape sequence");
+                    throw new LexerException("unrecognized escape sequence at (" + lineNum + "," + start + ")");
                 }
             }
         }
-        throw new LexerException("bad String token");
+        throw new LexerException("bad String token at (" + lineNum + "," + start + ")");
     }
 }
 
@@ -243,7 +246,8 @@ class IdentifierToken extends Token<String> {
                 c == '+' ||
                 c == '-' ||
                 c == '.' ||
-                c == '@';
+                c == '@' ||
+                c == '|';
 
     }
 
@@ -522,7 +526,7 @@ class NumberToken extends Token<SchemeNumber> {
     private static SchemeNumber getSchemeReal(int start, int expValue) {
         double value = readSoFar2Double();
 //        System.out.println(expValue);
-        if (value != 0){
+        if (value != 0) {
             value = value * Math.pow(10, expValue);
         }
         if (Double.isInfinite(value) || Double.isNaN(value)) {
@@ -654,7 +658,6 @@ class NumberToken extends Token<SchemeNumber> {
     public static NumberToken lex(String line, int start, int lineNum) {
         // TODO: 2021/7/8   复数,分数
         // TODO: 2021/7/8   缺少一些数字的溢出报错
-        // TODO: 2021/7/10 -#i#d3141599f232 
         lexLine = line.toLowerCase();
         tokenLineNum = lineNum;
         tokenColNum = start;

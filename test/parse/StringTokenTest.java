@@ -5,20 +5,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
 
 import static org.junit.Assert.*;
 
 public class StringTokenTest {
     String[] lines;
-    String fileName = "./test-resources/token-string-test0.scm";
+    String fileName = TestUtil.TEST_TOKEN_FILES_PATH + "token-string-test0.scm";
 
     @Before
     public void setUp() throws IOException {
-        lines = ReadTestFile.getTestContents(fileName);
+        lines = TestUtil.getTestContents(fileName);
     }
 
     @After
@@ -55,12 +52,12 @@ public class StringTokenTest {
     @Test(expected = LexerException.class)
     public void lexError1() {
 //        "\"Hello \nWorld!\""
-        StringToken.lex(lines[3],1,0);
+        StringToken.lex(lines[3], 1, 0);
     }
 
     @Test(expected = LexerException.class)
     public void lexError2() {
 //        "\"Hello \r\nWorld!\""
-        StringToken.lex(lines[4],1,0);
+        StringToken.lex(lines[4], 1, 0);
     }
 }

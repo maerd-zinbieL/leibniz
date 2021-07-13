@@ -8,11 +8,11 @@ import static org.junit.Assert.*;
 
 public class PunctuatorTest {
     String[] lines;
-    String fileName = "./test-resources/token-punctuator-test0.scm";
+    String fileName = TestUtil.TEST_TOKEN_FILES_PATH + "token-punctuator-test0.scm";
 
     @Before
     public void setUp() throws Exception {
-        lines = ReadTestFile.getTestContents(fileName);
+        lines = TestUtil.getTestContents(fileName);
     }
 
     @After

@@ -6,22 +6,22 @@ import java.io.*;
 import java.util.*;
 
 public class Lexer {
-    private static Lexer lexer;
-    private final Queue<Token<?>> tokensBuffer = new LinkedList<>();
-    private LineNumberReader lineNumberReader;
+    private final Queue<Token<?>> tokensBuffer;
+    private final LineNumberReader lineNumberReader;
+    private final String sourceFile;
 
     private Lexer(String sourceFile) throws IOException {
+        this.sourceFile = sourceFile;
+        tokensBuffer = new LinkedList<>();
         lineNumberReader =
                 new LineNumberReader(new FileReader(sourceFile));
     }
 
-    protected static synchronized Lexer getInstance(String sourceFile) throws IOException {
-        if (lexer == null)
-            lexer = new Lexer(sourceFile);
-        return lexer;
+    protected static Lexer getInstance(String sourceFile) throws IOException {
+        return new Lexer(sourceFile);
     }
 
-    private void lexLine(String line, int lineNum) throws IOException {
+    private void lexLine(String line, int lineNum) {
         if (line == null)
             throw new IllegalArgumentException();
         int current = 0;
@@ -45,13 +45,34 @@ public class Lexer {
                 token = CharToken.lex(line, current, lineNum);
                 tokensBuffer.add(token);
                 current = token.getEnd();
+                continue;
             }
             if (StringToken.isString(line, current)) {
-                token= StringToken.lex(line, current+1, lineNum);
+                token = StringToken.lex(line, current + 1, lineNum);
                 tokensBuffer.add(token);
                 current = token.getEnd();
                 continue;
             }
+            if (IdentifierToken.isIdentifier(line, current)) {
+                token = IdentifierToken.lex(line, current, lineNum);
+                tokensBuffer.add(token);
+                current = token.getEnd();
+                continue;
+            }
+            if (PunctuatorToken.isPunctuator(line, current)) {
+                token = PunctuatorToken.lex(line, current, lineNum);
+                tokensBuffer.add(token);
+                current = token.getEnd();
+                continue;
+            }
+            if (NumberToken.isNumber(line, current)) {
+                token = NumberToken.lex(line, current, lineNum);
+                tokensBuffer.add(token);
+                current = token.getEnd();
+                continue;
+            }
+            throw new LexerException(
+                    "bad token at (" + lineNum + "," + current + ")" + " in file " + sourceFile);
         }
     }
 
@@ -59,6 +80,15 @@ public class Lexer {
         String line = lineNumberReader.readLine();
         if (line == null) {
             lineNumberReader.close();
+            return null;
+        }
+        while (line.length() == 0 || line.startsWith(";")) {
+            //过滤空白和注释行
+            line = lineNumberReader.readLine();
+            if (line == null) {
+                lineNumberReader.close();
+                return null;
+            }
         }
         return line;
     }
@@ -67,15 +97,27 @@ public class Lexer {
         return lineNumberReader.getLineNumber();
     }
 
-    protected Token<?> nextToken() throws IOException {
-        if (tokensBuffer.isEmpty()) {
+    public Token<?> nextToken() throws IOException {
+        Token<?> token = tokensBuffer.poll();
+        while (token == null) {
             String line = nextLine();
             int lineNum = getLineNum();
             if (line == null) {
                 return new EOFToken(lineNum);
             }
             lexLine(line, lineNum);
+            token = tokensBuffer.poll();
         }
-        return tokensBuffer.poll();
+        return token;
+    }
+
+    public static void main(String[] args) throws IOException {
+        String fileName = "./test-resources/sicp/exer5-38-d.scm";
+        Lexer lexer = getInstance(fileName);
+        Token<?> token = lexer.nextToken();
+        while (token.getType() != TokenType.EOF) {
+            System.out.println(token.getValue());
+            token = lexer.nextToken();
+        }
     }
 }

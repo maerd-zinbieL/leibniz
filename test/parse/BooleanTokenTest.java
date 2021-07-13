@@ -5,20 +5,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
 
 import static org.junit.Assert.*;
 
 public class BooleanTokenTest {
 
     String[] lines;
-    String fileName = "./test-resources/token-boolean-test0.scm";
+    String fileName = TestUtil.TEST_TOKEN_FILES_PATH + "token-boolean-test0.scm";
 
     @Before
     public void setUp() throws IOException {
-        lines = ReadTestFile.getTestContents(fileName);
+        lines = TestUtil.getTestContents(fileName);
     }
 
     @After

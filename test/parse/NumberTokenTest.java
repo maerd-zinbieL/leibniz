@@ -11,11 +11,11 @@ import static org.junit.Assert.*;
 
 public class NumberTokenTest {
     String[] lines;
-    String fileName = "./test-resources/token-number-test0.scm";
+    String fileName = TestUtil.TEST_TOKEN_FILES_PATH + "token-number-test0.scm";
 
     @Before
     public void setUp() throws IOException {
-        lines = ReadTestFile.getTestContents(fileName);
+        lines = TestUtil.getTestContents(fileName);
     }
 
     @After
@@ -49,8 +49,8 @@ public class NumberTokenTest {
             represents[i] = tokens[i].getValue().toString();
         }
 
-        String expectFileName = "./test-resources/expect/token-number-test0.expect";
-        String[] expectRepresents = ReadTestFile.getTestContents(expectFileName);
+        String expectFileName = TestUtil.TEST_TOKEN_FILES_PATH + "expect/token-number-test0.expect";
+        String[] expectRepresents = TestUtil.getTestContents(expectFileName);
 
         for (int i = 0; i < tokens.length; i++) {
 //            System.out.println(lines[i]);
@@ -107,7 +107,7 @@ public class NumberTokenTest {
         assertArrayEquals(expectedEnd, ends);
     }
 
-    @Test (expected = LexerException.class)
+    @Test(expected = LexerException.class)
     public void lexError1() {
         NumberToken.lex("-#i#d3141599f232", 0, 0);
     }

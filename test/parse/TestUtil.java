@@ -6,7 +6,9 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReadTestFile {
+public class TestUtil {
+    final static String TEST_TOKEN_FILES_PATH = "./test-resources/token/";
+    final static String TEST_SICP_FILES_PATH = "./test-resources/sicp/";
     static public String[] getTestContents(String fileName) throws IOException {
         List<String> lineList = new ArrayList<>();
         LineNumberReader lr = new LineNumberReader(new FileReader(fileName));

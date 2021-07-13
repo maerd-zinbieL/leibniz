@@ -11,11 +11,11 @@ import static org.junit.Assert.*;
 
 public class IdentifierTest {
     String[] lines;
-    String fileName = "./test-resources/token-id-test0.scm";
+    String fileName = TestUtil.TEST_TOKEN_FILES_PATH + "token-id-test0.scm";
 
     @Before
     public void setUp() throws IOException {
-        lines = ReadTestFile.getTestContents(fileName);
+        lines = TestUtil.getTestContents(fileName);
     }
 
     @After
