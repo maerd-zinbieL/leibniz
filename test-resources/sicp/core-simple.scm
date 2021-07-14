@@ -19,8 +19,7 @@
                  (bind (caadr proc)
                        args
                        env)))
-          (else (error "unkown type of procedure:
-                       APPLY")))))
+          (else (error "unkown type of procedure: APPLY")))))
 
 (define evlist
   (lambda (l env)
@@ -47,11 +46,9 @@
   (lambda (vars vals)
     (cond ((eq? vars '())
            (cond ((eq? vals '()) '())
-                 (else (error "too many arguments:
-                              PAIR-UP"))))
+                 (else (error "too many arguments: PAIR-UP"))))
           ((eq? vals '())
-           (error "too few arguments:
-                                 PAIR-UP"))
+           (error "too few arguments: PAIR-UP"))
           ((symbol? vars);;;不懂
            (cons (cons vars vals) '()))
           (else (cons (cons (car vals)
@@ -62,8 +59,7 @@
 (define lookup
   (lambda (sym env)
     (cond ((eq? env '())
-           (error "Unbound variable:
-                  LOOK-UP"))
+           (error "Unbound variable: LOOK-UP"))
           (else((lambda (vcell) ;value cell:(variable . value)
                   (cond ((eq? vcell '())
                          (lookup sym

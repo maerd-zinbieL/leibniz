@@ -204,8 +204,7 @@
             (if (null? rest)
                 (sequence->exp 
                  (cond-actions first))
-                (error "ELSE clause isn't 
-                        last: COND->IF"
+                (error "ELSE clause isn't last: COND->IF"
                        clauses))
             (make-if (cond-predicate first)
                      (sequence->exp 

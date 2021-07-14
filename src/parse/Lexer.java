@@ -72,7 +72,8 @@ public class Lexer {
                 continue;
             }
             throw new LexerException(
-                    "bad token at (" + lineNum + "," + current + ")" + " in file " + sourceFile);
+                    "bad token at (" + lineNum + "," + current + ") " +
+                            "in line: \n" +line + "\n in file " + sourceFile);
         }
     }
 
@@ -112,7 +113,7 @@ public class Lexer {
     }
 
     public static void main(String[] args) throws IOException {
-        String fileName = "./test-resources/sicp/exer5-38-d.scm";
+        String fileName = "./test-resources/token/token-mixed-test1.scm";
         Lexer lexer = getInstance(fileName);
         Token<?> token = lexer.nextToken();
         while (token.getType() != TokenType.EOF) {

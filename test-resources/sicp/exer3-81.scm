@@ -12,8 +12,7 @@
            (rand-update x))
           ((number? m)
            m)
-          (else (error "Unkown operation:
-                       RAND" m))))
+          (else (error "Unkown operation: RAND" m))))
   (cons-stream random-init
    (stream-map proc (rand commands) commands)))
   

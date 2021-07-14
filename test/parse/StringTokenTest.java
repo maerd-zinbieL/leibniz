@@ -47,17 +47,9 @@ public class StringTokenTest {
         assertEquals("Hello World!", token3.getValue());
         assertEquals(14, token3.getEnd());
 
-    }
-
-    @Test(expected = LexerException.class)
-    public void lexError1() {
-//        "\"Hello \nWorld!\""
-        StringToken.lex(lines[3], 1, 0);
-    }
-
-    @Test(expected = LexerException.class)
-    public void lexError2() {
-//        "\"Hello \r\nWorld!\""
-        StringToken.lex(lines[4], 1, 0);
+        Token<String> token4 = StringToken.lex(lines[3], 1, 0);
+        assertEquals("\\\"Hello \\nWorld!\\\"", token4.getValue());
+        Token<String> token5 = StringToken.lex(lines[4], 1, 0);
+        assertEquals("\\\"Hello \\r\\nWorld!\\\"", token5.getValue());
     }
 }

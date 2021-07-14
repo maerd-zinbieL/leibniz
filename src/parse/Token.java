@@ -35,6 +35,8 @@ public class Token<T> {
         return Character.isWhitespace(c) ||
                 c == '(' ||
                 c == ')' ||
+                c == ']' ||
+                c == '[' ||
                 c == '\"' ||
                 c == ';' ||
                 c == '\r' ||
@@ -113,8 +115,8 @@ class BooleanToken extends Token<Boolean> {
     }
 }
 
-class CharToken extends Token<String> {
-    private CharToken(String value, int lineNum, int colNum, int end) {
+class CharToken extends Token<Character> {
+    private CharToken(Character value, int lineNum, int colNum, int end) {
         super(TokenType.Character, value, lineNum, colNum, end);
     }
 
@@ -127,19 +129,21 @@ class CharToken extends Token<String> {
     static CharToken lex(String line, int start, int lineNum) {
         if (!isCharacter(line, start)) throw new LexerException("not a character");
         int end = 0;
-        String value = null;
+        char value = '\000';
         if (isDelimiterOrEOF(line, start + 3)) {
             end = start + 3;
-            value = line.substring(start, end);
+            value = line.charAt(start + 2);
         }
         if (line.startsWith("#\\space", start)) {
             end = start + 7;
-            value = "#\\space";
+            value = ' ';
         }
         if (line.startsWith("#\\newline", start)) {
             end = start + 9;
-            value = "#\\newline";
+            value = '\n';
         }
+        if (value == '\000')
+            throw new LexerException("bad character at (" + lineNum + "," + end + ")");
         return new CharToken(value, lineNum, start, end);
     }
 }
@@ -196,6 +200,8 @@ class PunctuatorToken extends Token<String> {
         char c = line.charAt(start);
         return c == '(' ||
                 c == ')' ||
+                c == '[' ||
+                c == ']' ||
                 c == ',' ||
                 c == '\'' ||
                 c == '`' ||
@@ -246,8 +252,8 @@ class IdentifierToken extends Token<String> {
                 c == '+' ||
                 c == '-' ||
                 c == '.' ||
-                c == '@' ||
-                c == '|';
+                c == '@';
+//                c == '|';
 
     }
 

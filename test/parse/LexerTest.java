@@ -19,10 +19,10 @@ public class LexerTest {
                 System.out.println(fileName);
                 Token<?> token = lexer.nextToken();
                 while (token.getType() != TokenType.EOF) {
-                    System.out.println(token.getValue());
+//                    System.out.print(token.getValue());
                     token = lexer.nextToken();
                 }
-                System.out.println("++++++++++++++++++++++++++++++++++++++++++");
+                System.out.println("\n++++++++++++++++++++++++++++++++++++++++++");
             }
         }
     }

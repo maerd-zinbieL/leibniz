@@ -34,7 +34,7 @@ public class IdentifierTest {
         assertTrue(IdentifierToken.isIdentifier(lines[5], 8));
         assertFalse(IdentifierToken.isIdentifier(lines[6], 8));
         assertFalse(IdentifierToken.isIdentifier(lines[7], 8));
-
+        assertTrue(IdentifierToken.isIdentifier(lines[8], 10));
     }
 
     @Test
@@ -64,6 +64,9 @@ public class IdentifierTest {
 
         Token<String> token6 = IdentifierToken.lex(lines[5], 8, 1);
         assertEquals("+whatever", token6.getValue());
+
+        Token<String> token7 = IdentifierToken.lex(lines[8], 10, 1);
+        assertEquals("y", token7.getValue());
 
     }
 

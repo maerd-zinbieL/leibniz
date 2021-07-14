@@ -122,8 +122,7 @@
       (let ((text (instruction-text inst))
             (breakpoint? (instruction-bp inst)))
         (cond ((= 0 breakpoint?)
-               (error "This is not a breakpoint
-                      --CANCLE-BREAKPOINT" text))
+               (error "This is not a breakpoint --CANCLE-BREAKPOINT" text))
               (else (set-car! inst (list text label 0))))))))
 
 (define (cancle-all-breakpoint machine)

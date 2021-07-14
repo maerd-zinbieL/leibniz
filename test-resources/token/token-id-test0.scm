@@ -6,3 +6,4 @@
 (define +whatever 5)
 (define asdf, 6)
 (define 7 7)
+(define x y)
