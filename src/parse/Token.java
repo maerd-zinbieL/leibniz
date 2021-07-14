@@ -88,9 +88,9 @@ enum TokenType {
     EOF
 }
 
-class EOFToken extends Token<Object> {
+class EOFToken extends Token<String> {
     EOFToken(int lineNum) {
-        super(TokenType.EOF, null, lineNum, 0, 0);
+        super(TokenType.EOF, "EOF", lineNum, 0, 0);
     }
 }
 
@@ -217,13 +217,20 @@ class PunctuatorToken extends Token<String> {
         if (!isPunctuator(line, start))
             throw new LexerException("not a punctuator");
         int end = start;
+        String value = "";
         if (isSingleCharPunctuator(line, start)) {
             end = start + 1;
+            value = line.substring(start, end);
+            if (value.equals("["))
+                value = "(";
+            if (value.equals("]"))
+                value = ")";
         }
         if (isTwoCharPunctuator(line, start)) {
             end = start + 2;
+            value = line.substring(start, end);
         }
-        return new PunctuatorToken(line.substring(start, end), lineNum, start, end);
+        return new PunctuatorToken(value, lineNum, start, end);
     }
 }
 

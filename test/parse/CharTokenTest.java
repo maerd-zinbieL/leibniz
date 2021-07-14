@@ -34,6 +34,7 @@ public class CharTokenTest {
         assertTrue(CharToken.isCharacter(lines[4], 8));
         assertFalse(CharToken.isCharacter(lines[5], 0));
         assertTrue(CharToken.isCharacter(lines[6], 0));
+        assertTrue(CharToken.isCharacter(lines[7], 0));
     }
 
     @Test
@@ -55,6 +56,10 @@ public class CharTokenTest {
         CharToken token6 = CharToken.lex(lines[6], 0,7);
         assertEquals(3,token6.getEnd());
         assertEquals(SPACE, (char) token6.getValue());
+
+        // TODO: 2021/7/14 token-char-test0.scm line 8
+//        CharToken token7 = CharToken.lex(lines[7], 0, 8);
+//        assertEquals('\n', (char) token7.getValue());
     }
 
     @Test(expected = LexerException.class)

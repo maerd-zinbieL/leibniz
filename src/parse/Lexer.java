@@ -120,5 +120,6 @@ public class Lexer {
             System.out.println(token.getValue());
             token = lexer.nextToken();
         }
+        System.out.println(token.getValue());
     }
 }

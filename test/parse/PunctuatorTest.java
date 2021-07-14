@@ -60,5 +60,12 @@ public class PunctuatorTest {
 
         Token<String> token6 = PunctuatorToken.lex(lines[4], 6, 1);
         assertEquals(",@", token6.getValue());
+
+        Token<String> token7 = PunctuatorToken.lex(lines[5], 0, 5);
+        assertEquals("(", token7.getValue());
+
+        Token<String> token8 = PunctuatorToken.lex(lines[5], 6, 5);
+        assertEquals(")", token8.getValue());
+
     }
 }
