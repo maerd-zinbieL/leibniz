@@ -22,7 +22,7 @@ public class Lexer {
     }
 
     private Lexer(String line, int lineNum) {
-        sourceFile = null;
+        sourceFile = "<Standard Input>";
         lineNumberReader = null;
         tokensBuffer = new LinkedList<>();
         lexLine(line, lineNum);
@@ -116,18 +116,27 @@ public class Lexer {
         return lineNumberReader.getLineNumber();
     }
 
-    public Token<?> nextToken() throws IOException {
-        Token<?> token = tokensBuffer.poll();
-        while (token == null && lineNumberReader != null) {
+    private void fillBufferIfEmpty() throws IOException {
+        if(lineNumberReader == null)   // 如果是lineLexer，那么不需要填充tokensBuffer
+            return;
+        while (tokensBuffer.size() == 0) {
             String line = nextLine();
             int lineNum = getLineNum();
             if (line == null) {
-                return new EOFToken(lineNum);
+                tokensBuffer.add(new EOFToken(lineNum));
+                return;
             }
             lexLine(line, lineNum);
-            token = tokensBuffer.poll();
         }
-        return token;
+    }
+    public Token<?> nextToken() throws IOException {
+        fillBufferIfEmpty();
+        return tokensBuffer.poll();
+    }
+
+    public Token<?> peekToken() throws IOException {
+        fillBufferIfEmpty();
+        return tokensBuffer.peek();
     }
 
     public static void main(String[] args) throws IOException {

@@ -120,4 +120,10 @@ public class ParserTest {
         assertEquals("( f x ( h ( z y )  )  ( g z )  ) ", astNodes[2].toString());
 
     }
+
+    @Test
+    public void parseAbbreviation() throws IOException {
+        ASTNode[] astNodes = Parser.parseLine("'(1 2 3)", 1);
+        System.out.println(astNodes[0].toString());
+    }
 }

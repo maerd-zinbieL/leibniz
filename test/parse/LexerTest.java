@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import static org.junit.Assert.*;
 
 public class LexerTest {
     Lexer lexer;
@@ -51,11 +52,16 @@ public class LexerTest {
                 System.out.println("\n++++++++++++++++++++++++++++++++++++++++++");
             }
         }
-        Lexer lexer1 = Lexer.getLineLexer("(define x \"a\")", 1);
-        Token<?> token = lexer1.nextToken();
-        while (token != null) {
-            System.out.println(token);
-            token = lexer1.nextToken();
-        }
+    }
+
+    @Test
+    public void peekToken() throws IOException {
+        Lexer lexer = Lexer.getLineLexer("(define x \"a\")", 1);
+        Token<?> token = lexer.nextToken();
+        assertEquals("(", token.toString());
+        token = lexer.peekToken();
+        assertEquals("define", token.toString());
+        token = lexer.nextToken();
+        assertEquals("define", token.toString());
     }
 }

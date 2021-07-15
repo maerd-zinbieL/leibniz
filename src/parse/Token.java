@@ -108,7 +108,7 @@ class EOFToken extends Token<String> {
 }
 
 class BooleanToken extends Token<Boolean> {
-    private BooleanToken(boolean value, int lineNum, int colNum, int end) {
+    BooleanToken(boolean value, int lineNum, int colNum, int end) {
         super(TokenType.Boolean, value, lineNum, colNum, end);
     }
 
@@ -138,7 +138,7 @@ class BooleanToken extends Token<Boolean> {
 }
 
 class CharToken extends Token<Character> {
-    private CharToken(Character value, int lineNum, int colNum, int end) {
+    CharToken(Character value, int lineNum, int colNum, int end) {
         super(TokenType.Character, value, lineNum, colNum, end);
     }
 
@@ -176,7 +176,7 @@ class CharToken extends Token<Character> {
 }
 
 class StringToken extends Token<String> {
-    private StringToken(String value, int lineNum, int colNum, int end) {
+    StringToken(String value, int lineNum, int colNum, int end) {
         super(TokenType.String, value, lineNum, colNum, end);
     }
 
@@ -219,7 +219,7 @@ class StringToken extends Token<String> {
 
 class PunctuatorToken extends Token<String> {
 
-    private PunctuatorToken(String value, int lineNum, int colNum, int end) {
+    PunctuatorToken(String value, int lineNum, int colNum, int end) {
         super(TokenType.Punctuator, value, lineNum, colNum, end);
     }
 
@@ -274,7 +274,7 @@ class PunctuatorToken extends Token<String> {
 
 class IdentifierToken extends Token<String> {
 
-    private IdentifierToken(String value, int lineNum, int colNum, int end) {
+    IdentifierToken(String value, int lineNum, int colNum, int end) {
         super(TokenType.Identifier, value, lineNum, colNum, end);
     }
 
@@ -388,7 +388,7 @@ class NumberToken extends Token<SchemeNumber> {
     private static boolean mustNotBeExact;
     private static int tokenEnd;
 
-    private NumberToken(SchemeNumber value, int lineNum, int colNum, int end) {
+    NumberToken(SchemeNumber value, int lineNum, int colNum, int end) {
         super(TokenType.Number, value, lineNum, colNum, end);
     }
 

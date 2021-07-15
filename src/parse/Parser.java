@@ -19,15 +19,19 @@ public class Parser {
         return lexer.nextToken();
     }
 
+    private Token<?> peekToken() throws IOException {
+        return lexer.peekToken();
+    }
+
     private ASTNode parseSimpleDatum(Token<?> token) {
         return new ASTNode(token);
     }
 
     private void parseVector(ASTNode vector) throws IOException {
-        Token<?> token = lexer.nextToken();
+        Token<?> token = nextToken();
         while (!isListEnd(token)) {
             vector.addChild(parseExpression(token));
-            token = lexer.nextToken();
+            token = nextToken();
         }
         assert isListEnd(token);
         vector.addChild(new ASTNode(token));
@@ -46,9 +50,9 @@ public class Parser {
     private void parseDotList(ASTNode list) throws IOException {
         if (list.getChildrenCount() <= 2)
             throw new ParserException("unexpected dot " + sourceFile);
-        Token<?> token = lexer.nextToken();
+        Token<?> token = nextToken();
         list.addChild(parseExpression(token));
-        token = lexer.nextToken();
+        token = nextToken();
         if (isListEnd(token)) {
             list.addChild(new ASTNode(token));
         } else {
@@ -57,7 +61,7 @@ public class Parser {
     }
 
     private void parseNormalList(ASTNode list) throws IOException {
-        Token<?> token = lexer.nextToken();
+        Token<?> token = nextToken();
         while (!isListEnd(token)) {
             if (isDotList(token, list)) {
                 list.addChild(new ASTNode(token));
@@ -66,18 +70,96 @@ public class Parser {
             } else {
                 list.addChild(parseExpression(token));
             }
-            token = lexer.nextToken();
+            token = nextToken();
         }
         assert isListEnd(token);
         list.addChild(new ASTNode(token));
     }
 
-    private ASTNode parseAbbreviation(Token<?> token) {
-        return null;
+    private void parseQuote(ASTNode quote) throws IOException {
+        Token<?> token = nextToken();
+        if (token.getType() == TokenType.Punctuator &&
+                token.toString().equals(",")) {
+            quote.addChild(new ASTNode(
+                    new PunctuatorToken("(", -1, -1, -1)));
+            quote.addChild(new ASTNode(
+                    new IdentifierToken("unquote", -1, -1, -1)));
+            quote.addChild(parseExpression(nextToken()));
+            quote.addChild(new ASTNode(
+                    new PunctuatorToken(")", -1, -1, -1)));
+            return;
+        }
+        if (token.getType() == TokenType.Punctuator &&
+                token.toString().equals(",@")) {
+            quote.addChild(new ASTNode(
+                    new PunctuatorToken("(", -1, -1, -1)));
+            quote.addChild(new ASTNode(
+                    new IdentifierToken("unquote-splicing", -1, -1, -1)));
+            quote.addChild(parseExpression(nextToken()));
+            quote.addChild(new ASTNode(
+                    new PunctuatorToken(")", -1, -1, -1)));
+            return;
+        }
+        quote.addChild(parseExpression(token));
+    }
+
+    private void parseQuasiquote(ASTNode quasiquote) throws IOException {
+        Token<?> token = nextToken();
+        if (token.getType() == TokenType.Punctuator &&
+                token.toString().equals(",")) {
+            quasiquote.addChild(new ASTNode(
+                    new PunctuatorToken("(", -1, -1, -1)));
+            quasiquote.addChild(new ASTNode(
+                    new IdentifierToken("unquote", -1, -1, -1)));
+            quasiquote.addChild(parseExpression(nextToken()));
+            quasiquote.addChild(new ASTNode(
+                    new PunctuatorToken(")", -1, -1, -1)));
+            return;
+        }
+        if (token.getType() == TokenType.Punctuator &&
+                token.toString().equals(",@")) {
+            quasiquote.addChild(new ASTNode(
+                    new PunctuatorToken("(", -1, -1, -1)));
+            quasiquote.addChild(new ASTNode(
+                    new IdentifierToken("unquote-splicing", -1, -1, -1)));
+            quasiquote.addChild(parseExpression(nextToken()));
+            quasiquote.addChild(new ASTNode(
+                    new PunctuatorToken(")", -1, -1, -1)));
+            Token<?> nextToken = peekToken();
+            if (nextToken.getType() != TokenType.Punctuator ||
+                    nextToken.getValue().equals(")")) {
+                throw new ParserException("syntax error");
+            }
+            return;
+        }
+        quasiquote.addChild(parseExpression(token));
+    }
+
+    private void parseQuoteAbbrev(ASTNode quote, Token<?> firstToken) throws IOException {
+        String value = firstToken.toString();
+        if (value.equals("'")) {
+            quote.addChild(new ASTNode
+                    (new PunctuatorToken("(", -1, -1, -1)));
+            quote.addChild(new ASTNode(
+                    new IdentifierToken("quote", -1, -1, -1)));
+            parseQuote(quote);
+            quote.addChild(new ASTNode(
+                    new PunctuatorToken(")", -1, -1, -1)));
+        }
+        if (value.equals("`")) {
+            quote.addChild(new ASTNode
+                    (new PunctuatorToken("(", -1, -1, -1)));
+            quote.addChild(new ASTNode(
+                    new IdentifierToken("quasiquote", -1, -1, -1)));
+            parseQuasiquote(quote);
+            quote.addChild(new ASTNode(
+                    new PunctuatorToken(")", -1, -1, -1)));
+        }
     }
 
     private ASTNode parseCompoundDatum(Token<?> token) throws IOException {
         if (isNormalListStart(token)) {
+            // TODO: 2021/7/15 耦合度比较高
             ASTNode list = new ASTNode("list");
             list.addChild(new ASTNode(token));
             parseNormalList(list);
@@ -89,8 +171,10 @@ public class Parser {
             parseVector(vector);
             return vector;
         }
-        if (isAbbrevStart(token)) {
-            return parseAbbreviation(token);
+        if (isQuoteAbbrevStart(token)) {
+            ASTNode quote = new ASTNode("abbreviation");
+            parseQuoteAbbrev(quote, token);
+            return quote;
         }
         throw new ParserException("unknown expression in " + sourceFile);
     }
@@ -100,13 +184,11 @@ public class Parser {
                 && token.getValue().equals("(");
     }
 
-    private boolean isAbbrevStart(Token<?> token) {
+    private boolean isQuoteAbbrevStart(Token<?> token) {
         if (token.getType() != TokenType.Punctuator)
             return false;
         String value = (String) token.getValue();
-        return value.equals(",@") ||
-                value.equals(",") ||
-                value.equals("`") ||
+        return value.equals("`") ||
                 value.equals("'");
     }
 
@@ -120,7 +202,7 @@ public class Parser {
             return false;
         return isNormalListStart(token) ||
                 isVectorStart(token) ||
-                isAbbrevStart(token);
+                isQuoteAbbrevStart(token);
     }
 
     private boolean isSimpleDatum(Token<?> token) {
@@ -139,15 +221,15 @@ public class Parser {
         if (isCompoundDatum(token)) {
             return parseCompoundDatum(token);
         }
-        throw new ParserException("unknown expression in " + sourceFile);
+        throw new ParserException("syntax error in " + sourceFile + " token :" + token);
     }
 
     private ASTNode parseProgram() throws IOException {
         ASTNode program = new ASTNode("program");
-        Token<?> token = lexer.nextToken();
+        Token<?> token = nextToken();
         while (token.getType() != TokenType.EOF) {
             program.addChild(parseExpression(token));
-            token = lexer.nextToken();
+            token = nextToken();
         }
         assert token.getType() == TokenType.EOF;
         program.addChild(new ASTNode(token));
@@ -171,4 +253,8 @@ public class Parser {
         return parser.parseProgram();
     }
 
+    public static void main(String[] args) throws IOException {
+        ASTNode[] astNodes = Parser.parseLine("'(1 ,2 3)", 1);
+        System.out.println(astNodes[0].toString());
+    }
 }
