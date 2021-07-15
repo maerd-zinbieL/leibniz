@@ -87,4 +87,16 @@ public class ParserTest {
         Parser parser = Parser.getInstance(fileName);
         parser.parseExpression();
     }
+
+    @Test
+    public void parseVector() throws IOException {
+        String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-vector-test0.scm";
+        Parser parser = Parser.getInstance(fileName);
+        ASTNode expr1 = parser.parseExpression();
+        assertEquals("#( 1 2 3 ) ",expr1.toString());
+        ASTNode expr2 = parser.parseExpression();
+        assertEquals("#( 1 ( + 2 ( * 3 )  )  ) ", expr2.toString());
+
+
+    }
 }

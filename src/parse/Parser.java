@@ -21,8 +21,14 @@ public class Parser {
         return new ASTNode(token);
     }
 
-    private ASTNode parseVector(Token<?> token) {
-        return null;
+    private void parseVector(ASTNode vector) throws IOException {
+        Token<?> token = lexer.nextToken();
+        while (!isListEnd(token)) {
+            vector.addChild(parseExpression(token));
+            token = lexer.nextToken();
+        }
+        assert isListEnd(token);
+        vector.addChild(new ASTNode(token));
     }
 
     private boolean isListEnd(Token<?> token) {
@@ -69,14 +75,17 @@ public class Parser {
     }
 
     private ASTNode parseCompoundDatum(Token<?> token) throws IOException {
-        if (isVectorStart(token)) {
-            return parseVector(token);
-        }
         if (isNormalListStart(token)) {
             ASTNode list = new ASTNode("list");
             list.addChild(new ASTNode(token));
             parseNormalList(list);
             return list;
+        }
+        if (isVectorStart(token)) {
+            ASTNode vector = new ASTNode("vector");
+            vector.addChild(new ASTNode(token));
+            parseVector(vector);
+            return vector;
         }
         if (isAbbrevStart(token)) {
             return parseAbbreviation(token);
@@ -85,10 +94,13 @@ public class Parser {
     }
 
     private boolean isNormalListStart(Token<?> token) {
-        return token.getValue().equals("(");
+        return token.getType() == TokenType.Punctuator
+                && token.getValue().equals("(");
     }
 
     private boolean isAbbrevStart(Token<?> token) {
+        if(token.getType()!=TokenType.Punctuator)
+            return false;
         String value = (String) token.getValue();
         return value.equals(",@") ||
                 value.equals(",") ||
@@ -97,7 +109,8 @@ public class Parser {
     }
 
     private boolean isVectorStart(Token<?> token) {
-        return token.getValue().equals("#(");
+        return token.getType() == TokenType.Punctuator &&
+                token.getValue().equals("#(");
     }
 
     private boolean isCompoundDatum(Token<?> token) {
