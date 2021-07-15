@@ -16,13 +16,14 @@ public class ParserTest {
         String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-simple-test0.scm";
         Parser parser = Parser.getInstance(fileName);
         ASTNode program = parser.parseProgram();
-
+        assertEquals(13, program.getChildrenCount());
         Token<?>[] tokens = new Token[program.getChildrenCount()];
         int i = 0;
         for (ASTNode child : program) {
             tokens[i] = child.getToken();
             i++;
         }
+
         assertEquals(TokenType.Boolean, tokens[0].getType());
         assertEquals(TokenType.Boolean, tokens[1].getType());
         assertEquals(TokenType.Number, tokens[2].getType());

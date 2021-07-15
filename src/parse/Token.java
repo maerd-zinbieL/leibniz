@@ -76,6 +76,11 @@ public class Token<T> {
     public int getEnd() {
         return end;
     }
+
+    @Override
+    public String toString() {
+        return "token";
+    }
 }
 
 enum TokenType {
@@ -91,6 +96,11 @@ enum TokenType {
 class EOFToken extends Token<String> {
     EOFToken(int lineNum) {
         super(TokenType.EOF, "EOF", lineNum, 0, 0);
+    }
+
+    @Override
+    public String toString() {
+        return "EOF";
     }
 }
 
@@ -111,6 +121,15 @@ class BooleanToken extends Token<Boolean> {
             return new BooleanToken(true, lineNum, start, end);
         } else {
             return new BooleanToken(false, lineNum, start, end);
+        }
+    }
+
+    @Override
+    public String toString() {
+        if (getValue()) {
+            return "true";
+        }else {
+            return "false";
         }
     }
 }
@@ -145,6 +164,11 @@ class CharToken extends Token<Character> {
         if (value == '\000')
             throw new LexerException("bad character at (" + lineNum + "," + end + ")");
         return new CharToken(value, lineNum, start, end);
+    }
+
+    @Override
+    public String toString() {
+        return Character.toString(getValue());
     }
 }
 
@@ -182,6 +206,11 @@ class StringToken extends Token<String> {
             }
         }
         throw new LexerException("bad String token at (" + lineNum + "," + start + ")");
+    }
+
+    @Override
+    public String toString() {
+        return getValue();
     }
 }
 
@@ -232,6 +261,11 @@ class PunctuatorToken extends Token<String> {
         }
         return new PunctuatorToken(value, lineNum, start, end);
     }
+
+    @Override
+    public String toString() {
+        return getValue();
+    }
 }
 
 class IdentifierToken extends Token<String> {
@@ -239,7 +273,6 @@ class IdentifierToken extends Token<String> {
     private IdentifierToken(String value, int lineNum, int colNum, int end) {
         super(TokenType.Identifier, value, lineNum, colNum, end);
     }
-
 
     private static boolean isSpecialInitial(char c) {
         return c == '!' ||
@@ -322,6 +355,10 @@ class IdentifierToken extends Token<String> {
         return new IdentifierToken(line.substring(start, end).toLowerCase(), lineNum, start, end);
     }
 
+    @Override
+    public String toString() {
+        return getValue();
+    }
 }
 
 class NumberToken extends Token<SchemeNumber> {
@@ -707,6 +744,11 @@ class NumberToken extends Token<SchemeNumber> {
         }
         supportInFuture(start);
         throw new LexerException("bad number at (" + tokenLineNum + "," + tokenColNum + ")");
+    }
+
+    @Override
+    public String toString() {
+        return getValue().toString();
     }
 
     public static void main(String[] args) {
