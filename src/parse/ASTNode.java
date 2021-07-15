@@ -71,15 +71,4 @@ public class ASTNode implements Iterable<ASTNode> {
         return getCode(this);
     }
 
-    public static void main(String[] args) throws IOException {
-        String fileName = "./test-resources/parser/" + "parser-list-test1.scm";
-        Parser parser = Parser.getInstance(fileName);
-        ASTNode expr1 = parser.parseExpression();
-
-        ASTNode expr2 = parser.parseExpression();
-
-        ASTNode expr3 = parser.parseExpression();
-        System.out.println(expr3.getCode(expr3));
-//        System.out.println(expr3.toString());
-    }
 }

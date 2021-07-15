@@ -10,15 +10,33 @@ public class Lexer {
     private final LineNumberReader lineNumberReader;
     private final String sourceFile;
 
-    private Lexer(String sourceFile) throws IOException {
-        this.sourceFile = sourceFile;
+    private Lexer(File file) throws IOException {
+        sourceFile = file.getCanonicalPath();
         tokensBuffer = new LinkedList<>();
         lineNumberReader =
-                new LineNumberReader(new FileReader(sourceFile));
+                new LineNumberReader(new FileReader(file));
     }
 
-    protected static Lexer getInstance(String sourceFile) throws IOException {
-        return new Lexer(sourceFile);
+    public String getSourceFile() {
+        return sourceFile;
+    }
+
+    private Lexer(String line, int lineNum) {
+        sourceFile = null;
+        lineNumberReader = null;
+        tokensBuffer = new LinkedList<>();
+        lexLine(line, lineNum);
+    }
+
+    protected static Lexer getFileLexer(String sourceFile) throws IOException {
+        File file = new File(sourceFile);
+        return new Lexer(file);
+    }
+
+    protected static Lexer getLineLexer(String line, int lineNum) {
+        if (line.length() == 0 || line.startsWith(";")) //空白行和注释行应该报错
+            throw new IllegalArgumentException();
+        return new Lexer(line, lineNum);
     }
 
     private void lexLine(String line, int lineNum) {
@@ -73,7 +91,7 @@ public class Lexer {
             }
             throw new LexerException(
                     "bad token at (" + lineNum + "," + current + ") " +
-                            "in line: \n" +line + "\n in file " + sourceFile);
+                            "in line: \n" + line + "\n in file " + sourceFile);
         }
     }
 
@@ -100,7 +118,7 @@ public class Lexer {
 
     public Token<?> nextToken() throws IOException {
         Token<?> token = tokensBuffer.poll();
-        while (token == null) {
+        while (token == null && lineNumberReader != null) {
             String line = nextLine();
             int lineNum = getLineNum();
             if (line == null) {
@@ -114,7 +132,7 @@ public class Lexer {
 
     public static void main(String[] args) throws IOException {
         String fileName = "./test-resources/token/token-mixed-test1.scm";
-        Lexer lexer = getInstance(fileName);
+        Lexer lexer = getFileLexer(fileName);
         Token<?> token = lexer.nextToken();
         while (token.getType() != TokenType.EOF) {
             System.out.println(token.getValue());

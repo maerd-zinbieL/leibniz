@@ -1,6 +1,7 @@
 package parse;
 
 import exception.ParserException;
+import io.ReadFile;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,8 +16,7 @@ public class ParserTest {
     @Test
     public void parseSimple() throws IOException {
         String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-simple-test0.scm";
-        Parser parser = Parser.getInstance(fileName);
-        ASTNode program = parser.parseProgram();
+        ASTNode program = Parser.parseFile(fileName);
         assertEquals(13, program.getChildrenCount());
         Token<?>[] tokens = new Token[program.getChildrenCount()];
         int i = 0;
@@ -54,49 +54,70 @@ public class ParserTest {
     }
 
     @Test
-    public void parseDotList() throws IOException {
+    public void parseList1() throws IOException {
         String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-list-test1.scm";
-        Parser parser = Parser.getInstance(fileName);
-        ASTNode expr1 = parser.parseExpression();
+        String[] lines = ReadFile.getLines(fileName);
+
+        ASTNode expr1 = Parser.parseLine(lines[0], 1)[0];
         assertEquals("( 1 2 . 3 ) ", expr1.toString());
 
-        ASTNode expr2 = parser.parseExpression();
+        ASTNode expr2 = Parser.parseLine(lines[1], 2)[0];
         assertEquals("( f x y . z ) ", expr2.toString());
 
-        ASTNode expr3 = parser.parseExpression();
+        ASTNode expr3 = Parser.parseLine(lines[2], 3)[0];
         assertEquals("( + 1 2 ( * 3 4 5 ( f x ( g x y z )  )  )  ) ", expr3.toString());
     }
 
     @Test(expected = ParserException.class)
     public void parseDotListError1() throws IOException {
         String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-list-test2.scm";
-        Parser parser = Parser.getInstance(fileName);
-        parser.parseExpression();
+        String[] lines = ReadFile.getLines(fileName);
+
+        Parser.parseLine(lines[0], 1);
     }
 
     @Test(expected = ParserException.class)
     public void parseDotListError2() throws IOException {
         String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-list-test3.scm";
-        Parser parser = Parser.getInstance(fileName);
-        parser.parseExpression();
+        String[] lines = ReadFile.getLines(fileName);
+
+        Parser.parseLine(lines[0], 1);
     }
 
     @Test(expected = ParserException.class)
     public void parseDotListError3() throws IOException {
         String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-list-test4.scm";
-        Parser parser = Parser.getInstance(fileName);
-        parser.parseExpression();
+        String[] lines = ReadFile.getLines(fileName);
+
+        Parser.parseLine(lines[0], 1);
     }
 
     @Test
     public void parseVector() throws IOException {
         String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-vector-test0.scm";
-        Parser parser = Parser.getInstance(fileName);
-        ASTNode expr1 = parser.parseExpression();
-        assertEquals("#( 1 2 3 ) ",expr1.toString());
-        ASTNode expr2 = parser.parseExpression();
+        String[] lines = ReadFile.getLines(fileName);
+
+        ASTNode expr1 = Parser.parseLine(lines[0],1)[0];
+        assertEquals("#( 1 2 3 ) ", expr1.toString());
+
+        ASTNode expr2 = Parser.parseLine(lines[1],2)[0];
         assertEquals("#( 1 ( + 2 ( * 3 )  )  ) ", expr2.toString());
 
+        ASTNode expr3 = Parser.parseLine(lines[2],3)[0];
+        assertEquals("#( 1 #( \"a\" \"b\" )  ) ", expr3.toString());
+
+        ASTNode expr4 = Parser.parseLine(lines[3],4)[0];
+        assertEquals("#( ) ", expr4.toString());
+    }
+
+    @Test
+    public void parseLine() throws IOException {
+        String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-list-test5.scm";
+        String line = ReadFile.getLines(fileName)[0];
+        ASTNode[] astNodes = Parser.parseLine(line, 1);
+        assertEquals("( + 1 2 3 ) ", astNodes[0].toString());
+        assertEquals("( * 5 6 ) ", astNodes[1].toString());
+        assertEquals("( f x ( h ( z y )  )  ( g z )  ) ", astNodes[2].toString());
 
     }
 }

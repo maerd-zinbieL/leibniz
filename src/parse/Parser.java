@@ -3,18 +3,20 @@ package parse;
 import exception.ParserException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Parser {
     private final String sourceFile;
     private final Lexer lexer;
 
-    private Parser(String sourceFile) throws IOException {
-        this.sourceFile = sourceFile;
-        lexer = Lexer.getInstance(sourceFile);
+    private Parser(Lexer lexer) {
+        sourceFile = lexer.getSourceFile();
+        this.lexer = lexer;
     }
 
-    public static Parser getInstance(String sourceFile) throws IOException {
-        return new Parser(sourceFile);
+    private Token<?> nextToken() throws IOException {
+        return lexer.nextToken();
     }
 
     private ASTNode parseSimpleDatum(Token<?> token) {
@@ -99,7 +101,7 @@ public class Parser {
     }
 
     private boolean isAbbrevStart(Token<?> token) {
-        if(token.getType()!=TokenType.Punctuator)
+        if (token.getType() != TokenType.Punctuator)
             return false;
         String value = (String) token.getValue();
         return value.equals(",@") ||
@@ -123,8 +125,7 @@ public class Parser {
 
     private boolean isSimpleDatum(Token<?> token) {
         TokenType type = token.getType();
-        return type == TokenType.EOF ||
-                type == TokenType.Boolean ||
+        return type == TokenType.Boolean ||
                 type == TokenType.Number ||
                 type == TokenType.Character ||
                 type == TokenType.String ||
@@ -132,7 +133,6 @@ public class Parser {
     }
 
     private ASTNode parseExpression(Token<?> token) throws IOException {
-        assert token.getType() != TokenType.EOF;
         if (isSimpleDatum(token)) {
             return parseSimpleDatum(token);
         }
@@ -142,25 +142,33 @@ public class Parser {
         throw new ParserException("unknown expression in " + sourceFile);
     }
 
-    public ASTNode parseExpression() throws IOException {
-        Token<?> token = lexer.nextToken();
-        return parseExpression(token);
-    }
-
-    public ASTNode parseProgram() throws IOException {
+    private ASTNode parseProgram() throws IOException {
         ASTNode program = new ASTNode("program");
         Token<?> token = lexer.nextToken();
         while (token.getType() != TokenType.EOF) {
             program.addChild(parseExpression(token));
             token = lexer.nextToken();
         }
-        program.addChild(parseSimpleDatum(token));
+        assert token.getType() == TokenType.EOF;
+        program.addChild(new ASTNode(token));
         return program;
     }
 
-    public static void main(String[] args) throws IOException {
-        String fileName = "./test-resources/parser/" + "parser-list-test1.scm";
-        Parser parser = Parser.getInstance(fileName);
-        ASTNode expr1 = parser.parseExpression();
+    public static ASTNode[] parseLine(String line, int lineNum) throws IOException {
+        Parser parser = new Parser(Lexer.getLineLexer(line, lineNum));
+        Token<?> token = parser.nextToken();
+        List<ASTNode> nodeList = new ArrayList<>();
+        while (token != null) {
+            nodeList.add(parser.parseExpression(token));
+            token = parser.nextToken();
+        }
+        ASTNode[] nodes = new ASTNode[nodeList.size()];
+        return nodeList.toArray(nodes);
     }
+
+    public static ASTNode parseFile(String sourceFile) throws IOException {
+        Parser parser = new Parser(Lexer.getFileLexer(sourceFile));
+        return parser.parseProgram();
+    }
+
 }

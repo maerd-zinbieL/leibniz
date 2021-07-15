@@ -213,7 +213,7 @@ class StringToken extends Token<String> {
 
     @Override
     public String toString() {
-        return getValue();
+        return "\"" + getValue() + "\"";
     }
 }
 
