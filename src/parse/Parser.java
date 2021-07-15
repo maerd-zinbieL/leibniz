@@ -30,10 +30,34 @@ public class Parser {
                 token.getValue().equals(")");
     }
 
+    private boolean isDotList(Token<?> token, ASTNode list) {
+        return token.getType() == TokenType.Punctuator &&
+                token.toString().equals(".");
+    }
+
+    private void parseDotList(ASTNode list) throws IOException {
+        if (list.getChildrenCount() <= 2)
+            throw new ParserException("unexpected dot " + sourceFile);
+        Token<?> token = lexer.nextToken();
+        list.addChild(parseExpression(token));
+        token = lexer.nextToken();
+        if (isListEnd(token)) {
+            list.addChild(new ASTNode(token));
+        } else {
+            throw new ParserException("unknown expression in " + sourceFile);
+        }
+    }
+
     private void parseNormalList(ASTNode list) throws IOException {
         Token<?> token = lexer.nextToken();
         while (!isListEnd(token)) {
-            list.addChild(parseExpression(token));
+            if (isDotList(token, list)) {
+                list.addChild(new ASTNode(token));
+                parseDotList(list);
+                return;
+            } else {
+                list.addChild(parseExpression(token));
+            }
             token = lexer.nextToken();
         }
         assert isListEnd(token);
@@ -104,6 +128,7 @@ public class Parser {
         }
         throw new ParserException("unknown expression in " + sourceFile);
     }
+
     public ASTNode parseExpression() throws IOException {
         Token<?> token = lexer.nextToken();
         return parseExpression(token);
@@ -121,16 +146,8 @@ public class Parser {
     }
 
     public static void main(String[] args) throws IOException {
-        String fileName = "./test-resources/parser/" + "parser-list-test0.scm";
-        Parser parser = new Parser(fileName);
-        ASTNode expression1 = parser.parseExpression();
-        System.out.println(expression1.toString());
-        ASTNode expression2 = parser.parseExpression();
-        System.out.println(expression2.toString());
-
-        ASTNode expression3 = parser.parseExpression();
-        System.out.println(expression3.toString());
-        ASTNode expression4 = parser.parseExpression();
-        System.out.println(expression4.toString());
+        String fileName = "./test-resources/parser/" + "parser-list-test2.scm";
+        Parser parser = Parser.getInstance(fileName);
+        System.out.println(parser.parseExpression());
     }
 }

@@ -4,6 +4,9 @@ import core.number.SchemeInteger;
 import core.number.SchemeNumber;
 import core.number.SchemeReal;
 import exception.LexerException;
+import io.ReadFile;
+
+import java.io.IOException;
 
 
 public class Token<T> {
@@ -128,7 +131,7 @@ class BooleanToken extends Token<Boolean> {
     public String toString() {
         if (getValue()) {
             return "true";
-        }else {
+        } else {
             return "false";
         }
     }
@@ -234,6 +237,7 @@ class PunctuatorToken extends Token<String> {
                 c == ',' ||
                 c == '\'' ||
                 c == '`' ||
+                (c == '.' && isDelimiterOrEOF(line, start + 1)) ||
                 c == ';';
     }
 
@@ -274,7 +278,15 @@ class IdentifierToken extends Token<String> {
         super(TokenType.Identifier, value, lineNum, colNum, end);
     }
 
-    private static boolean isSpecialInitial(char c) {
+    private static boolean isSubsequent(String line, int start) {
+        char c = line.charAt(start);
+        return isInitial(line, start) ||
+                isDigit(c) ||
+                isSpecialSubsequent(c);
+    }
+
+    private static boolean isSpecialInitial(String line, int start) {
+        char c = line.charAt(start);
         return c == '!' ||
                 c == '$' ||
                 c == '%' ||
@@ -291,14 +303,15 @@ class IdentifierToken extends Token<String> {
                 c == '~' ||
                 c == '+' ||
                 c == '-' ||
-                c == '.' ||
+                (c == '.' && isSubsequent(line, start + 1)) || //单独的一个点应该是一个punctuator
                 c == '@';
 //                c == '|';
 
     }
 
-    private static boolean isInitial(char c) {
-        return isLetter(c) || isSpecialInitial(c);
+    private static boolean isInitial(String line, int start) {
+        char c = line.charAt(start);
+        return isLetter(c) || isSpecialInitial(line, start);
     }
 
     private static boolean isSpecialSubsequent(char c) {
@@ -321,17 +334,14 @@ class IdentifierToken extends Token<String> {
 
     private static int isNormalId(String line, int start) {
         int i;
-        if (!isInitial(line.charAt(start)))
+        if (!isInitial(line, start))
             return -1;
         char c;
         for (i = start + 1; i < line.length(); i++) {
             c = line.charAt(i);
-            if (isInitial(c))
+            if (isSubsequent(line, i)) {
                 continue;
-            if (isDigit(c))
-                continue;
-            if (isSpecialSubsequent(c))
-                continue;
+            }
             if (isDelimiter(c))
                 return i;
             return -1;
@@ -358,6 +368,12 @@ class IdentifierToken extends Token<String> {
     @Override
     public String toString() {
         return getValue();
+    }
+
+    public static void main(String[] args) throws IOException {
+        String fileName = "./test-resources/parser/" + "parser-list-test2.scm";
+        String[] lines = ReadFile.getLines(fileName);
+        isIdentifier(lines[0], 2);
     }
 }
 

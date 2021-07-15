@@ -1,5 +1,6 @@
 package parse;
 
+import exception.ParserException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +51,23 @@ public class ParserTest {
         assertEquals("define", tokens[9].getValue());
         assertEquals("x", tokens[10].getValue());
         assertEquals("square", tokens[11].getValue());
+    }
 
+    @Test
+    public void parseDotList() throws IOException {
+        String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-list-test1.scm";
+        Parser parser = Parser.getInstance(fileName);
+        ASTNode expr1 = parser.parseExpression();
+        assertEquals("( 1 2 . 3 ) ", expr1.toString());
+
+        ASTNode expr2 = parser.parseExpression();
+        assertEquals("( f x y . z ) ", expr2.toString());
+    }
+
+    @Test (expected = ParserException.class)
+    public void parseDotListError1() throws IOException {
+        String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-list-test2.scm";
+        Parser parser = Parser.getInstance(fileName);
+        System.out.println(parser.parseExpression());
     }
 }

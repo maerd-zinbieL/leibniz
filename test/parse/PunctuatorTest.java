@@ -32,8 +32,10 @@ public class PunctuatorTest {
         assertTrue(PunctuatorToken.isPunctuator(lines[4], 0));
         assertTrue(PunctuatorToken.isPunctuator(lines[3], 20));
         assertTrue(PunctuatorToken.isPunctuator(lines[4], 6));
-
         assertFalse(PunctuatorToken.isPunctuator(lines[4], 7));
+        assertTrue(PunctuatorToken.isPunctuator(lines[5], 0));
+        assertTrue(PunctuatorToken.isPunctuator(lines[6], 0));
+
     }
 
     @Test
@@ -66,6 +68,9 @@ public class PunctuatorTest {
 
         Token<String> token8 = PunctuatorToken.lex(lines[5], 6, 5);
         assertEquals(")", token8.getValue());
+
+        Token<String> token9 = PunctuatorToken.lex(lines[6], 0, 6);
+        assertEquals(".", token9.toString());
 
     }
 }
