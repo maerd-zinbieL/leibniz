@@ -62,12 +62,29 @@ public class ParserTest {
 
         ASTNode expr2 = parser.parseExpression();
         assertEquals("( f x y . z ) ", expr2.toString());
+
+        ASTNode expr3 = parser.parseExpression();
+        assertEquals("( + 1 2 ( * 3 4 5 ( f x ( g x y z )  )  )  ) ", expr3.toString());
     }
 
-    @Test (expected = ParserException.class)
+    @Test(expected = ParserException.class)
     public void parseDotListError1() throws IOException {
         String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-list-test2.scm";
         Parser parser = Parser.getInstance(fileName);
-        System.out.println(parser.parseExpression());
+        parser.parseExpression();
+    }
+
+    @Test(expected = ParserException.class)
+    public void parseDotListError2() throws IOException {
+        String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-list-test3.scm";
+        Parser parser = Parser.getInstance(fileName);
+        parser.parseExpression();
+    }
+
+    @Test(expected = ParserException.class)
+    public void parseDotListError3() throws IOException {
+        String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-list-test4.scm";
+        Parser parser = Parser.getInstance(fileName);
+        parser.parseExpression();
     }
 }

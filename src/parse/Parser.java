@@ -44,7 +44,7 @@ public class Parser {
         if (isListEnd(token)) {
             list.addChild(new ASTNode(token));
         } else {
-            throw new ParserException("unknown expression in " + sourceFile);
+            throw new ParserException("more than one item found after dot in " + sourceFile);
         }
     }
 
@@ -146,8 +146,8 @@ public class Parser {
     }
 
     public static void main(String[] args) throws IOException {
-        String fileName = "./test-resources/parser/" + "parser-list-test2.scm";
+        String fileName = "./test-resources/parser/" + "parser-list-test1.scm";
         Parser parser = Parser.getInstance(fileName);
-        System.out.println(parser.parseExpression());
+        ASTNode expr1 = parser.parseExpression();
     }
 }

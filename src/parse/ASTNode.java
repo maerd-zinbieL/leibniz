@@ -2,6 +2,7 @@ package parse;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -51,7 +52,7 @@ public class ASTNode implements Iterable<ASTNode> {
             return node.token.toString();
         } else {
             StringBuilder sb = new StringBuilder();
-            for (ASTNode child : children) {
+            for (ASTNode child : node.children) {
                 sb.append(getCode(child));
                 sb.append(" ");
             }
@@ -68,5 +69,17 @@ public class ASTNode implements Iterable<ASTNode> {
     @Override
     public String toString() {
         return getCode(this);
+    }
+
+    public static void main(String[] args) throws IOException {
+        String fileName = "./test-resources/parser/" + "parser-list-test1.scm";
+        Parser parser = Parser.getInstance(fileName);
+        ASTNode expr1 = parser.parseExpression();
+
+        ASTNode expr2 = parser.parseExpression();
+
+        ASTNode expr3 = parser.parseExpression();
+        System.out.println(expr3.getCode(expr3));
+//        System.out.println(expr3.toString());
     }
 }
