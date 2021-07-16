@@ -122,8 +122,73 @@ public class ParserTest {
     }
 
     @Test
-    public void parseAbbreviation() throws IOException {
-        ASTNode[] astNodes = Parser.parseLine("'(1 2 3)", 1);
-        System.out.println(astNodes[0].toString());
+    public void parseQuote() throws IOException {
+        String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-quote-test0.scm";
+        String[] lines = ReadFile.getLines(fileName);
+
+        ASTNode quote = Parser.parseLine(lines[0], 1)[0];
+        assertEquals("( quote x ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[1], 2)[0];
+        assertEquals("( quote ( 1 x 3 )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[2], 2)[0];
+        assertEquals("( quote ( 1 ( unquote x ) 3 )  ) ",quote.toString());
+
+
+        quote = Parser.parseLine(lines[3], 2)[0];
+        assertEquals("( quote ( 1 ( unquote-splicing x ) 3 )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[4], 2)[0];
+        assertEquals("( quote ( 1 ( unquote x ) ( quote ( 1 2 x )  )  3 )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[5], 2)[0];
+        assertEquals("( quote ( 1 ( unquote x ) ( quote ( 1 2 ( unquote x ) )  )  3 )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[6], 2)[0];
+        assertEquals("( quote x ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[7], 2)[0];
+        assertEquals("( quote ( unquote x ) ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[8], 2)[0];
+        assertEquals("( quote ( unquote-splicing x ) ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[9], 2)[0];
+        assertEquals("( quote #( 1 2 x )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[10], 2)[0];
+        assertEquals("( quasiquote ( unquote-splicing x ) ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[11], 2)[0];
+        assertEquals("( quasiquote ( unquote x ) ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[12], 2)[0];
+        assertEquals("( quasiquote ( x )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[13], 2)[0];
+        assertEquals("( quasiquote ( 1 2 ( unquote x ) )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[14], 2)[0];
+        assertEquals("( quasiquote ( 1 2 ( unquote-splicing x ) )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[15], 2)[0];
+        assertEquals("( quasiquote ( 1 2 ( unquote-splicing x ) 3 7 )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[16], 2)[0];
+        assertEquals("( quote #( ( unquote x ) )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[17], 2)[0];
+        assertEquals("( quote #( 1 2 ( unquote x ) 5 )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[18], 2)[0];
+        assertEquals("( quasiquote #( 1 2 ( unquote-splicing x ) ( quote ( 1 25 ( unquote x ) )  )  )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[19], 2)[0];
+        assertEquals("( quote ( x ( unquote y ) ( unquote-splicing ( quasiquote ( z )  )  ) )  ) ",quote.toString());
+
+        quote = Parser.parseLine(lines[20], 2)[0];
+        assertEquals("( quote ( x ( unquote y ) ( unquote-splicing ( quasiquote ( z ( unquote-splicing x ) )  )  ) )  ) ",quote.toString());
+
     }
 }
