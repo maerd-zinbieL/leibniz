@@ -10,3 +10,9 @@
    - [ ] 空格标识符，即...| ... |...
    - [ ] 多行字符串
    - [ ] 多行注释，即#| ... |#
+   
+2. ###### parser
+   
+   - [ ] full test
+   - [ ] throw exception when parsing `(x ,@y z ... )
+   

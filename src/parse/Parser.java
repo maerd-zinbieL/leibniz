@@ -19,10 +19,6 @@ public class Parser {
         return lexer.nextToken();
     }
 
-    private Token<?> peekToken() throws IOException {
-        return lexer.peekToken();
-    }
-
     private ASTNode parseSimpleDatum(Token<?> token) {
         return new ASTNode(token);
     }
@@ -141,19 +137,19 @@ public class Parser {
     private ASTNode parseCompoundDatum(Token<?> token, boolean isInQuote) throws IOException {
         if (isNormalListStart(token)) {
             // TODO: 2021/7/15 耦合度比较高
-            ASTNode list = new ASTNode("list");
+            ASTNode list = new ASTNode(NodeType.LIST);
             list.addChild(new ASTNode(token));
             parseNormalList(list, isInQuote);
             return list;
         }
         if (isVectorStart(token)) {
-            ASTNode vector = new ASTNode("vector");
+            ASTNode vector = new ASTNode(NodeType.VECTOR);
             vector.addChild(new ASTNode(token));
             parseVector(vector, isInQuote);
             return vector;
         }
         if (isQuoteAbbrevStart(token)) {
-            ASTNode quote = new ASTNode("abbreviation");
+            ASTNode quote = new ASTNode(NodeType.QUOTE);
             parseQuoteAbbrev(quote, token);
             return quote;
         }
@@ -205,7 +201,7 @@ public class Parser {
         if (isInQuote &&
                 token.getType() == TokenType.Punctuator &&
                 (token.toString().equals(",") || token.toString().equals(",@"))) {
-            ASTNode quote = new ASTNode("quote");
+            ASTNode quote = new ASTNode(NodeType.QUOTE);
             parseQuote(quote, token );
             return quote;
         }
@@ -213,7 +209,7 @@ public class Parser {
     }
 
     private ASTNode parseProgram() throws IOException {
-        ASTNode program = new ASTNode("program");
+        ASTNode program = new ASTNode(NodeType.PROGRAM);
         Token<?> token = nextToken();
         while (token.getType() != TokenType.EOF) {
             program.addChild(parseExpression(token, false));
@@ -239,14 +235,5 @@ public class Parser {
     public static ASTNode parseFile(String sourceFile) throws IOException {
         Parser parser = new Parser(Lexer.getFileLexer(sourceFile));
         return parser.parseProgram();
-    }
-
-    public static void main(String[] args) throws IOException {
-//        ASTNode[] astNodes = Parser.parseLine("'(1 ,x '(1 2 ,x) 3)", 1);
-//        ASTNode[] astNodes = Parser.parseLine("`,@x", 1);
-//        ASTNode[] astNodes = Parser.parseLine("`,x", 1);
-        ASTNode[] astNodes = Parser.parseLine("'(x ,y ,@`(z ,@x))", 1);
-
-        System.out.println(astNodes[0].toString());
     }
 }

@@ -2,18 +2,17 @@ package parse;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class ASTNode implements Iterable<ASTNode> {
     private final Token<?> token;
-    private final String type;
+    private final NodeType type;
     private final List<ASTNode> children;
     private int childrenCount;
 
-    public ASTNode(String type) {
+    public ASTNode(NodeType type) {
         //非叶子节点
         this.type = type;
         this.token = null;
@@ -24,12 +23,12 @@ public class ASTNode implements Iterable<ASTNode> {
     public ASTNode(Token<?> token) {
         //叶子节点
         this.token = token;
-        this.type = null;
+        this.type = NodeType.SIMPLE;
         this.children = new ArrayList<>();
         childrenCount = 0;
     }
 
-    public String getType() {
+    public NodeType getType() {
         return type;
     }
 
@@ -71,4 +70,12 @@ public class ASTNode implements Iterable<ASTNode> {
         return getCode(this);
     }
 
+}
+
+enum NodeType {
+    SIMPLE,
+    LIST,
+    VECTOR,
+    QUOTE,
+    PROGRAM
 }
