@@ -7,32 +7,32 @@ import java.util.Objects;
 
 public class REPL extends JFrame {
     private final JFrame box;
-    private final Container boxContainer;
-    private final int WIDTH = 900;
-    private final int HEIGHT = 618;
-    private final int VGAP = 10;
-    private final int HGAP = 10;
+    private  Container boxContainer;
+    private final int FRAME_WIDTH = 900;
+    private final int FRAME_HEIGHT = 618;
+    private final int V_GAP = 10;
+    private final int H_GAP = 10;
     private final int PROMPT_WIDTH = 30;
     private final int INPUT_LINE_HEIGHT = 30;
-    private final int INPUT_START_X = PROMPT_WIDTH + HGAP;
-    private final int INPUT_WIDTH = WIDTH - 60;
-    private int outputHeight = 50;
+    private final int OUTPUT_INPUT_START_X = PROMPT_WIDTH + H_GAP;
+    private final int INPUT_WIDTH = FRAME_WIDTH - 60;
+    private final int TEXT_OUTPUT_HEIGHT = 50;
     private final Font font;
-    private int lineY;
+    private int currentY;
 
     public REPL() {
         box = new JFrame();
-        boxContainer = box.getContentPane();
+        boxContainer = new JPanel();
+        box.add(boxContainer);
         font = new Font("JetBrains Mono", Font.BOLD, 20);
-        lineY = 50;
+        currentY = 50;
         init();
-        input();
     }
 
     private void init() {
         box.setVisible(true);
         box.setResizable(false);
-        box.setSize(WIDTH, HEIGHT);
+        box.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         box.setResizable(false);
         box.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -42,72 +42,72 @@ public class REPL extends JFrame {
         box.setIconImage(imageIcon.getImage());
 
         boxContainer.setBackground(Color.darkGray);
-        FlowLayout layout = new FlowLayout();
-        layout.setVgap(VGAP);
-        layout.setHgap(HGAP);
-        boxContainer.setLayout(layout);
+        boxContainer.setLayout(new ScrollPaneLayout());
 
-        Label welcome = new Label("Leibniz Scheme Version 0.0.1 ");
-        welcome.setForeground(Color.white);
-        welcome.setFont(font);
-        welcome.setBounds(0, 0, WIDTH, lineY);
-        welcome.setBackground(Color.DARK_GRAY);
-        welcome.setVisible(true);
+
+        REPLLabel welcome = new REPLLabel
+                ("Leibniz Scheme Version 0.0.1 ", 0, 0, FRAME_WIDTH, currentY, font);
         boxContainer.add(welcome, FlowLayout.LEFT);
+
+        input();
+
     }
 
     private void input() {
-        // TODO: 2021/7/17 add icon
-        Label prompt = new Label("> ");
-        prompt.setForeground(Color.white);
-        prompt.setFont(font);
-        prompt.setBounds(0, lineY, PROMPT_WIDTH, INPUT_LINE_HEIGHT);
-        prompt.setBackground(Color.DARK_GRAY);
-        prompt.setVisible(true);
+        REPLLabel prompt = new REPLLabel("> ", 0, currentY, PROMPT_WIDTH, INPUT_LINE_HEIGHT, font);
         boxContainer.add(prompt, FlowLayout.LEFT);
 
-        JTextField input = new JTextField();
-        input.setBackground(Color.darkGray);
-        input.setForeground(Color.white);
-        input.setVisible(true);
-        input.setBounds(INPUT_START_X, lineY, INPUT_WIDTH, INPUT_LINE_HEIGHT);
-        input.setFont(font);
-
-//        input.setBorder(new LineBorder(Color.white));
+        REPLInputField input = new REPLInputField
+                (OUTPUT_INPUT_START_X, currentY, INPUT_WIDTH, INPUT_LINE_HEIGHT, font);
         input.addActionListener(e -> {
             input.setEditable(false);
             input.setBorder(null);
             String expr = input.getText();
-            lineY = lineY + INPUT_LINE_HEIGHT + VGAP;
-            output(expr);
+            currentY = currentY + INPUT_LINE_HEIGHT + V_GAP;
+            textOutput(expr);
         });
         boxContainer.add(input, FlowLayout.CENTER);
-
     }
 
-    private void output(String result) {
-        Label prompt = new Label("=> ");
-        prompt.setForeground(Color.white);
-        prompt.setFont(font);
-        prompt.setBounds(0, lineY, PROMPT_WIDTH, outputHeight);
-        prompt.setBackground(Color.DARK_GRAY);
-        prompt.setVisible(true);
+    private void textOutput(String result) {
+        REPLLabel prompt = new REPLLabel
+                ("=> ", 0, currentY, PROMPT_WIDTH, TEXT_OUTPUT_HEIGHT, font);
         boxContainer.add(prompt, FlowLayout.LEFT);
 
-        Label output = new Label(result);
-        output.setBackground(Color.darkGray);
-        output.setForeground(Color.white);
-        output.setVisible(true);
-        output.setBounds(INPUT_START_X, lineY, INPUT_WIDTH, outputHeight);
-        output.setFont(font);
+        REPLLabel output = new REPLLabel
+                (result, OUTPUT_INPUT_START_X, currentY, INPUT_WIDTH, TEXT_OUTPUT_HEIGHT, font);
         boxContainer.add(output, FlowLayout.CENTER);
 
-        lineY = lineY + outputHeight + VGAP;
+        currentY = currentY + TEXT_OUTPUT_HEIGHT + V_GAP;
 
         input();
     }
 
     public static void main(String[] args) {
         new REPL();
+    }
+}
+
+class REPLLabel extends Label {
+    // TODO: 2021/7/17 add icon
+    public REPLLabel(String text, int x, int y, int width, int height, Font font) {
+        super(text);
+        setForeground(Color.white);
+        setFont(font);
+        setBounds(x, y, width, height);
+        setBackground(Color.DARK_GRAY);
+        setVisible(true);
+    }
+}
+
+class REPLInputField extends JTextField {
+    public REPLInputField(int x, int y, int width, int height, Font font) {
+        grabFocus();
+        requestFocus();
+        setBackground(Color.darkGray);
+        setForeground(Color.white);
+        setVisible(true);
+        setBounds(x, y, width, height);
+        setFont(font);
     }
 }
