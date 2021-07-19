@@ -1,7 +1,11 @@
 package io;
 
+import core.eval.Eval;
+import exception.BaseException;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 
@@ -18,13 +22,16 @@ public class REPL extends JFrame {
     private final int INPUT_WIDTH = FRAME_WIDTH - 60;
     private final int TEXT_OUTPUT_HEIGHT = 50;
     private final Font font;
+    private final int INIT_Y = 50;
     private int currentY;
+    private final Eval eval;
 
     public REPL() {
         box = new JFrame();
         boxContainer = box.getContentPane();
         font = new Font("JetBrains Mono", Font.BOLD, 20);
-        currentY = 50;
+        eval = new Eval();
+        currentY = INIT_Y;
         init();
     }
 
@@ -51,19 +58,20 @@ public class REPL extends JFrame {
 
     }
 
-    private void checkCurrentY() {
-        if (currentY >= FRAME_HEIGHT) {
-            for(Component component : boxContainer.getComponents()) {
+    private void checkCurrentY(int height) {
+        if (currentY + height >= FRAME_HEIGHT) {
+            for (Component component : boxContainer.getComponents()) {
                 boxContainer.remove(component);
             }
-            currentY = 50;
+            currentY = INIT_Y;
             boxContainer.revalidate();
             boxContainer.repaint();
             boxContainer.setLayout(null);
         }
     }
+
     private void input() {
-        checkCurrentY();
+        checkCurrentY(INPUT_LINE_HEIGHT);
         REPLLabel prompt = new REPLLabel("> ", 0, currentY, PROMPT_WIDTH, INPUT_LINE_HEIGHT, font);
         boxContainer.add(prompt, FlowLayout.LEFT);
 
@@ -72,16 +80,25 @@ public class REPL extends JFrame {
         input.addActionListener(e -> {
             input.setEditable(false);
             input.setBorder(null);
-            String expr = input.getText();
-            currentY = currentY + INPUT_LINE_HEIGHT + V_GAP;
-            textOutput(expr);
+            String result = null;
+            String inputText = input.getText();
+            try {
+                result = eval.evalExpression(inputText).toString();
+            } catch (IOException | BaseException exception) {
+                result = exception.getMessage();
+            } finally {
+                currentY = currentY + INPUT_LINE_HEIGHT + V_GAP;
+                textOutput(result);
+            }
+
         });
         boxContainer.add(input, FlowLayout.CENTER);
         input.requestFocus();
+
     }
 
     private void textOutput(String result) {
-        checkCurrentY();
+        checkCurrentY(TEXT_OUTPUT_HEIGHT);
         REPLLabel prompt = new REPLLabel
                 ("=> ", 0, currentY, PROMPT_WIDTH, TEXT_OUTPUT_HEIGHT, font);
         boxContainer.add(prompt, FlowLayout.LEFT);
@@ -91,7 +108,6 @@ public class REPL extends JFrame {
         boxContainer.add(output, FlowLayout.CENTER);
 
         currentY = currentY + TEXT_OUTPUT_HEIGHT + V_GAP;
-
         input();
     }
 

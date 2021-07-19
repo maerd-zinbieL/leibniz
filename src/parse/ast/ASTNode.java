@@ -1,6 +1,7 @@
-package parse;
+package parse.ast;
 
 import org.jetbrains.annotations.NotNull;
+import parse.token.Token;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -70,12 +71,4 @@ public class ASTNode implements Iterable<ASTNode> {
         return getCode(this);
     }
 
-}
-
-enum NodeType {
-    SIMPLE,
-    LIST,
-    VECTOR,
-    QUOTE,
-    PROGRAM
 }

@@ -1,6 +1,12 @@
 package parse;
 
 import exception.ParserException;
+import parse.ast.ASTNode;
+import parse.ast.NodeType;
+import parse.token.IdentifierToken;
+import parse.token.PunctuatorToken;
+import parse.token.Token;
+import parse.token.TokenType;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,9 +1,10 @@
 package parse;
 
-import exception.LexerException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import parse.token.StringToken;
+import parse.token.Token;
 
 import java.io.IOException;
 

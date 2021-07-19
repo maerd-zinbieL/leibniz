@@ -1,6 +1,7 @@
 package parse;
 
 import exception.LexerException;
+import parse.token.*;
 
 import java.io.*;
 import java.util.*;

@@ -3,6 +3,8 @@ package parse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import parse.token.PunctuatorToken;
+import parse.token.Token;
 
 import static org.junit.Assert.*;
 

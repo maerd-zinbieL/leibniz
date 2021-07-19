@@ -2,12 +2,12 @@ package parse;
 
 import exception.ParserException;
 import io.ReadFile;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import parse.ast.ASTNode;
+import parse.token.Token;
+import parse.token.TokenType;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import static org.junit.Assert.*;
 

@@ -2,6 +2,8 @@ package parse;
 
 import io.ReadFile;
 import org.junit.Test;
+import parse.token.Token;
+import parse.token.TokenType;
 
 import java.io.File;
 import java.io.IOException;

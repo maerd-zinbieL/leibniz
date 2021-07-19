@@ -4,6 +4,8 @@ import exception.LexerException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import parse.token.BooleanToken;
+import parse.token.TokenType;
 
 import java.io.IOException;
 
