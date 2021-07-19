@@ -1,7 +1,0 @@
-(define (get-expect)
-    (let ((token (read)))
-        (if (not (eof-object? token))
-        (begin (display token)
-               (newline)
-               (get-expect)))))
-(get-expect)

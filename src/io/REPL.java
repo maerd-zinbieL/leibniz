@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class REPL extends JFrame {
     private final JFrame box;
-    private  Container boxContainer;
+    private final Container boxContainer;
     private final int FRAME_WIDTH = 900;
     private final int FRAME_HEIGHT = 618;
     private final int V_GAP = 10;
@@ -22,8 +22,7 @@ public class REPL extends JFrame {
 
     public REPL() {
         box = new JFrame();
-        boxContainer = new JPanel();
-        box.add(boxContainer);
+        boxContainer = box.getContentPane();
         font = new Font("JetBrains Mono", Font.BOLD, 20);
         currentY = 50;
         init();
@@ -36,14 +35,13 @@ public class REPL extends JFrame {
         box.setResizable(false);
         box.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        box.setLayout(null);
         URL url = REPL.class.getResource("./scheme.png");
         ImageIcon imageIcon = new ImageIcon(
                 Objects.requireNonNull(url));
         box.setIconImage(imageIcon.getImage());
 
         boxContainer.setBackground(Color.darkGray);
-        boxContainer.setLayout(new ScrollPaneLayout());
-
 
         REPLLabel welcome = new REPLLabel
                 ("Leibniz Scheme Version 0.0.1 ", 0, 0, FRAME_WIDTH, currentY, font);
@@ -53,7 +51,19 @@ public class REPL extends JFrame {
 
     }
 
+    private void checkCurrentY() {
+        if (currentY >= FRAME_HEIGHT) {
+            for(Component component : boxContainer.getComponents()) {
+                boxContainer.remove(component);
+            }
+            currentY = 50;
+            boxContainer.revalidate();
+            boxContainer.repaint();
+            boxContainer.setLayout(null);
+        }
+    }
     private void input() {
+        checkCurrentY();
         REPLLabel prompt = new REPLLabel("> ", 0, currentY, PROMPT_WIDTH, INPUT_LINE_HEIGHT, font);
         boxContainer.add(prompt, FlowLayout.LEFT);
 
@@ -67,9 +77,11 @@ public class REPL extends JFrame {
             textOutput(expr);
         });
         boxContainer.add(input, FlowLayout.CENTER);
+        input.requestFocus();
     }
 
     private void textOutput(String result) {
+        checkCurrentY();
         REPLLabel prompt = new REPLLabel
                 ("=> ", 0, currentY, PROMPT_WIDTH, TEXT_OUTPUT_HEIGHT, font);
         boxContainer.add(prompt, FlowLayout.LEFT);
