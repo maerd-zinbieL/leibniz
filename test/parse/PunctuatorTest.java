@@ -42,36 +42,36 @@ public class PunctuatorTest {
 
     @Test
     public void lex() {
-        Token<String> token1 = PunctuatorToken.lex(lines[0], 0, 2);
+        Token token1 = PunctuatorToken.lex(lines[0], 0, 2);
         assertEquals(2, token1.getLineNum());
         assertEquals(0, token1.getColNum());
-        assertEquals("(", token1.getValue());
+        assertEquals("(", token1.getSchemeValue().toString());
         assertEquals(1, token1.getEnd());
 
-        Token<String> token2 = PunctuatorToken.lex(lines[0], 12, 1);
-        assertEquals(")", token2.getValue());
+        Token token2 = PunctuatorToken.lex(lines[0], 12, 1);
+        assertEquals(")", token2.getSchemeValue().toString());
         assertEquals(13, token2.getEnd());
 
-        Token<String> token3 = PunctuatorToken.lex(lines[1], 0, 1);
-        assertEquals("#(", token3.getValue());
+        Token token3 = PunctuatorToken.lex(lines[1], 0, 1);
+        assertEquals("#(", token3.getSchemeValue().toString());
         assertEquals(2, token3.getEnd());
 
-        Token<String> token4 = PunctuatorToken.lex(lines[2], 0, 1);
-        assertEquals("'", token4.getValue());
+        Token token4 = PunctuatorToken.lex(lines[2], 0, 1);
+        assertEquals("'", token4.getSchemeValue().toString());
 
-        Token<String> token5 = PunctuatorToken.lex(lines[3], 8, 1);
-        assertEquals("`", token5.getValue());
+        Token token5 = PunctuatorToken.lex(lines[3], 8, 1);
+        assertEquals("`", token5.getSchemeValue().toString());
 
-        Token<String> token6 = PunctuatorToken.lex(lines[4], 6, 1);
-        assertEquals(",@", token6.getValue());
+        Token token6 = PunctuatorToken.lex(lines[4], 6, 1);
+        assertEquals(",@", token6.getSchemeValue().toString());
 
-        Token<String> token7 = PunctuatorToken.lex(lines[5], 0, 5);
-        assertEquals("(", token7.getValue());
+        Token token7 = PunctuatorToken.lex(lines[5], 0, 5);
+        assertEquals("(", token7.getSchemeValue().toString());
 
-        Token<String> token8 = PunctuatorToken.lex(lines[5], 6, 5);
-        assertEquals(")", token8.getValue());
+        Token token8 = PunctuatorToken.lex(lines[5], 6, 5);
+        assertEquals(")", token8.getSchemeValue().toString());
 
-        Token<String> token9 = PunctuatorToken.lex(lines[6], 0, 6);
+        Token token9 = PunctuatorToken.lex(lines[6], 0, 6);
         assertEquals(".", token9.toString());
 
     }

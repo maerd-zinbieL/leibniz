@@ -1,10 +1,23 @@
 package parse.token;
 
-import exception.LexerException;
+import core.exception.LexerException;
+import core.value.SchemeCharacter;
 
-public class CharToken extends Token<Character> {
-    CharToken(Character value, int lineNum, int colNum, int end) {
-        super(TokenType.Character, value, lineNum, colNum, end);
+public class CharToken extends Token {
+    private final SchemeCharacter value;
+
+    CharToken(SchemeCharacter value, int lineNum, int colNum, int end) {
+        super(TokenType.Character, lineNum, colNum, end);
+        this.value = value;
+    }
+
+    public SchemeCharacter getSchemeValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
     }
 
     public static boolean isCharacter(String line, int start) {
@@ -31,11 +44,7 @@ public class CharToken extends Token<Character> {
         }
         if (value == '\000')
             throw new LexerException("bad character at (" + lineNum + "," + end + ")");
-        return new CharToken(value, lineNum, start, end);
+        return new CharToken(new SchemeCharacter(value), lineNum, start, end);
     }
 
-    @Override
-    public String toString() {
-        return Character.toString(getValue());
-    }
 }

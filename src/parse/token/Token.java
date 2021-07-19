@@ -1,15 +1,15 @@
 package parse.token;
 
-public class Token<T> {
+import core.value.SchemeValue;
+
+public class Token {
     private final TokenType type;
-    private final T value;
     private final int lineNum;
     private final int colNum;
     private final int end;
 
-    Token(TokenType type, T value, int lineNum, int colNum, int end) {
+    Token(TokenType type, int lineNum, int colNum, int end) {
         this.type = type;
-        this.value = value;
         this.lineNum = lineNum;
         this.colNum = colNum;
         this.end = end;
@@ -55,10 +55,6 @@ public class Token<T> {
         return type;
     }
 
-    public T getValue() {
-        return value;
-    }
-
     public int getLineNum() {
         return lineNum;
     }
@@ -71,8 +67,7 @@ public class Token<T> {
         return end;
     }
 
-    @Override
-    public String toString() {
-        return "token";
+    public SchemeValue<?> getSchemeValue() {
+        return null;
     }
 }

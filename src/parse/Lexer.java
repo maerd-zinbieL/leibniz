@@ -1,13 +1,13 @@
 package parse;
 
-import exception.LexerException;
+import core.exception.LexerException;
 import parse.token.*;
 
 import java.io.*;
 import java.util.*;
 
 public class Lexer {
-    private final Queue<Token<?>> tokensBuffer;
+    private final Queue<Token> tokensBuffer;
     private final LineNumberReader lineNumberReader;
     private final String sourceFile;
 
@@ -44,7 +44,7 @@ public class Lexer {
         if (line == null)
             throw new IllegalArgumentException();
         int current = 0;
-        Token<?> token;
+        Token token;
         while (current < line.length()) {
             char c = Character.toLowerCase(line.charAt(current));
             if (Character.isWhitespace(c)) {
@@ -130,12 +130,12 @@ public class Lexer {
             lexLine(line, lineNum);
         }
     }
-    public Token<?> nextToken() throws IOException {
+    public Token nextToken() throws IOException {
         fillBufferIfEmpty();
         return tokensBuffer.poll();
     }
 
-    public Token<?> peekToken() throws IOException {
+    public Token peekToken() throws IOException {
         fillBufferIfEmpty();
         return tokensBuffer.peek();
     }
@@ -143,11 +143,11 @@ public class Lexer {
     public static void main(String[] args) throws IOException {
         String fileName = "./test-resources/token/token-mixed-test1.scm";
         Lexer lexer = getFileLexer(fileName);
-        Token<?> token = lexer.nextToken();
+        Token token = lexer.nextToken();
         while (token.getType() != TokenType.EOF) {
-            System.out.println(token.getValue());
+            System.out.println(token.getSchemeValue());
             token = lexer.nextToken();
         }
-        System.out.println(token.getValue());
+        System.out.println(token.getSchemeValue());
     }
 }

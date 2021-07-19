@@ -1,6 +1,6 @@
 package parse;
 
-import exception.LexerException;
+import core.exception.LexerException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class NumberTokenTest {
         }
         String[] represents = new String[tokens.length];
         for (int i = 0; i < represents.length; i++) {
-            represents[i] = tokens[i].getValue().toString();
+            represents[i] = tokens[i].getSchemeValue().toString();
         }
 
         String expectFileName = TestUtil.TEST_TOKEN_FILES_PATH + "expect/token-number-test0.expect";
@@ -64,7 +64,7 @@ public class NumberTokenTest {
             System.out.println("------------------------------------");
             token = NumberToken.lex(lines[i], 0, i + 1);
             System.out.println(lines[i]);
-            System.out.println(token.getValue());
+            System.out.println(token.getSchemeValue());
             System.out.println("------------------------------------");
         }
     }

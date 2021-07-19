@@ -1,4 +1,4 @@
-package exception;
+package core.exception;
 
 public class BaseException extends RuntimeException{
     public BaseException() {

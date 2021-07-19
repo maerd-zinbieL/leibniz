@@ -1,12 +1,18 @@
 package parse.token;
 
-import exception.LexerException;
+import core.exception.LexerException;
+import core.value.SchemeString;
 
-public class StringToken extends Token<String> {
+public class StringToken extends Token {
+    private final SchemeString value;
     StringToken(String value, int lineNum, int colNum, int end) {
-        super(TokenType.String, value, lineNum, colNum, end);
+        super(TokenType.String, lineNum, colNum, end);
+        this.value = new SchemeString(value);
     }
 
+    public SchemeString getSchemeValue() {
+        return value;
+    }
     public static boolean isString(String line, int start) {
         return line.charAt(start) == '\"' &&
                 (start == 0 || line.charAt(start - 1) != '\\');
@@ -40,6 +46,6 @@ public class StringToken extends Token<String> {
 
     @Override
     public String toString() {
-        return "\"" + getValue() + "\"";
+        return "\"" + value + "\"";
     }
 }

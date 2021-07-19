@@ -1,6 +1,6 @@
 package parse;
 
-import exception.LexerException;
+import core.exception.LexerException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,8 +48,10 @@ public class BooleanTokenTest {
         BooleanToken token1 = BooleanToken.lex(lines[0], 13, 1);
         BooleanToken token2 = BooleanToken.lex(lines[0], 31, 1);
         assertEquals(TokenType.Boolean, token1.getType());
-        assertTrue(token1.getValue());
-        assertFalse(token2.getValue());
+        assertEquals("true", token1.toString());
+        assertEquals("false", token2.toString());
+//        assertTrue(token1.getSchemeValue().getJavaValue());
+//        assertFalse(token2.getSchemeValue().getJavaValue());
         assertEquals(13, token1.getColNum());
         assertEquals(1, token2.getLineNum());
     }

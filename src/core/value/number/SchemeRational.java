@@ -1,4 +1,4 @@
-package core.number;
+package core.value.number;
 
 public class SchemeRational extends SchemeNumber {
     private final long numerator;
@@ -31,7 +31,7 @@ public class SchemeRational extends SchemeNumber {
     }
 
     @Override
-    public double getValue() {
+    public Double getJavaValue() {
         return (double) numerator / (double) denominator;
     }
 

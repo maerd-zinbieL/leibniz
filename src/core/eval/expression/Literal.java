@@ -1,5 +1,6 @@
 package core.eval.expression;
 
+import core.value.SchemeValue;
 import parse.ast.ASTNode;
 import parse.ast.NodeType;
 import parse.token.TokenType;
@@ -11,8 +12,8 @@ public class Literal extends Expression {
     }
 
     @Override
-    public Expression eval() {
-        return this;
+    public SchemeValue eval() {
+        return null;
     }
 
     public static boolean isLiteral(ASTNode node) {

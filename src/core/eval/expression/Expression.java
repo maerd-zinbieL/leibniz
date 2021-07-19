@@ -1,6 +1,7 @@
 package core.eval.expression;
 
-import exception.EvalException;
+import core.value.SchemeValue;
+import core.exception.EvalException;
 import parse.ast.ASTNode;
 
 public abstract class Expression {
@@ -11,14 +12,14 @@ public abstract class Expression {
         }
         this.node = node;
     }
-    public static Expression evalAST(ASTNode node) {
+    public static SchemeValue evalAST(ASTNode node) {
         if (Literal.isLiteral(node)) {
-            return new Literal(node);
+            return new Literal(node).eval();
         }
         throw new EvalException("unknown expression type");
     }
 
-    public abstract Expression eval();
+    public abstract SchemeValue eval();
     @Override
     public String toString() {
         return node.toString();

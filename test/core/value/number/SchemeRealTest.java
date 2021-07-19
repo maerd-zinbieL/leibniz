@@ -1,4 +1,4 @@
-package core.number;
+package core.value.number;
 
 import org.junit.Test;
 

@@ -1,11 +1,19 @@
 package parse.token;
 
-import exception.LexerException;
+import core.exception.LexerException;
+import core.value.SchemePunctuator;
 
-public class PunctuatorToken extends Token<String> {
+public class PunctuatorToken extends Token {
+
+    private final SchemePunctuator value;
 
     public PunctuatorToken(String value, int lineNum, int colNum, int end) {
-        super(TokenType.Punctuator, value, lineNum, colNum, end);
+        super(TokenType.Punctuator, lineNum, colNum, end);
+        this.value = new SchemePunctuator(value);
+    }
+
+    public SchemePunctuator getSchemeValue() {
+        return value;
     }
 
     private static boolean isTwoCharPunctuator(String line, int start) {
@@ -53,6 +61,6 @@ public class PunctuatorToken extends Token<String> {
 
     @Override
     public String toString() {
-        return getValue();
+        return value.toString();
     }
 }

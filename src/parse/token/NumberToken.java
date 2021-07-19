@@ -1,12 +1,13 @@
 package parse.token;
 
-import core.number.SchemeInteger;
-import core.number.SchemeNumber;
-import core.number.SchemeReal;
-import exception.LexerException;
+import core.value.number.SchemeInteger;
+import core.value.number.SchemeNumber;
+import core.value.number.SchemeReal;
+import core.exception.LexerException;
 
-public class NumberToken extends Token<SchemeNumber> {
+public class NumberToken extends Token {
 
+    private final SchemeNumber value;
     private static int tokenLineNum;
     private static int tokenColNum;
     private static String lexLine;
@@ -16,8 +17,13 @@ public class NumberToken extends Token<SchemeNumber> {
     private static boolean mustNotBeExact;
     private static int tokenEnd;
 
-    NumberToken(SchemeNumber value, int lineNum, int colNum, int end) {
-        super(TokenType.Number, value, lineNum, colNum, end);
+    public NumberToken(SchemeNumber value, int lineNum, int colNum, int end) {
+        super(TokenType.Number, lineNum, colNum, end);
+        this.value = value;
+    }
+
+    public SchemeNumber getSchemeValue() {
+        return value;
     }
 
     private static boolean isDigit2(char c) {
@@ -392,14 +398,14 @@ public class NumberToken extends Token<SchemeNumber> {
 
     @Override
     public String toString() {
-        return getValue().toString();
+        return value.toString();
     }
 
     public static void main(String[] args) {
         // TODO: 2021/7/10 fix this bug
         String line = "#d#e314152.##d22";
         NumberToken token = lex(line, 0, 1);
-        System.out.println(token.getValue()); //9223372036854775807
+        System.out.println(token.getSchemeValue()); //9223372036854775807
 
     }
 }

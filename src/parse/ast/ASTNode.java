@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ASTNode implements Iterable<ASTNode> {
-    private final Token<?> token;
+    private final Token token;
     private final NodeType type;
     private final List<ASTNode> children;
     private int childrenCount;
@@ -21,7 +21,7 @@ public class ASTNode implements Iterable<ASTNode> {
         childrenCount = 0;
     }
 
-    public ASTNode(Token<?> token) {
+    public ASTNode(Token token) {
         //叶子节点
         this.token = token;
         this.type = NodeType.SIMPLE;
@@ -33,7 +33,7 @@ public class ASTNode implements Iterable<ASTNode> {
         return type;
     }
 
-    public Token<?> getToken() {
+    public Token getToken() {
         return token;
     }
 

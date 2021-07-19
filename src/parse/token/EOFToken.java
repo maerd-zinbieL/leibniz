@@ -1,8 +1,17 @@
 package parse.token;
 
-public class EOFToken extends Token<String> {
+import core.value.SchemeIdentifier;
+
+public class EOFToken extends Token {
+    private final SchemeIdentifier value;
+
     public EOFToken(int lineNum) {
-        super(TokenType.EOF, "EOF", lineNum, 0, 0);
+        super(TokenType.EOF, lineNum, 0, 0);
+        this.value = new SchemeIdentifier("EOF");
+    }
+
+    public SchemeIdentifier getSchemeValue() {
+        return value;
     }
 
     @Override

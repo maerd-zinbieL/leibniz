@@ -1,6 +1,6 @@
 package parse;
 
-import exception.ParserException;
+import core.exception.ParserException;
 import io.ReadFile;
 import org.junit.Test;
 import parse.ast.ASTNode;
@@ -18,7 +18,7 @@ public class ParserTest {
         String fileName = TestUtil.TEST_PARSER_FILES_PATH + "parser-simple-test0.scm";
         ASTNode program = Parser.parseFile(fileName);
         assertEquals(13, program.getChildrenCount());
-        Token<?>[] tokens = new Token[program.getChildrenCount()];
+        Token[] tokens = new Token[program.getChildrenCount()];
         int i = 0;
         for (ASTNode child : program) {
             tokens[i] = child.getToken();
@@ -39,18 +39,18 @@ public class ParserTest {
         assertEquals(TokenType.Identifier, tokens[11].getType());
 
 
-        assertEquals(false, tokens[0].getValue());
-        assertEquals(true, tokens[1].getValue());
-        assertEquals("7.89", tokens[2].getValue().toString());
-        assertEquals("157/50", tokens[3].getValue().toString());
-        assertEquals(' ', tokens[4].getValue());
-        assertEquals('a', tokens[5].getValue());
-        assertEquals('b', tokens[6].getValue());
-        assertEquals("scheme", tokens[7].getValue());
-        assertEquals("lambda", tokens[8].getValue());
-        assertEquals("define", tokens[9].getValue());
-        assertEquals("x", tokens[10].getValue());
-        assertEquals("square", tokens[11].getValue());
+        assertEquals("false", tokens[0].getSchemeValue().toString());
+        assertEquals("true", tokens[1].getSchemeValue().toString());
+        assertEquals("7.89", tokens[2].getSchemeValue().toString());
+        assertEquals("157/50", tokens[3].getSchemeValue().toString());
+        assertEquals(' ', tokens[4].getSchemeValue().getJavaValue());
+        assertEquals('a', tokens[5].getSchemeValue().getJavaValue());
+        assertEquals('b', tokens[6].getSchemeValue().getJavaValue());
+        assertEquals("scheme", tokens[7].getSchemeValue().toString());
+        assertEquals("lambda", tokens[8].getSchemeValue().toString());
+        assertEquals("define", tokens[9].getSchemeValue().toString());
+        assertEquals("x", tokens[10].getSchemeValue().toString());
+        assertEquals("square", tokens[11].getSchemeValue().toString());
     }
 
     @Test

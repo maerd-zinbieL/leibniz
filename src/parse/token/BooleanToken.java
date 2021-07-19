@@ -1,10 +1,23 @@
 package parse.token;
 
-import exception.LexerException;
+import core.exception.LexerException;
+import core.value.SchemeBoolean;
 
-public class BooleanToken extends Token<Boolean> {
-    BooleanToken(boolean value, int lineNum, int colNum, int end) {
-        super(TokenType.Boolean, value, lineNum, colNum, end);
+public class BooleanToken extends Token {
+    private final SchemeBoolean value;
+
+    BooleanToken(SchemeBoolean value, int lineNum, int colNum, int end) {
+        super(TokenType.Boolean, lineNum, colNum, end);
+        this.value = value;
+    }
+
+    public SchemeBoolean getSchemeValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
     }
 
     public static boolean isBoolean(String line, int start) {
@@ -16,18 +29,10 @@ public class BooleanToken extends Token<Boolean> {
         if (!isBoolean(line, start)) throw new LexerException("not a boolean");
         int end = start + 2;
         if (line.charAt(start + 1) == 't') {
-            return new BooleanToken(true, lineNum, start, end);
+            return new BooleanToken(new SchemeBoolean(true), lineNum, start, end);
         } else {
-            return new BooleanToken(false, lineNum, start, end);
+            return new BooleanToken(new SchemeBoolean(false), lineNum, start, end);
         }
     }
 
-    @Override
-    public String toString() {
-        if (getValue()) {
-            return "true";
-        } else {
-            return "false";
-        }
-    }
 }

@@ -14,7 +14,7 @@
 2. ###### parser
    
    - [ ] full test
-   - [ ] throw exception when parsing `(x ,@y z ... )
+   - [ ] throw core.exception when parsing `(x ,@y z ... )
    
 3. ###### repl
    - [ ] 滚动或者清除组件

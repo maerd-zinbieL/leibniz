@@ -1,6 +1,6 @@
 package parse;
 
-import exception.ParserException;
+import core.exception.ParserException;
 import parse.ast.ASTNode;
 import parse.ast.NodeType;
 import parse.token.IdentifierToken;
@@ -21,16 +21,16 @@ public class Parser {
         this.lexer = lexer;
     }
 
-    private Token<?> nextToken() throws IOException {
+    private Token nextToken() throws IOException {
         return lexer.nextToken();
     }
 
-    private ASTNode parseSimpleDatum(Token<?> token) {
+    private ASTNode parseSimpleDatum(Token token) {
         return new ASTNode(token);
     }
 
     private void parseVector(ASTNode vector, boolean isInQuote) throws IOException {
-        Token<?> token = nextToken();
+        Token token = nextToken();
         while (!isListEnd(token)) {
 
             if (isInQuote &&
@@ -46,12 +46,12 @@ public class Parser {
         vector.addChild(new ASTNode(token));
     }
 
-    private boolean isListEnd(Token<?> token) {
+    private boolean isListEnd(Token token) {
         return token.getType() == TokenType.Punctuator &&
-                token.getValue().equals(")");
+                token.getSchemeValue().toString().equals(")");
     }
 
-    private boolean isDotList(Token<?> token) {
+    private boolean isDotList(Token token) {
         return token.getType() == TokenType.Punctuator &&
                 token.toString().equals(".");
     }
@@ -59,7 +59,7 @@ public class Parser {
     private void parseDotList(ASTNode list, boolean isInQuote) throws IOException {
         if (list.getChildrenCount() <= 2)
             throw new ParserException("unexpected dot " + sourceFile);
-        Token<?> token = nextToken();
+        Token token = nextToken();
         list.addChild(parseExpression(token, isInQuote));
         token = nextToken();
         if (isListEnd(token)) {
@@ -70,7 +70,7 @@ public class Parser {
     }
 
     private void parseNormalList(ASTNode list, boolean isInQuote) throws IOException {
-        Token<?> token = nextToken();
+        Token token = nextToken();
         while (!isListEnd(token)) {
             if (isDotList(token)) {
                 list.addChild(new ASTNode(token));
@@ -91,7 +91,7 @@ public class Parser {
         list.addChild(new ASTNode(token));
     }
 
-    private void parseQuote(ASTNode quote,  Token<?> token) throws IOException {
+    private void parseQuote(ASTNode quote,  Token token) throws IOException {
         if (token.getType() == TokenType.Punctuator &&
                 token.toString().equals(",")) {
             quote.addChild(new ASTNode(
@@ -118,7 +118,7 @@ public class Parser {
         quote.addChild(parseExpression(token, true));
     }
 
-    private void parseQuoteAbbrev(ASTNode quote, Token<?> firstToken) throws IOException {
+    private void parseQuoteAbbrev(ASTNode quote, Token firstToken) throws IOException {
         String value = firstToken.toString();
         if (value.equals("'")) {
             quote.addChild(new ASTNode
@@ -140,7 +140,7 @@ public class Parser {
         }
     }
 
-    private ASTNode parseCompoundDatum(Token<?> token, boolean isInQuote) throws IOException {
+    private ASTNode parseCompoundDatum(Token token, boolean isInQuote) throws IOException {
         if (isNormalListStart(token)) {
             // TODO: 2021/7/15 耦合度比较高
             ASTNode list = new ASTNode(NodeType.LIST);
@@ -162,25 +162,25 @@ public class Parser {
         throw new ParserException("unknown expression in " + sourceFile);
     }
 
-    private boolean isNormalListStart(Token<?> token) {
+    private boolean isNormalListStart(Token token) {
         return token.getType() == TokenType.Punctuator
-                && token.getValue().equals("(");
+                && token.getSchemeValue().toString().equals("(");
     }
 
-    private boolean isQuoteAbbrevStart(Token<?> token) {
+    private boolean isQuoteAbbrevStart(Token token) {
         if (token.getType() != TokenType.Punctuator)
             return false;
-        String value = (String) token.getValue();
+        String value =  token.toString();
         return value.equals("`") ||
                 value.equals("'");
     }
 
-    private boolean isVectorStart(Token<?> token) {
+    private boolean isVectorStart(Token token) {
         return token.getType() == TokenType.Punctuator &&
-                token.getValue().equals("#(");
+                token.getSchemeValue().toString().equals("#(");
     }
 
-    private boolean isCompoundDatum(Token<?> token) {
+    private boolean isCompoundDatum(Token token) {
         if (!(token.getType() == TokenType.Punctuator))
             return false;
         return isNormalListStart(token) ||
@@ -188,7 +188,7 @@ public class Parser {
                 isQuoteAbbrevStart(token);
     }
 
-    private boolean isSimpleDatum(Token<?> token) {
+    private boolean isSimpleDatum(Token token) {
         TokenType type = token.getType();
         return type == TokenType.Boolean ||
                 type == TokenType.Number ||
@@ -197,7 +197,7 @@ public class Parser {
                 type == TokenType.Identifier;
     }
 
-    private ASTNode parseExpression(Token<?> token, boolean isInQuote) throws IOException {
+    private ASTNode parseExpression(Token token, boolean isInQuote) throws IOException {
         if (isSimpleDatum(token)) {
             return parseSimpleDatum(token);
         }
@@ -216,7 +216,7 @@ public class Parser {
 
     private ASTNode parseProgram() throws IOException {
         ASTNode program = new ASTNode(NodeType.PROGRAM);
-        Token<?> token = nextToken();
+        Token token = nextToken();
         while (token.getType() != TokenType.EOF) {
             program.addChild(parseExpression(token, false));
             token = nextToken();
@@ -228,7 +228,7 @@ public class Parser {
 
     public static ASTNode[] parseLine(String line, int lineNum) throws IOException {
         Parser parser = new Parser(Lexer.getLineLexer(line, lineNum));
-        Token<?> token = parser.nextToken();
+        Token token = parser.nextToken();
         List<ASTNode> nodeList = new ArrayList<>();
         while (token != null) {
             nodeList.add(parser.parseExpression(token, false));
@@ -241,5 +241,10 @@ public class Parser {
     public static ASTNode parseFile(String sourceFile) throws IOException {
         Parser parser = new Parser(Lexer.getFileLexer(sourceFile));
         return parser.parseProgram();
+    }
+
+    public static void main(String[] args) throws IOException {
+        String line = "(list 1 2 3)";
+        System.out.println(Parser.parseLine(line, 1)[0]);
     }
 }

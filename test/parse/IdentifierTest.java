@@ -1,6 +1,6 @@
 package parse;
 
-import exception.LexerException;
+import core.exception.LexerException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,34 +41,34 @@ public class IdentifierTest {
 
     @Test
     public void lex() {
-        Token<String> token0 = IdentifierToken.lex(lines[0], 1, 0);
-        assertEquals("define", token0.getValue());
+        Token token0 = IdentifierToken.lex(lines[0], 1, 0);
+        assertEquals("define", token0.getSchemeValue().toString());
         assertEquals(7, token0.getEnd());
 
-        Token<String> token1 = IdentifierToken.lex(lines[0], 8, 1);
-        assertEquals("he++o", token1.getValue());
+        Token token1 = IdentifierToken.lex(lines[0], 8, 1);
+        assertEquals("he++o", token1.getSchemeValue().toString());
         assertEquals(13, token1.getEnd());
 
-        Token<String> token2 = IdentifierToken.lex(lines[1], 8, 1);
-        assertEquals("hel.o", token2.getValue());
+        Token token2 = IdentifierToken.lex(lines[1], 8, 1);
+        assertEquals("hel.o", token2.getSchemeValue().toString());
         assertEquals(13, token2.getEnd());
 
-        Token<String> token3 = IdentifierToken.lex(lines[2], 8, 1);
-        assertEquals("....", token3.getValue());
+        Token token3 = IdentifierToken.lex(lines[2], 8, 1);
+        assertEquals("....", token3.getSchemeValue().toString());
         assertEquals(12, token3.getEnd());
 
-        Token<String> token4 = IdentifierToken.lex(lines[3], 8, 1);
-        assertEquals("...", token4.getValue());
+        Token token4 = IdentifierToken.lex(lines[3], 8, 1);
+        assertEquals("...", token4.getSchemeValue().toString());
         assertEquals(11, token4.getEnd());
 
-        Token<String> token5 = IdentifierToken.lex(lines[4], 8, 1);
-        assertEquals("@whatever", token5.getValue());
+        Token token5 = IdentifierToken.lex(lines[4], 8, 1);
+        assertEquals("@whatever", token5.getSchemeValue().toString());
 
-        Token<String> token6 = IdentifierToken.lex(lines[5], 8, 1);
-        assertEquals("+whatever", token6.getValue());
+        Token token6 = IdentifierToken.lex(lines[5], 8, 1);
+        assertEquals("+whatever", token6.getSchemeValue().toString());
 
-        Token<String> token7 = IdentifierToken.lex(lines[8], 10, 1);
-        assertEquals("y", token7.getValue());
+        Token token7 = IdentifierToken.lex(lines[8], 10, 1);
+        assertEquals("y", token7.getSchemeValue().toString());
 
     }
 

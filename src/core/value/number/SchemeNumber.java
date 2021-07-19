@@ -1,8 +1,11 @@
-package core.number;
+package core.value.number;
 
-public abstract class SchemeNumber {
+import core.value.SchemeValue;
+
+public abstract class SchemeNumber extends SchemeValue<Double> {
+
     abstract SchemeNumber copy();
-    public abstract double getValue();
+
     public abstract boolean isExact();
 
     public abstract SchemeNumber up();

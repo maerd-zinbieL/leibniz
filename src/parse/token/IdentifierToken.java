@@ -1,14 +1,22 @@
 package parse.token;
 
-import exception.LexerException;
+import core.exception.LexerException;
+import core.value.SchemeIdentifier;
+import core.value.SchemeString;
 import io.ReadFile;
 
 import java.io.IOException;
 
-public class IdentifierToken extends Token<String> {
+public class IdentifierToken extends Token {
 
+    private final SchemeIdentifier value;
     public IdentifierToken(String value, int lineNum, int colNum, int end) {
-        super(TokenType.Identifier, value, lineNum, colNum, end);
+        super(TokenType.Identifier,  lineNum, colNum, end);
+        this.value = new SchemeIdentifier(value);
+    }
+
+    public SchemeIdentifier getSchemeValue() {
+        return value;
     }
 
     private static boolean isSubsequent(String line, int start) {
@@ -95,17 +103,16 @@ public class IdentifierToken extends Token<String> {
         if (end == -1) {
             throw new LexerException("not an identifier");
         }
-        return new IdentifierToken(line.substring(start, end).toLowerCase(), lineNum, start, end);
+        return new IdentifierToken(
+                line.substring(start, end).toLowerCase(),
+                lineNum,
+                start,
+                end);
     }
 
     @Override
     public String toString() {
-        return getValue();
+        return value.toString();
     }
 
-    public static void main(String[] args) throws IOException {
-        String fileName = "./test-resources/parser/" + "parser-list-test2.scm";
-        String[] lines = ReadFile.getLines(fileName);
-        isIdentifier(lines[0], 2);
-    }
 }

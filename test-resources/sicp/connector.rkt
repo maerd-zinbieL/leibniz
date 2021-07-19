@@ -66,12 +66,12 @@
                          request))))
     me))
 
-(define (for-each-except exception 
+(define (for-each-except core.exception
                          procedure 
                          list)
   (define (loop items)
     (cond ((null? items) 'done)
-          ((eq? (car items) exception) 
+          ((eq? (car items) core.exception)
            (loop (cdr items)))
           (else (procedure (car items))
                 (loop (cdr items)))))

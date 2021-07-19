@@ -20,7 +20,7 @@ public class LexerTest {
             if (fileName.endsWith(".scm")) {
                 lexer = Lexer.getFileLexer(TestUtil.TEST_SICP_FILES_PATH + fileName);
                 System.out.println(fileName);
-                Token<?> token = lexer.nextToken();
+                Token token = lexer.nextToken();
                 while (token.getType() != TokenType.EOF) {
                     System.out.print(token);
                     System.out.print(" ");
@@ -44,7 +44,7 @@ public class LexerTest {
                     if (line.length() == 0 || line.startsWith(";"))
                         continue;
                     lexer = Lexer.getLineLexer(line, i);
-                    Token<?> token = lexer.nextToken();
+                    Token token = lexer.nextToken();
                     while (token != null) {
                         System.out.print(token);
                         System.out.print(" ");
@@ -59,7 +59,7 @@ public class LexerTest {
     @Test
     public void peekToken() throws IOException {
         Lexer lexer = Lexer.getLineLexer("(define x \"a\")", 1);
-        Token<?> token = lexer.nextToken();
+        Token token = lexer.nextToken();
         assertEquals("(", token.toString());
         token = lexer.peekToken();
         assertEquals("define", token.toString());

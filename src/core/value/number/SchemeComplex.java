@@ -1,4 +1,4 @@
-package core.number;
+package core.value.number;
 
 public class SchemeComplex extends SchemeNumber {
     private final SchemeNumber real;
@@ -62,8 +62,8 @@ public class SchemeComplex extends SchemeNumber {
     }
 
     @Override
-    public double getValue() {
-        return real.getValue();
+    public Double getJavaValue() {
+        return real.getJavaValue();
     }
 
     @Override
@@ -78,7 +78,7 @@ public class SchemeComplex extends SchemeNumber {
 
     @Override
     public SchemeReal down() {
-        return new SchemeReal(real.getValue());
+        return new SchemeReal(real.getJavaValue());
     }
 
     @Override
@@ -96,22 +96,17 @@ public class SchemeComplex extends SchemeNumber {
 
         // 如果虚数和实数都是exact的，返回两者的exact的表示。
         if (isExact()) {
-            String sign = imag.getValue() >= 0 ? "+" : "";
+            String sign = imag.getJavaValue() >= 0 ? "+" : "";
             return real + sign + imag + "i";
         }
 
         // 如果虚数是exact的，并且为0,去掉虚数部分。
-        if (imag.isExact() && imag.getValue() == 0)
+        if (imag.isExact() && imag.getJavaValue() == 0)
             return real.toString();
 
         //只要虚数或实数有一个不是exact的，虚数和实数就都是inexact的。
-        String sign = imag.getValue() >= 0 ? "+" : "";
-        return real.getValue() + sign + imag.getValue() + "i";
+        String sign = imag.getJavaValue() >= 0 ? "+" : "";
+        return real.getJavaValue() + sign + imag.getJavaValue() + "i";
     }
 
-    public static void main(String[] args) {
-        SchemeComplex complex10 = new SchemeComplex(
-                new SchemeRational(3, 2),
-                new SchemeRational(-4, 3));
-    }
 }

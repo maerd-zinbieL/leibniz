@@ -1,6 +1,6 @@
-package core.number;
+package core.value.number;
 
-import exception.BaseException;
+import core.exception.BaseException;
 
 public class SchemeReal extends SchemeNumber {
     private final double value;
@@ -9,7 +9,7 @@ public class SchemeReal extends SchemeNumber {
         this.value = value;
     }
 
-    public double getValue() {
+    public Double getJavaValue() {
         return value;
     }
 
@@ -144,13 +144,5 @@ public class SchemeReal extends SchemeNumber {
         } else {
             return sign + scientificToString(valueStr, isScientific);
         }
-    }
-
-    public static void main(String[] args) {
-        SchemeReal schemeReal5 = new SchemeReal(0e2323);
-        System.out.println(schemeReal5.toString());
-        SchemeRational schemeRational = schemeReal5.down();
-        String rep = schemeRational.toString();
-        System.out.println(rep);
     }
 }

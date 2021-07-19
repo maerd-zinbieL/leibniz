@@ -1,4 +1,4 @@
-package core.number;
+package core.value.number;
 
 public class SchemeInteger extends SchemeNumber {
     private final long value;
@@ -13,8 +13,8 @@ public class SchemeInteger extends SchemeNumber {
     }
 
     @Override
-    public double getValue() {
-        return value;
+    public Double getJavaValue() {
+        return (double) value;
     }
 
     @Override

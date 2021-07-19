@@ -1,6 +1,6 @@
 package parse;
 
-import exception.LexerException;
+import core.exception.LexerException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,21 +42,21 @@ public class CharTokenTest {
     public void lex() {
         CharToken token1 = CharToken.lex(lines[0], 8, 1);
         assertEquals(15, token1.getEnd());
-        assertEquals(SPACE, (char)token1.getValue());
+        assertEquals(SPACE, (char)token1.getSchemeValue().getJavaValue());
         assertEquals(8, token1.getColNum());
 
         CharToken token2 = CharToken.lex(lines[1], 8, 2);
         assertEquals(17, token2.getEnd());
-        assertEquals(NEWLINE, (char) token2.getValue());
+        assertEquals(NEWLINE, (char) token2.getSchemeValue().getJavaValue());
         assertEquals(2, token2.getLineNum());
 
         CharToken token5 = CharToken.lex(lines[4], 8, 1);
         assertEquals(11, token5.getEnd());
-        assertEquals('@', (char) token5.getValue());
+        assertEquals('@', (char) token5.getSchemeValue().getJavaValue());
 
         CharToken token6 = CharToken.lex(lines[6], 0,7);
         assertEquals(3,token6.getEnd());
-        assertEquals(SPACE, (char) token6.getValue());
+        assertEquals(SPACE, (char) token6.getSchemeValue().getJavaValue());
 
         // TODO: 2021/7/14 token-char-test0.scm line 8
 //        CharToken token7 = CharToken.lex(lines[7], 0, 8);
