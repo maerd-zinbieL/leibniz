@@ -50,18 +50,10 @@ public class ASTNode implements Iterable<ASTNode> {
         children.add(node);
     }
 
-    public ASTNode getFirstChild() {
+    public ASTNode getChild(int index) {
         if (isLeaf())
             return null;
-        return children.get(0);
-    }
-
-    public ASTNode nextChild() {
-        if (isLeaf())
-            return null;
-        ASTNode node = children.remove(0);
-        childrenCount--;
-        return node;
+        return children.get(index);
     }
 
     public int getChildrenCount() {

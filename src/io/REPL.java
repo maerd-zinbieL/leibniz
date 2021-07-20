@@ -81,7 +81,7 @@ public class REPL extends JFrame {
             String result = null;
             String inputText = input.getText();
             try {
-                result = REPLEval.evalExpression(inputText).toString();
+                result = REPLEval.evalLine(inputText);
             } catch (Exception exception) {
                 result = exception.getClass().toString() + ": " + exception.getMessage();
             } finally {
