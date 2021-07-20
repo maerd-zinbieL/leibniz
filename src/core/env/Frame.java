@@ -1,8 +1,8 @@
 package core.env;
 
 import core.exception.EvalException;
-import core.value.SchemeValue;
-import parse.token.Token;
+import core.value.*;
+import core.value.number.SchemeNumber;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -54,6 +54,11 @@ public class Frame {
     }
 
     public void defineVariable(String varName, SchemeValue<?> value) {
+        assert value instanceof SchemeNumber ||
+                value instanceof SchemeBoolean ||
+                value instanceof SchemeString ||
+                value instanceof SchemeCharacter ||
+                value instanceof SchemeQuotation;
         varTable.put(varName, value);
     }
 
