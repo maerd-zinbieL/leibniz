@@ -46,6 +46,6 @@ public class StringToken extends Token {
 
     @Override
     public String toString() {
-        return "\"" + value + "\"";
+        return value.toString();
     }
 }

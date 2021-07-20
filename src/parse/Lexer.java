@@ -139,15 +139,4 @@ public class Lexer {
         fillBufferIfEmpty();
         return tokensBuffer.peek();
     }
-
-    public static void main(String[] args) throws IOException {
-        String fileName = "./test-resources/token/token-mixed-test1.scm";
-        Lexer lexer = getFileLexer(fileName);
-        Token token = lexer.nextToken();
-        while (token.getType() != TokenType.EOF) {
-            System.out.println(token.getSchemeValue());
-            token = lexer.nextToken();
-        }
-        System.out.println(token.getSchemeValue());
-    }
 }

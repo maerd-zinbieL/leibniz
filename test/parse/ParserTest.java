@@ -46,8 +46,8 @@ public class ParserTest {
         assertEquals(' ', tokens[4].getSchemeValue().getJavaValue());
         assertEquals('a', tokens[5].getSchemeValue().getJavaValue());
         assertEquals('b', tokens[6].getSchemeValue().getJavaValue());
-        assertEquals("scheme", tokens[7].getSchemeValue().toString());
-        assertEquals("lambda", tokens[8].getSchemeValue().toString());
+        assertEquals("\"scheme\"", tokens[7].getSchemeValue().toString());
+        assertEquals("\"lambda\"", tokens[8].getSchemeValue().toString());
         assertEquals("define", tokens[9].getSchemeValue().toString());
         assertEquals("x", tokens[10].getSchemeValue().toString());
         assertEquals("square", tokens[11].getSchemeValue().toString());

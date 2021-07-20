@@ -1,6 +1,6 @@
 package core.value;
 
-public class SchemeString extends SchemeValue<String>{
+public class SchemeString extends SchemeValue<String> {
 
     public SchemeString(String value) {
         this.value = value;
@@ -13,6 +13,6 @@ public class SchemeString extends SchemeValue<String>{
 
     @Override
     public String toString() {
-        return value;
+        return "\"" + value + "\"";
     }
 }

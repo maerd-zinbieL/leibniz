@@ -36,8 +36,8 @@ public class Parser {
             if (isInQuote &&
                     token.getType() == TokenType.Punctuator &&
                     (token.toString().equals(",") || token.toString().equals(",@"))) {
-                parseQuote(vector, token );
-            }else {
+                parseQuote(vector, token);
+            } else {
                 vector.addChild(parseExpression(token, isInQuote));
             }
             token = nextToken();
@@ -80,9 +80,8 @@ public class Parser {
             if (isInQuote &&
                     token.getType() == TokenType.Punctuator &&
                     (token.toString().equals(",") || token.toString().equals(",@"))) {
-                parseQuote(list, token );
-            }
-            else {
+                parseQuote(list, token);
+            } else {
                 list.addChild(parseExpression(token, false));
             }
             token = nextToken();
@@ -91,7 +90,7 @@ public class Parser {
         list.addChild(new ASTNode(token));
     }
 
-    private void parseQuote(ASTNode quote,  Token token) throws IOException {
+    private void parseQuote(ASTNode quote, Token token) throws IOException {
         if (token.getType() == TokenType.Punctuator &&
                 token.toString().equals(",")) {
             quote.addChild(new ASTNode(
@@ -134,7 +133,7 @@ public class Parser {
                     (new PunctuatorToken("(", -1, -1, -1)));
             quote.addChild(new ASTNode(
                     new IdentifierToken("quasiquote", -1, -1, -1)));
-            parseQuote(quote,nextToken());
+            parseQuote(quote, nextToken());
             quote.addChild(new ASTNode(
                     new PunctuatorToken(")", -1, -1, -1)));
         }
@@ -155,7 +154,12 @@ public class Parser {
             return vector;
         }
         if (isQuoteAbbrevStart(token)) {
-            ASTNode quote = new ASTNode(NodeType.QUOTE);
+            ASTNode quote;
+            if (token.toString().equals("'"))
+                quote = new ASTNode(NodeType.QUOTE);
+            else {
+                quote = new ASTNode(NodeType.QUASIQUOTE);
+            }
             parseQuoteAbbrev(quote, token);
             return quote;
         }
@@ -170,7 +174,7 @@ public class Parser {
     private boolean isQuoteAbbrevStart(Token token) {
         if (token.getType() != TokenType.Punctuator)
             return false;
-        String value =  token.toString();
+        String value = token.toString();
         return value.equals("`") ||
                 value.equals("'");
     }
@@ -208,7 +212,7 @@ public class Parser {
                 token.getType() == TokenType.Punctuator &&
                 (token.toString().equals(",") || token.toString().equals(",@"))) {
             ASTNode quote = new ASTNode(NodeType.QUOTE);
-            parseQuote(quote, token );
+            parseQuote(quote, token);
             return quote;
         }
         throw new ParserException("syntax error in " + sourceFile + " token :" + token);
@@ -241,10 +245,5 @@ public class Parser {
     public static ASTNode parseFile(String sourceFile) throws IOException {
         Parser parser = new Parser(Lexer.getFileLexer(sourceFile));
         return parser.parseProgram();
-    }
-
-    public static void main(String[] args) throws IOException {
-        String line = "(list 1 2 3)";
-        System.out.println(Parser.parseLine(line, 1)[0]);
     }
 }

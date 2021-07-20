@@ -225,7 +225,6 @@ public class NumberToken extends Token {
 
     private static SchemeNumber getSchemeReal(int start, int expValue) {
         double value = readSoFar2Double();
-//        System.out.println(expValue);
         if (value != 0) {
             value = value * Math.pow(10, expValue);
         }

@@ -42,7 +42,7 @@ public class StringTokenTest {
         assertEquals(26, token1.getEnd());
 
         Token token2 = StringToken.lex(lines[1], 1, 1);
-        assertEquals("\\\"Hello \\\\World!\\\"", token2.getSchemeValue().toString());
+        assertEquals("\"\\\"Hello \\\\World!\\\"\"", token2.getSchemeValue().toString());
 
         Token token3 = StringToken.lex(lines[2], 1, 0);
         assertEquals("Hello World!", token3.getSchemeValue().getJavaValue());
@@ -51,6 +51,6 @@ public class StringTokenTest {
         Token token4 = StringToken.lex(lines[3], 1, 0);
         assertEquals("\\\"Hello \\nWorld!\\\"", token4.getSchemeValue().getJavaValue());
         Token token5 = StringToken.lex(lines[4], 1, 0);
-        assertEquals("\\\"Hello \\r\\nWorld!\\\"", token5.getSchemeValue().toString());
+        assertEquals("\"\\\"Hello \\r\\nWorld!\\\"\"", token5.getSchemeValue().toString());
     }
 }

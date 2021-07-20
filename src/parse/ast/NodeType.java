@@ -5,5 +5,6 @@ public enum NodeType {
     LIST,
     VECTOR,
     QUOTE,
+    QUASIQUOTE,
     PROGRAM
 }
