@@ -17,6 +17,9 @@ public class Eval {
         if (EvalVariable.isVariable(node)) {
             return EvalVariable.eval(node, env);
         }
+        if (EvalLambda.isLambda(node)) {
+            return EvalLambda.eval(node, env);
+        }
         throw new EvalException("unknown expression type");
     }
 }

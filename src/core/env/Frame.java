@@ -2,7 +2,9 @@ package core.env;
 
 import core.exception.EvalException;
 import core.value.*;
+import core.value.number.SchemeInteger;
 import core.value.number.SchemeNumber;
+import core.value.number.SchemeReal;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -58,8 +60,38 @@ public class Frame {
                 value instanceof SchemeBoolean ||
                 value instanceof SchemeString ||
                 value instanceof SchemeCharacter ||
-                value instanceof SchemeQuotation;
+                value instanceof SchemeQuotation ||
+                value instanceof SchemePair ||
+                value instanceof SchemeClosure;
         varTable.put(varName, value);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        Frame current = this;
+        while (current.preFrame != null) {
+            sb.append(current.varTable);
+            sb.append(" -> ");
+            current = current.preFrame;
+        }
+        sb.append(current.varTable);
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Frame init = new Frame();
+        init.defineVariable("pi", new SchemeReal(3.14));
+
+        Frame next1 = new Frame();
+        next1.setPreFrame(init);
+
+        next1.defineVariable("pi2", new SchemeReal(6.28));
+
+        next1.defineVariable("pi", new SchemeInteger(0));
+
+        Frame next2 = new Frame();
+        next1.extendFrame(next2);
+
+    }
 }

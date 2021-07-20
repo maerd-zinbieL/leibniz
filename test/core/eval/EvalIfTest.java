@@ -3,6 +3,7 @@ package core.eval;
 import core.env.Frame;
 import core.env.InitEnv;
 import core.value.SchemeValue;
+import core.value.number.SchemeNumber;
 import org.junit.Test;
 import parse.Parser;
 import parse.ast.ASTNode;
@@ -28,6 +29,7 @@ public class EvalIfTest {
 
         ASTNode node2 = Parser.parseLine("(if x x 0)", 1)[0];
         SchemeValue<?> value = EvalIf.eval(node2, global);
+        assertTrue(value instanceof SchemeNumber);
         assertEquals("2", value.toString());
     }
 }

@@ -47,4 +47,22 @@ public class FrameTest {
 
     }
 
+    @Test
+    public void testToString() {
+        Frame init = new Frame();
+        init.defineVariable("pi", new SchemeReal(3.14));
+
+        Frame next1 = new Frame();
+        next1.setPreFrame(init);
+
+        next1.defineVariable("pi2", new SchemeReal(6.28));
+
+        next1.defineVariable("pi", new SchemeInteger(0));
+
+        Frame next2 = new Frame();
+        next1.extendFrame(next2);
+
+        assertEquals("{} -> {pi2=6.28, pi=0} -> {pi=3.14}", next2.toString());
+
+    }
 }

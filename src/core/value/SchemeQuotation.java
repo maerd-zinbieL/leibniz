@@ -3,19 +3,19 @@ package core.value;
 import parse.ast.ASTNode;
 
 public class SchemeQuotation extends SchemeValue<ASTNode> {
-    private final ASTNode node;
+    private final ASTNode code;
 
-    public SchemeQuotation(ASTNode node) {
-        this.node = node;
+    public SchemeQuotation(ASTNode code) {
+        this.code = code;
     }
 
     @Override
     public ASTNode getJavaValue() {
-        return node;
+        return code;
     }
 
     @Override
     public String toString() {
-        return node.toString();
+        return code.toString();
     }
 }
