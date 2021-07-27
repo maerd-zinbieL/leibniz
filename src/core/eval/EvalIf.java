@@ -1,11 +1,9 @@
 package core.eval;
 
 import core.env.Frame;
-import core.exception.EvalException;
 import core.value.SchemeBoolean;
 import core.value.SchemeValue;
 import parse.ast.ASTNode;
-import parse.token.Token;
 
 public class EvalIf {
     private static boolean isTrue(SchemeValue<?> value) {

@@ -57,7 +57,7 @@ public class REPL extends JFrame {
     }
 
     private void checkCurrentY(int height) {
-        if (currentY + height >= FRAME_HEIGHT) {
+        if (currentY + height + V_GAP >= FRAME_HEIGHT) {
             for (Component component : boxContainer.getComponents()) {
                 boxContainer.remove(component);
             }
@@ -132,6 +132,7 @@ class REPLInputField extends JTextField {
         requestFocus();
         setBackground(Color.darkGray);
         setForeground(Color.white);
+        setCaretColor(Color.WHITE);
         setVisible(true);
         setBounds(x, y, width, height);
         setFont(font);

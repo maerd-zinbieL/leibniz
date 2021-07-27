@@ -20,6 +20,12 @@ public class Eval {
         if (EvalLambda.isLambda(node)) {
             return EvalLambda.eval(node, env);
         }
+        if (EvalIf.isIf(node)) {
+            return EvalIf.eval(node, env);
+        }
+        if (EvalBegin.isBegin(node)) {
+            return EvalBegin.eval(node, env);
+        }
         throw new EvalException("unknown expression type");
     }
 }
