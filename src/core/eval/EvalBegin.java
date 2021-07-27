@@ -29,9 +29,9 @@ public class EvalBegin {
 
     public static void main(String[] args) throws IOException {
         Frame global = InitEnv.getInstance();
-        String code = "(begin 2)";
+        String code = "(begin + ";
         ASTNode node = Parser.parseLine(code, 1)[0];
-        SchemeValue<?> result = eval(node, global);
+        SchemeValue<?> result = Eval.evalExpr(node, global);
         System.out.println(result);
     }
 }

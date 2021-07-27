@@ -15,8 +15,10 @@
    
    - [ ] full test
    - [ ] throw core.exception when parsing `(x ,@y z ... )
+   - [ ] 右括号缺失（目前直接报NullPointerException)
    
 3. ###### repl
+   
    - [ ] 滚动或者清除组件
    - [ ] 括号匹配
    
