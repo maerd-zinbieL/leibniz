@@ -73,6 +73,10 @@ public class SchemeRealTest {
 
         SchemeReal schemeReal2 = new SchemeReal(+3.14);
         assertEquals("157/50", schemeReal2.toExact().toString());
+
+        SchemeReal schemeReal3 = new SchemeReal(3.0);
+        System.out.println(schemeReal3.toExact());
+        assertEquals("3", schemeReal3.toExact().toString());
     }
 
     @Test

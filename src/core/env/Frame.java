@@ -56,7 +56,8 @@ public class Frame {
     }
 
     public void defineVariable(String varName, SchemeValue<?> value) {
-        assert value instanceof SchemeNumber ||
+        assert value instanceof Primitive ||
+                value instanceof SchemeNumber ||
                 value instanceof SchemeBoolean ||
                 value instanceof SchemeString ||
                 value instanceof SchemeCharacter ||

@@ -3,6 +3,7 @@ package core.eval;
 import core.env.Frame;
 import core.env.InitEnv;
 import core.exception.EvalException;
+import core.value.Primitive;
 import core.value.SchemeClosure;
 import core.value.SchemeValue;
 import parse.Parser;
@@ -11,7 +12,7 @@ import parse.ast.NodeType;
 
 import java.io.IOException;
 
-public class EvalApplication {
+public class Apply {
     private static SchemeValue<?>[] getArguments(ASTNode app, Frame env) {
         int childrenCount = app.getChildrenCount();
         SchemeValue<?>[] arguments = new SchemeValue<?>[childrenCount - 3];
@@ -27,25 +28,27 @@ public class EvalApplication {
 
     private static String[] getParameters(SchemeClosure closure) {
         ASTNode parameterNode = closure.getParameters();
-        String[]  parameters = new String[parameterNode.getChildrenCount()-2];
+        String[] parameters = new String[parameterNode.getChildrenCount() - 2];
         for (int i = 0; i < parameters.length; i++) {
-            parameters[i] = parameterNode.getChild(i+1).toString();
+            parameters[i] = parameterNode.getChild(i + 1).toString();
         }
         return parameters;
     }
-    public static SchemeValue<?> eval(ASTNode app, Frame env) {
-        ASTNode operatorNode = app.getChild(1);
-        SchemeValue<?> operator = Eval.evalExpr(operatorNode, env);
-        if (operator.getClass() != SchemeClosure.class) {
-            throw new EvalException(operatorNode.toString() + " is not a procedure");
-        }
-        ASTNode body = ((SchemeClosure) operator).getBody();
-        String[] parameters = getParameters((SchemeClosure) operator);
+
+    private static SchemeValue<?> applyPrimitive(Primitive operator, ASTNode app, Frame env) {
         SchemeValue<?>[] arguments = getArguments(app, env);
-        if (parameters.length  != arguments.length) {
+        return operator.apply(arguments);
+    }
+
+    private static SchemeValue<?> applyCompound(SchemeClosure operator, ASTNode app, Frame env) {
+        String[] parameters = getParameters(operator);
+        SchemeValue<?>[] arguments = getArguments(app, env);
+        if (parameters.length != arguments.length) {
             throw new EvalException("incorrect number of arguments to procedure: "
-                    + operatorNode.toString());
+                    + app.getChild(1).toString());
         }
+        ASTNode body = operator.getBody();
+
         Frame appEnv = new Frame();
         for (int i = 0; i < arguments.length; i++) {
             String varName = parameters[i];
@@ -53,6 +56,17 @@ public class EvalApplication {
         }
         appEnv.setPreFrame(env);
         return EvalSequence.eval(body, appEnv);
+    }
+
+    public static SchemeValue<?> apply(ASTNode app, Frame env) {
+        SchemeValue<?> operator = Eval.evalExpr(app.getChild(1), env);
+        if (operator.getClass() == Primitive.class) {
+            return applyPrimitive((Primitive) operator, app, env);
+        }
+        if (operator.getClass() == SchemeClosure.class) {
+            return applyCompound((SchemeClosure) operator, app, env);
+        }
+        throw new EvalException(app.getChild(1).toString() + " is not a procedure");
     }
 
     public static void main(String[] args) throws IOException {

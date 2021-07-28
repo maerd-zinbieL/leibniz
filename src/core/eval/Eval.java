@@ -23,11 +23,8 @@ public class Eval {
         if (EvalIf.isIf(node)) {
             return EvalIf.eval(node, env);
         }
-        if (EvalBegin.isBegin(node)) {
-            return EvalBegin.eval(node, env);
-        }
-        if (EvalApplication.isApplication(node)) {
-            return EvalApplication.eval(node, env);
+        if (Apply.isApplication(node)) {
+            return Apply.apply(node, env);
         }
         throw new EvalException("unknown expression type");
     }
