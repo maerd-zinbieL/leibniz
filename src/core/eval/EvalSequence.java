@@ -1,6 +1,7 @@
 package core.eval;
 
 import core.env.Frame;
+import core.exception.EvalException;
 import core.value.SchemeNil;
 import core.value.SchemeValue;
 import parse.ast.ASTNode;
@@ -8,6 +9,9 @@ import parse.ast.ASTNode;
 class EvalSequence {
     public static SchemeValue<?> eval(ASTNode node, Frame env) {
         int childrenCount = node.getChildrenCount();
+        if (childrenCount < 2) {
+            throw new EvalException("not a sequence");
+        }
         if (childrenCount == 2) {
             // '()
             return new SchemeNil();

@@ -11,8 +11,7 @@ public class EvalLambda {
                 node.getChildrenCount() == 5 &&
                 node.getChild(1).isLeaf() &&
                 node.getChild(1).toString().equals("lambda") &&
-                node.getChild(2).getType() == NodeType.LIST &&
-                node.getChild(3).getType() == NodeType.LIST;
+                node.getChild(2).getType() == NodeType.LIST;
     }
 
     public static SchemeClosure eval(ASTNode node, Frame env) {

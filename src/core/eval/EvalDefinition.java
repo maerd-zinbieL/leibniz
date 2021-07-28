@@ -12,8 +12,9 @@ public class EvalDefinition {
 
     public static boolean isDefinition(ASTNode node) {
         if (node.getType() == NodeType.LIST ) {
-            Token first = node.getChild(1).getToken();
-            return first.getType() == TokenType.Identifier &&
+            ASTNode first = node.getChild(1);
+            return  first.isLeaf() &&
+                    first.getToken().getType() == TokenType.Identifier &&
                     first.toString().equals("define");
         }
         return false;

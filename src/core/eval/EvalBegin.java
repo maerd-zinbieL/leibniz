@@ -29,7 +29,7 @@ public class EvalBegin {
 
     public static void main(String[] args) throws IOException {
         Frame global = InitEnv.getInstance();
-        String code = "(begin + ";
+        String code = "(begin 1 2 3)";
         ASTNode node = Parser.parseLine(code, 1)[0];
         SchemeValue<?> result = Eval.evalExpr(node, global);
         System.out.println(result);

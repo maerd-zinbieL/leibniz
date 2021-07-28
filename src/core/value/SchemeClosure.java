@@ -2,6 +2,8 @@ package core.value;
 
 import core.env.Frame;
 import parse.ast.ASTNode;
+import parse.ast.NodeType;
+import parse.token.PunctuatorToken;
 
 public class SchemeClosure extends SchemeValue<ASTNode> {
     private final ASTNode code;
@@ -13,7 +15,11 @@ public class SchemeClosure extends SchemeValue<ASTNode> {
     }
 
     public ASTNode getBody() {
-        return code.getChild(3);
+        ASTNode body = new ASTNode(NodeType.LIST);
+        body.addChild(new ASTNode(new PunctuatorToken("(", -1, -1, -1)));
+        body.addChild(code.getChild(3));
+        body.addChild(new ASTNode(new PunctuatorToken(")", -1, -1, -1)));
+        return body;
     }
 
     public ASTNode getParameters() {

@@ -21,6 +21,9 @@ public class EvalLambdaTest {
 
         node = Parser.parseLine("( lambda (x y z) (+ x (* x 2) 1) (what)) ", 1)[0];
         assertFalse(EvalLambda.isLambda(node));
+
+        node = Parser.parseLine("(lambda (x) x) ", 1)[0];
+        assertTrue(EvalLambda.isLambda(node));
     }
 
     @Test
@@ -38,5 +41,7 @@ public class EvalLambdaTest {
         value = Eval.evalExpr(node, global);
         assertEquals("( lambda ( x y )  ( + ( * x x )  ( * y y )  )  ) ",value.toString());
 
+        node = Parser.parseLine("(lambda (x) x) ", 1)[0];
+        assertEquals("( lambda ( x )  x ) ",EvalLambda.eval(node,global).toString());
     }
 }
