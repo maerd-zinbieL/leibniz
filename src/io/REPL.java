@@ -82,8 +82,13 @@ public class REPL extends JFrame {
             String inputText = input.getText();
             try {
                 result = REPLEval.evalLine(inputText);
-            } catch (Exception exception) {
-                result = exception.getClass().toString() + ": " + exception.getMessage();
+            } catch (Exception | Error exception) {
+
+                result = exception.toString();
+                String msg = exception.getMessage();
+                if (msg != null) {
+                    result = result + " : " + msg;
+                }
             } finally {
                 currentY = currentY + INPUT_LINE_HEIGHT + V_GAP;
                 textOutput(result);

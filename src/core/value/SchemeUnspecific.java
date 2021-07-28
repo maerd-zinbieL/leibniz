@@ -3,7 +3,7 @@ package core.value;
 public class SchemeUnspecific extends SchemeValue<String> {
     @Override
     public String toString() {
-        return "unspecific";
+        return "#unspecific";
     }
 
     @Override
