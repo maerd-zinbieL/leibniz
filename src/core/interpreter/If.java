@@ -1,11 +1,11 @@
-package core.eval;
+package core.interpreter;
 
 import core.env.Frame;
 import core.value.SchemeBoolean;
 import core.value.SchemeValue;
 import parse.ast.ASTNode;
 
-public class EvalIf {
+public class If {
     private static boolean isTrue(SchemeValue<?> value) {
         if (!(value instanceof SchemeBoolean))
             return true;

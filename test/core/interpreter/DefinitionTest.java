@@ -1,4 +1,4 @@
-package core.eval;
+package core.interpreter;
 
 import core.env.Frame;
 import core.env.InitEnv;
@@ -10,12 +10,12 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class EvalDefinitionTest {
+public class DefinitionTest {
 
     @Test
     public void isDefinition() throws IOException {
         ASTNode node = Parser.parseLine("(define x 10)", 1)[0];
-        assertTrue(EvalDefinition.isDefinition(node));
+        assertTrue(Definition.isDefinition(node));
     }
 
     @Test
@@ -23,15 +23,15 @@ public class EvalDefinitionTest {
         Frame global = InitEnv.getInstance();
 
         ASTNode node1 = Parser.parseLine("(define x 10)", 1)[0];
-        EvalDefinition.eval(node1, global);
+        Definition.eval(node1, global);
         assertEquals("10",
-                EvalVariable.eval(
+                Variable.eval(
                         Parser.parseLine("x", 1)[0], global).toString()
         );
 
         ASTNode node2 = Parser.parseLine("(define y x)", 1)[0];
-        EvalDefinition.eval(node2, global);
-        assertEquals("10", EvalVariable.eval(
+        Definition.eval(node2, global);
+        assertEquals("10", Variable.eval(
                 Parser.parseLine("y", 2)[0], global).toString()
         );
 

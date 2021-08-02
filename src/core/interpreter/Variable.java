@@ -1,12 +1,11 @@
-package core.eval;
+package core.interpreter;
 
 import core.env.Frame;
 import core.value.SchemeValue;
 import parse.ast.ASTNode;
-import parse.ast.NodeType;
 import parse.token.TokenType;
 
-public class EvalVariable {
+public class Variable {
     public static boolean isVariable(ASTNode node) {
         return node.isLeaf()&&
                 node.getToken().getType() == TokenType.Identifier;

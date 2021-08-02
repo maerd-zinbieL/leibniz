@@ -1,4 +1,4 @@
-package core.eval;
+package core.interpreter;
 
 import core.env.Frame;
 import core.env.InitEnv;
@@ -12,12 +12,12 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class EvalIfTest {
+public class IfTest {
 
     @Test
     public void isIf() throws IOException {
         ASTNode node = Parser.parseLine("(if (= x 0) x (+ x y))", 1)[0];
-        assertTrue(EvalIf.isIf(node));
+        assertTrue(If.isIf(node));
     }
 
     @Test
@@ -25,10 +25,10 @@ public class EvalIfTest {
         Frame global = InitEnv.getInstance();
 
         ASTNode node1 = Parser.parseLine("(define x 2)", 1)[0];
-        EvalDefinition.eval(node1, global);
+        Definition.eval(node1, global);
 
         ASTNode node2 = Parser.parseLine("(if x x 0)", 1)[0];
-        SchemeValue<?> value = EvalIf.eval(node2, global);
+        SchemeValue<?> value = If.eval(node2, global);
         assertTrue(value instanceof SchemeNumber);
         assertEquals("2", value.toString());
     }

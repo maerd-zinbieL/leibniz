@@ -1,4 +1,4 @@
-package core.eval;
+package core.interpreter;
 
 import core.env.Frame;
 import core.env.InitEnv;
@@ -55,7 +55,7 @@ public class Apply {
             appEnv.defineVariable(varName, arguments[i]);
         }
         appEnv.setPreFrame(env);
-        return EvalSequence.eval(body, appEnv);
+        return Sequence.eval(body, appEnv);
     }
 
     public static SchemeValue<?> apply(ASTNode app, Frame env) {

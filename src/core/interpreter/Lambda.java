@@ -1,11 +1,11 @@
-package core.eval;
+package core.interpreter;
 
 import core.env.Frame;
 import core.value.SchemeClosure;
 import parse.ast.ASTNode;
 import parse.ast.NodeType;
 
-public class EvalLambda {
+public class Lambda {
     public static boolean isLambda(ASTNode node) {
         return node.getType() == NodeType.LIST &&
                 node.getChildrenCount() == 5 &&

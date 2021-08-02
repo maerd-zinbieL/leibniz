@@ -1,4 +1,4 @@
-package core.eval;
+package core.interpreter;
 
 import core.env.Frame;
 import core.env.InitEnv;
@@ -12,25 +12,25 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class EvalLambdaTest {
+public class LambdaTest {
 
     @Test
     public void isLambda() throws IOException {
         ASTNode node = Parser.parseLine("( lambda (x) (+ x (* x 2) 1))", 1)[0];
-        assertTrue(EvalLambda.isLambda(node));
+        assertTrue(Lambda.isLambda(node));
 
         node = Parser.parseLine("( lambda (x y z) (+ x (* x 2) 1) (what)) ", 1)[0];
-        assertFalse(EvalLambda.isLambda(node));
+        assertFalse(Lambda.isLambda(node));
 
         node = Parser.parseLine("(lambda (x) x) ", 1)[0];
-        assertTrue(EvalLambda.isLambda(node));
+        assertTrue(Lambda.isLambda(node));
     }
 
     @Test
     public void eval() throws IOException {
         Frame global = InitEnv.getInstance();
         ASTNode node = Parser.parseLine("(lambda (x) ((lambda (y) (+ x y)) x))", 1)[0];
-        SchemeClosure lambda = EvalLambda.eval(node, global);
+        SchemeClosure lambda = Lambda.eval(node, global);
         assertEquals("( lambda ( x )  ( ( lambda ( y )  ( + x y )  )  x )  ) ", lambda.toString());
 
 
@@ -42,6 +42,6 @@ public class EvalLambdaTest {
         assertEquals("( lambda ( x y )  ( + ( * x x )  ( * y y )  )  ) ",value.toString());
 
         node = Parser.parseLine("(lambda (x) x) ", 1)[0];
-        assertEquals("( lambda ( x )  x ) ",EvalLambda.eval(node,global).toString());
+        assertEquals("( lambda ( x )  x ) ", Lambda.eval(node,global).toString());
     }
 }

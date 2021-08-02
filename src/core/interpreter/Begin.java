@@ -1,4 +1,4 @@
-package core.eval;
+package core.interpreter;
 
 import core.env.Frame;
 import core.env.InitEnv;
@@ -9,7 +9,7 @@ import parse.ast.NodeType;
 
 import java.io.IOException;
 
-public class EvalBegin {
+public class Begin {
     private static ASTNode getBeginBody(ASTNode node) {
         ASTNode body = new ASTNode(NodeType.LIST);
         body.addChild(node.getChild(0));
@@ -24,14 +24,11 @@ public class EvalBegin {
     }
 
     public static SchemeValue<?> eval(ASTNode node, Frame env) {
-        return EvalSequence.eval(getBeginBody(node), env);
+        return Sequence.eval(getBeginBody(node), env);
     }
 
-    public static void main(String[] args) throws IOException {
-        Frame global = InitEnv.getInstance();
-        String code = "(begin 1 2 3)";
-        ASTNode node = Parser.parseLine(code, 1)[0];
-        SchemeValue<?> result = Eval.evalExpr(node, global);
-        System.out.println(result);
+    public static boolean isReducible() {
+        return false;
     }
+
 }

@@ -1,6 +1,6 @@
 package io;
 
-import core.eval.REPLEval;
+import core.interpreter.REPLEval;
 
 import javax.swing.*;
 import java.awt.*;
