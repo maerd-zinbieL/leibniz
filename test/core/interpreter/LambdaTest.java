@@ -29,19 +29,20 @@ public class LambdaTest {
     @Test
     public void eval() throws IOException {
         Frame global = InitEnv.getInstance();
-        ASTNode node = Parser.parseLine("(lambda (x) ((lambda (y) (+ x y)) x))", 1)[0];
-        SchemeClosure lambda = Lambda.eval(node, global);
+
+        String line = "(lambda (x) ((lambda (y) (+ x y)) x))";
+        Expression expr = Expression.parse(line, 1)[0];
+        SchemeValue<?> lambda = expr.eval(global);
         assertEquals("( lambda ( x )  ( ( lambda ( y )  ( + x y )  )  x )  ) ", lambda.toString());
 
 
-        node = Parser.parseLine("(define x (lambda (x y) (+ (* x x) (* y y))))", 1)[0];
-        SchemeValue<?> value = Eval.evalExpr(node, global);
+        line = "(define x (lambda (x y) (+ (* x x) (* y y))))";
+        expr = Expression.parse(line, 1)[0];
+        expr.eval(global);
+        expr = Expression.parse("x", 2)[0];
+        assertEquals("( lambda ( x y )  ( + ( * x x )  ( * y y )  )  ) ", expr.eval(global).toString());
 
-        node = Parser.parseLine("x", 1)[0];
-        value = Eval.evalExpr(node, global);
-        assertEquals("( lambda ( x y )  ( + ( * x x )  ( * y y )  )  ) ",value.toString());
-
-        node = Parser.parseLine("(lambda (x) x) ", 1)[0];
-        assertEquals("( lambda ( x )  x ) ", Lambda.eval(node,global).toString());
+        expr = Expression.parse("(lambda (x) x) ", 1)[0];
+        assertEquals("( lambda ( x )  x ) ", expr.eval(global).toString());
     }
 }

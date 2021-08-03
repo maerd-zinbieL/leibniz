@@ -24,12 +24,17 @@ public class IfTest {
     public void eval() throws IOException {
         Frame global = InitEnv.getInstance();
 
-        ASTNode node1 = Parser.parseLine("(define x 2)", 1)[0];
-        Definition.eval(node1, global);
+        ASTNode node = Parser.parseLine("(define x 2)", 1)[0];
+        Expression expr = Expression.ast2Expression(node);
+        expr.eval(global);
 
-        ASTNode node2 = Parser.parseLine("(if x x 0)", 1)[0];
-        SchemeValue<?> value = If.eval(node2, global);
+        node = Parser.parseLine("(if x x 0)", 1)[0];
+        expr = Expression.ast2Expression(node);
+        SchemeValue<?> value = expr.eval(global);
         assertTrue(value instanceof SchemeNumber);
         assertEquals("2", value.toString());
+
+        expr = Expression.parse("(if (if (if #f 1 #f) 1 2) 999 0)", 1)[0];
+        assertEquals("999", expr.eval(global).toString());
     }
 }

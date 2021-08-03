@@ -1,34 +1,37 @@
 package core.interpreter;
 
 import core.env.Frame;
-import core.env.InitEnv;
+import core.exception.EvalException;
 import core.value.SchemeValue;
-import parse.Parser;
 import parse.ast.ASTNode;
 import parse.ast.NodeType;
 
-import java.io.IOException;
 
-public class Begin {
-    private static ASTNode getBeginBody(ASTNode node) {
-        ASTNode body = new ASTNode(NodeType.LIST);
-        body.addChild(node.getChild(0));
-        for (int i = 2; i < node.getChildrenCount(); i++) {
-            body.addChild(node.getChild(i));
+public class Begin implements Expression {
+    private final Sequence body;
+
+    public Begin(ASTNode node) {
+        Expression[] expressions = new Expression[node.getChildrenCount() - 3];
+
+        for (int i = 0; i < expressions.length; i++) {
+            expressions[i] = Expression.ast2Expression(node.getChild(i + 2));
         }
-        return body;
+        body = new Sequence(expressions);
     }
 
     public static boolean isBegin(ASTNode node) {
-        return node.getChild(1).toString().equals("begin");
+        return node.getType() == NodeType.LIST &&
+                node.getChildrenCount() >= 3 &&
+                node.getChild(1).toString().equals("begin");
     }
 
-    public static SchemeValue<?> eval(ASTNode node, Frame env) {
-        return Sequence.eval(getBeginBody(node), env);
-    }
-
-    public static boolean isReducible() {
-        return false;
+    @Override
+    public SchemeValue<?> eval(Frame env) {
+        if (body.getLength() == 0) {
+            //(begin) 不合法
+            throw new EvalException("begin: bad syntax");
+        }
+        return body.eval(env);
     }
 
 }

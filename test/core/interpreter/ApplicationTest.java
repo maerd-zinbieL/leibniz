@@ -13,38 +13,43 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class ApplyTest {
+public class ApplicationTest {
 
     @Test
     public void isApplication() {
     }
 
+    private Expression parse(String line) throws IOException {
+        return Expression.parse(line, 0)[0];
+    }
+    private SchemeValue<?> eval(String code, Frame env) throws IOException {
+        Expression expr = parse(code);
+        return expr.eval(env);
+    }
     @Test
-    public void eval() throws IOException {
+    public void evalTest() throws IOException {
         Frame global = InitEnv.getInstance();
+
         String code = "((lambda (a) a) pi)";
-        ASTNode astNode = Parser.parseLine(code, 0)[0];
-        SchemeValue<?> result = Eval.evalExpr(astNode, global);
+        Expression expression = parse(code);
+        assertEquals(Application.class, expression.getClass());
+        SchemeValue<?> result = expression.eval(global);
         assertEquals(SchemeReal.class, result.getClass());
         assertEquals("3.1415926", result.toString());
 
-
         code = "(+ 1 2 3)";
-        astNode = Parser.parseLine(code, 0)[0];
-        result = Eval.evalExpr(astNode, global);
+        result = eval(code, global);
         assertEquals("6", result.toString());
 
         code = "(- 1 2 3)";
-        astNode = Parser.parseLine(code, 0)[0];
-        result = Eval.evalExpr(astNode, global);
+        result = eval(code, global);
         assertEquals("-4", result.toString());
 
         code = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))";
-        astNode = Parser.parseLine(code, 0)[0];
-        Eval.evalExpr(astNode, global);
+        eval(code, global);
         code = "(fib 20)";
-        astNode = Parser.parseLine(code, 0)[0];
-        assertEquals("6765", Eval.evalExpr(astNode, global).toString());
+        result = eval(code, global);
+        assertEquals("6765", result.toString());
     }
 
     @Test(expected = EvalException.class)
@@ -52,33 +57,31 @@ public class ApplyTest {
         Frame global = InitEnv.getInstance();
         String code = "((lambda (a) (a)) pi)";
         ASTNode node = Parser.parseLine(code, 0)[0];
-        Eval.evalExpr(node, global);
+        Expression expression = Expression.ast2Expression(node);
+        expression.eval(global);
     }
 
     @Test(expected = StackOverflowError.class)
     public void evalError2() throws IOException {
         Frame global = InitEnv.getInstance();
         String code = "(define loop (lambda () (loop)))";
-        ASTNode node = Parser.parseLine(code, 0)[0];
-        Eval.evalExpr(node, global);
+        eval(code, global);
 
         code = "(loop)";
-        node = Parser.parseLine(code, 0)[0];
-        Eval.evalExpr(node, global);
+        eval(code, global);
+
     }
 
     @Test
     public void timeTest() throws IOException {
-        String code = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))" +
-                      "(fib 30)";
-        ASTNode define = Parser.parseLine(code, 0)[0];
-        ASTNode run = Parser.parseLine(code, 0)[1];
-
         Frame globalEnv = InitEnv.getInstance();
-        Eval.evalExpr(define, globalEnv);
+
+        String define = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))";
+        String run = "(fib 30)";
+        eval(define, globalEnv);
 
         long startTime = System.currentTimeMillis();
-        Eval.evalExpr(run, globalEnv);
+        eval(run, globalEnv);
         long endTime = System.currentTimeMillis();
         System.out.println(endTime - startTime + "ms");
     }

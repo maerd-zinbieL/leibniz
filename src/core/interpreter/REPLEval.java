@@ -24,7 +24,8 @@ public class REPLEval {
         }
         List<SchemeValue<?>> result = new ArrayList<>();
         for (ASTNode node : Parser.parseLine(line, lineCount)) {
-            result.add(Eval.evalExpr(node, global));
+            Expression expr = Expression.ast2Expression(node);
+            result.add(expr.eval(global));
         }
         lineCount++;
         StringBuilder sb = new StringBuilder();

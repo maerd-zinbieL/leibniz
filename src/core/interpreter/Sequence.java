@@ -6,19 +6,37 @@ import core.value.SchemeNil;
 import core.value.SchemeValue;
 import parse.ast.ASTNode;
 
-class Sequence {
-    public static SchemeValue<?> eval(ASTNode node, Frame env) {
+
+class Sequence implements Expression {
+
+    private final Expression[] expressions;
+    public Sequence(Expression[] expressions) {
+        this.expressions = expressions;
+    }
+    public int getLength() {
+        return expressions.length;
+    }
+    public Sequence(ASTNode node) {
         int childrenCount = node.getChildrenCount();
         if (childrenCount < 2) {
             throw new EvalException("not a sequence");
         }
-        if (childrenCount == 2) {
-            // '()
+        expressions = new Expression[childrenCount - 2];
+        for (int i = 1; i < childrenCount - 1; i++) {
+            expressions[i - 1] = Expression.ast2Expression(node.getChild(i));
+        }
+
+    }
+
+    @Override
+    public SchemeValue<?> eval(Frame env) {
+        int exprCount = expressions.length;
+        if (exprCount == 0) {
             return new SchemeNil();
         }
-        for (int i = 1; i < childrenCount - 2; i++) {
-            Eval.evalExpr(node.getChild(i), env);
+        for (int i = 0; i < exprCount - 1; i++) {
+            expressions[i].eval(env);
         }
-        return Eval.evalExpr(node.getChild(childrenCount - 2), env);
+        return expressions[exprCount - 1].eval(env);
     }
 }

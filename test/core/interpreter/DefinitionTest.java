@@ -16,24 +16,27 @@ public class DefinitionTest {
     public void isDefinition() throws IOException {
         ASTNode node = Parser.parseLine("(define x 10)", 1)[0];
         assertTrue(Definition.isDefinition(node));
+
+        node = Parser.parseLine("x", 1)[0];
+        assertFalse(Definition.isDefinition(node));
+
     }
 
     @Test
     public void eval() throws IOException {
         Frame global = InitEnv.getInstance();
 
-        ASTNode node1 = Parser.parseLine("(define x 10)", 1)[0];
-        Definition.eval(node1, global);
-        assertEquals("10",
-                Variable.eval(
-                        Parser.parseLine("x", 1)[0], global).toString()
-        );
+        Expression expr = Expression.parse("(define x 10)", 1)[0];
+        expr.eval(global);
 
-        ASTNode node2 = Parser.parseLine("(define y x)", 1)[0];
-        Definition.eval(node2, global);
-        assertEquals("10", Variable.eval(
-                Parser.parseLine("y", 2)[0], global).toString()
-        );
+        expr = Expression.parse("x", 2)[0];
+        assertEquals(Variable.class, expr.getClass());
+        assertEquals("10",expr.eval(global).toString());
+
+        expr = Expression.parse("(define y x)", 3)[0];
+        expr.eval(global);
+        expr = Expression.parse("y", 4)[0];
+        assertEquals("10", expr.eval(global).toString());
 
     }
 }

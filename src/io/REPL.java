@@ -10,7 +10,7 @@ import java.util.Objects;
 public class REPL extends JFrame {
     private final JFrame box;
     private final Container boxContainer;
-    private final int FRAME_WIDTH = 900;
+    private final int FRAME_WIDTH = 1000;
     private final int FRAME_HEIGHT = 618;
     private final int V_GAP = 10;
     private final int H_GAP = 10;

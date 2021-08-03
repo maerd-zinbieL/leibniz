@@ -15,5 +15,10 @@ public class Primitive extends SchemeValue<Object>{
     public Object getJavaValue() {
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "#<primitive procedure>";
+    }
 }
 

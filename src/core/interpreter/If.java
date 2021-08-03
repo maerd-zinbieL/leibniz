@@ -5,7 +5,15 @@ import core.value.SchemeBoolean;
 import core.value.SchemeValue;
 import parse.ast.ASTNode;
 
-public class If {
+public class If implements Expression{
+    private final Expression predicateExpr;
+    private final Expression consequentExpr;
+    private final Expression alternativeExpr;
+    public If(ASTNode node) {
+        predicateExpr = Expression.ast2Expression(node.getChild(2));
+        consequentExpr = Expression.ast2Expression(node.getChild(3));
+        alternativeExpr = Expression.ast2Expression(node.getChild(4));
+    }
     private static boolean isTrue(SchemeValue<?> value) {
         if (!(value instanceof SchemeBoolean))
             return true;
@@ -18,14 +26,12 @@ public class If {
                 node.getChild(1).getToken().toString().equals("if");
     }
 
-    public static SchemeValue<?> eval(ASTNode node, Frame env) {
-        SchemeValue<?> predicate = Eval.evalExpr(node.getChild(2), env);
-        ASTNode consequent = node.getChild(3);
-        ASTNode alternative = node.getChild(4);
-        if (isTrue(predicate)) {
-            return Eval.evalExpr(consequent, env);
-        } else {
-            return Eval.evalExpr(alternative, env);
+    @Override
+    public SchemeValue<?> eval(Frame env) {
+        if (isTrue(predicateExpr.eval(env))) {
+            return consequentExpr.eval(env);
+        }else {
+            return alternativeExpr.eval(env);
         }
     }
 }
