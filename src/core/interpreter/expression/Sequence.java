@@ -1,4 +1,4 @@
-package core.interpreter;
+package core.interpreter.expression;
 
 import core.env.Frame;
 import core.exception.EvalException;
@@ -7,7 +7,7 @@ import core.value.SchemeValue;
 import parse.ast.ASTNode;
 
 
-class Sequence implements Expression {
+public class Sequence implements Expression {
 
     private final Expression[] expressions;
     public Sequence(Expression[] expressions) {

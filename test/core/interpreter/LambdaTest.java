@@ -2,7 +2,8 @@ package core.interpreter;
 
 import core.env.Frame;
 import core.env.InitEnv;
-import core.value.SchemeClosure;
+import core.interpreter.expression.Expression;
+import core.interpreter.expression.Lambda;
 import core.value.SchemeValue;
 import org.junit.Test;
 import parse.Parser;

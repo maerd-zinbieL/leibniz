@@ -3,6 +3,8 @@ package core.interpreter;
 import core.env.Frame;
 import core.env.InitEnv;
 import core.exception.EvalException;
+import core.interpreter.expression.Application;
+import core.interpreter.expression.Expression;
 import core.value.SchemeValue;
 import core.value.number.SchemeReal;
 import org.junit.Test;

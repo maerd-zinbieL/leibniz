@@ -2,6 +2,7 @@ package core.interpreter;
 
 import core.env.Frame;
 import core.env.InitEnv;
+import core.interpreter.expression.Expression;
 import core.value.SchemeValue;
 import parse.ast.ASTNode;
 import parse.Parser;
