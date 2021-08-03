@@ -22,6 +22,16 @@ public class Lambda implements Expression {
     }
 
     @Override
+    public boolean isReducible() {
+        return false;
+    }
+
+    @Override
+    public Expression reduce(Frame env) {
+        return null;
+    }
+
+    @Override
     public SchemeValue<?> eval(Frame env) {
         return new SchemeClosure(node, env);
     }

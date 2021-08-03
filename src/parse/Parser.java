@@ -21,6 +21,23 @@ public class Parser {
         this.lexer = lexer;
     }
 
+    public static ASTNode[] parseLine(String line, int lineNum) throws IOException {
+        Parser parser = new Parser(Lexer.getLineLexer(line, lineNum));
+        Token token = parser.nextToken();
+        List<ASTNode> nodeList = new ArrayList<>();
+        while (token != null) {
+            nodeList.add(parser.parseExpression(token, false));
+            token = parser.nextToken();
+        }
+        ASTNode[] nodes = new ASTNode[nodeList.size()];
+        return nodeList.toArray(nodes);
+    }
+
+    public static ASTNode parseFile(String sourceFile) throws IOException {
+        Parser parser = new Parser(Lexer.getFileLexer(sourceFile));
+        return parser.parseProgram();
+    }
+
     private Token nextToken() throws IOException {
         return lexer.nextToken();
     }
@@ -228,22 +245,5 @@ public class Parser {
         assert token.getType() == TokenType.EOF;
         program.addChild(new ASTNode(token));
         return program;
-    }
-
-    public static ASTNode[] parseLine(String line, int lineNum) throws IOException {
-        Parser parser = new Parser(Lexer.getLineLexer(line, lineNum));
-        Token token = parser.nextToken();
-        List<ASTNode> nodeList = new ArrayList<>();
-        while (token != null) {
-            nodeList.add(parser.parseExpression(token, false));
-            token = parser.nextToken();
-        }
-        ASTNode[] nodes = new ASTNode[nodeList.size()];
-        return nodeList.toArray(nodes);
-    }
-
-    public static ASTNode parseFile(String sourceFile) throws IOException {
-        Parser parser = new Parser(Lexer.getFileLexer(sourceFile));
-        return parser.parseProgram();
     }
 }

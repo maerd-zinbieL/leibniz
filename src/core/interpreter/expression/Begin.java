@@ -26,6 +26,16 @@ public class Begin implements Expression {
     }
 
     @Override
+    public boolean isReducible() {
+        return true;
+    }
+
+    @Override
+    public Expression reduce(Frame env) {
+        return body.reduce(env);
+    }
+
+    @Override
     public SchemeValue<?> eval(Frame env) {
         if (body.getLength() == 0) {
             //(begin) 不合法

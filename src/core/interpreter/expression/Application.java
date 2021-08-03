@@ -1,45 +1,56 @@
 package core.interpreter.expression;
 
 import core.env.Frame;
-import core.env.InitEnv;
 import core.exception.EvalException;
 import core.value.Primitive;
 import core.value.SchemeClosure;
 import core.value.SchemeValue;
-import parse.Parser;
 import parse.ast.ASTNode;
 import parse.ast.NodeType;
-
-import java.io.IOException;
 
 public class Application implements Expression {
     private final Expression operatorExpr;
     private final Expression[] argumentsExpr;
+    private boolean isReducible;
+
+    // TODO: 2021/8/3 cache result
+
+    public Application(Expression operatorExpr, Expression[] argumentsExpr) {
+        // reduced
+        this.operatorExpr = operatorExpr;
+        this.argumentsExpr = argumentsExpr;
+        isReducible = false;
+    }
+
 
     public Application(ASTNode app) {
-        argumentsExpr = getArgumentsExpr(app);
-        operatorExpr = Expression.ast2Expression(app.getChild(1));
-    }
-
-    private Expression[] getArgumentsExpr(ASTNode app) {
         int childrenCount = app.getChildrenCount();
-        Expression[] arguments = new Expression[childrenCount - 3];
+        argumentsExpr = new Expression[childrenCount - 3];
         for (int i = 2; i < childrenCount - 1; i++) {
-            arguments[i - 2] = Expression.ast2Expression(app.getChild(i));
+            argumentsExpr[i - 2] = Expression.ast2Expression(app.getChild(i));
         }
-        return arguments;
+
+        operatorExpr = Expression.ast2Expression(app.getChild(1));
+
+        isReducible = calReducibility();
     }
 
-    private SchemeValue<?>[] evalArguments(Frame env) {
-        SchemeValue<?>[] arguments = new SchemeValue[argumentsExpr.length];
-        for (int i = 0; i < arguments.length; i++) {
-            arguments[i] = argumentsExpr[i].eval(env);
+    private boolean calReducibility() {
+        // calculate reducibility
+        for (Expression expr : argumentsExpr) {
+            if (!expr.isReducible()) {
+                return false;
+            }
         }
-        return arguments;
+        return operatorExpr.isReducible();
     }
 
     public static boolean isApplication(ASTNode node) {
         return node.getType() == NodeType.LIST && node.getChildrenCount() > 2;
+    }
+
+    private SchemeValue<?> applyPrimitive(Primitive operator, SchemeValue<?>[] arguments) {
+        return operator.apply(arguments);
     }
 
     private String[] getParameters(SchemeClosure closure) {
@@ -51,14 +62,8 @@ public class Application implements Expression {
         return parameters;
     }
 
-    private SchemeValue<?> applyPrimitive(Primitive operator, Frame env) {
-        SchemeValue<?>[] arguments = evalArguments(env);
-        return operator.apply(arguments);
-    }
-
-    private SchemeValue<?> applyCompound(SchemeClosure operator, Frame env) {
+    private SchemeValue<?> applyCompound(SchemeClosure operator, Frame env, SchemeValue<?>[] arguments) {
         String[] parameters = getParameters(operator);
-        SchemeValue<?>[] arguments = evalArguments(env);
         if (parameters.length != arguments.length) {
             throw new EvalException("incorrect number of arguments to procedure: "
                     + operatorExpr.toString());
@@ -75,24 +80,47 @@ public class Application implements Expression {
     }
 
     @Override
-    public SchemeValue<?> eval(Frame env) {
-        SchemeValue<?> operator = operatorExpr.eval(env);
-        if (operator.getClass() == Primitive.class) {
-            return applyPrimitive((Primitive) operator, env);
-        }
-        if (operator.getClass() == SchemeClosure.class) {
-            return applyCompound((SchemeClosure) operator, env);
-        }
-        throw new EvalException(operatorExpr + " is not a procedure");
+    public boolean isReducible() {
+        return isReducible;
     }
 
-    public static void main(String[] args) throws IOException {
-        Frame global = InitEnv.getInstance();
-        String code = "((lambda (a) a) pi)";
-        ASTNode node = Parser.parseLine(code, 0)[0];
-        Expression expr = Expression.ast2Expression(node);
-        assert expr.getClass() == Application.class;
-        System.out.println(expr.eval(global));
+    @Override
+    public Expression reduce(Frame env) {
+        Expression[] arguments = new Expression[argumentsExpr.length];
+        Expression expr;
+        for (int i = 0; i < arguments.length; i++) {
+            expr = argumentsExpr[i];
+            while (expr.isReducible()) {
+                expr = expr.reduce(env);
+            }
+            arguments[i] = expr;
+        }
+
+        Expression operatorExprReduce = operatorExpr;
+        while (operatorExprReduce.isReducible()) {
+            operatorExprReduce = operatorExprReduce.reduce(env);
+        }
+        return new Application(operatorExprReduce, arguments);
+    }
+//    public SchemeValue<?> getReduceResult(Frame env) {
+//
+//    }
+
+    @Override
+    public SchemeValue<?> eval(Frame env) {
+        SchemeValue<?> operator = operatorExpr.eval(env);
+        SchemeValue<?>[] arguments = new SchemeValue[argumentsExpr.length];
+        for (int i = 0; i < arguments.length; i++) {
+            arguments[i] = argumentsExpr[i].eval(env);
+        }
+
+        if (operator.getClass() == Primitive.class) {
+            return applyPrimitive((Primitive) operator, arguments);
+        }
+        if (operator.getClass() == SchemeClosure.class) {
+            return applyCompound((SchemeClosure) operator, env, arguments);
+        }
+        throw new EvalException(operatorExpr + " is not a procedure");
     }
 
 }

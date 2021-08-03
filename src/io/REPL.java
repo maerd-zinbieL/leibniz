@@ -21,8 +21,8 @@ public class REPL extends JFrame {
     private final int TEXT_OUTPUT_HEIGHT = 50;
     private final Font font;
     private final int INIT_Y = 50;
-    private int currentY;
     private final REPLEval REPLEval;
+    private int currentY;
 
     public REPL() {
         box = new JFrame();
@@ -31,6 +31,10 @@ public class REPL extends JFrame {
         REPLEval = new REPLEval();
         currentY = INIT_Y;
         init();
+    }
+
+    public static void main(String[] args) {
+        new REPL();
     }
 
     private void init() {
@@ -112,10 +116,6 @@ public class REPL extends JFrame {
 
         currentY = currentY + TEXT_OUTPUT_HEIGHT + V_GAP;
         input();
-    }
-
-    public static void main(String[] args) {
-        new REPL();
     }
 }
 

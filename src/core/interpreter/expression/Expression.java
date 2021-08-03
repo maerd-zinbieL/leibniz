@@ -3,20 +3,26 @@ package core.interpreter.expression;
 
 import core.env.Frame;
 import core.exception.EvalException;
+import core.exception.ReduceException;
 import core.value.SchemeValue;
-import parse.Parser;
 import parse.ast.ASTNode;
 
-import java.io.IOException;
 
 public interface Expression {
-    static Expression[] parse(String line, int lineNum) throws IOException {
-        ASTNode[] nodes = Parser.parseLine(line, lineNum);
-        Expression[] expressions = new Expression[nodes.length];
-        for (int i = 0; i < nodes.length; i++) {
-            expressions[i] = ast2Expression(nodes[i]);
+
+    static boolean isFinalReduceState(Expression expression) {
+        return !expression.isReducible() &&
+                expression instanceof Literal ||
+                expression instanceof Definition ||
+                expression instanceof Lambda ||
+                expression instanceof Variable;
+    }
+
+    static SchemeValue<?> getReduceResult(Expression expression, Frame env) {
+        if (!isFinalReduceState(expression)) {
+            throw new ReduceException("bad reduce");
         }
-        return expressions;
+        return expression.eval(env);
     }
 
     static Expression ast2Expression(ASTNode node) {
@@ -40,6 +46,10 @@ public interface Expression {
         }
         throw new EvalException("unknown expression type");
     }
+
+    boolean isReducible();
+
+    Expression reduce(Frame env);
 
     SchemeValue<?> eval(Frame env);
 }

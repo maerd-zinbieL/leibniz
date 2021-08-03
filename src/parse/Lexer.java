@@ -3,8 +3,12 @@ package parse;
 import core.exception.LexerException;
 import parse.token.*;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Lexer {
     private final Queue<Token> tokensBuffer;
@@ -16,10 +20,6 @@ public class Lexer {
         tokensBuffer = new LinkedList<>();
         lineNumberReader =
                 new LineNumberReader(new FileReader(file));
-    }
-
-    public String getSourceFile() {
-        return sourceFile;
     }
 
     private Lexer(String line, int lineNum) {
@@ -38,6 +38,10 @@ public class Lexer {
         if (line.length() == 0 || line.startsWith(";")) //空白行和注释行应该报错
             throw new IllegalArgumentException();
         return new Lexer(line, lineNum);
+    }
+
+    public String getSourceFile() {
+        return sourceFile;
     }
 
     private void lexLine(String line, int lineNum) {
@@ -118,7 +122,7 @@ public class Lexer {
     }
 
     private void fillBufferIfEmpty() throws IOException {
-        if(lineNumberReader == null)   // 如果是lineLexer，那么不需要填充tokensBuffer
+        if (lineNumberReader == null)   // 如果是lineLexer，那么不需要填充tokensBuffer
             return;
         while (tokensBuffer.size() == 0) {
             String line = nextLine();
@@ -130,6 +134,7 @@ public class Lexer {
             lexLine(line, lineNum);
         }
     }
+
     public Token nextToken() throws IOException {
         fillBufferIfEmpty();
         return tokensBuffer.poll();

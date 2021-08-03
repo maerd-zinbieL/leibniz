@@ -13,7 +13,7 @@ import parse.ast.ASTNode;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ApplicationTest {
 
@@ -22,12 +22,15 @@ public class ApplicationTest {
     }
 
     private Expression parse(String line) throws IOException {
-        return Expression.parse(line, 0)[0];
+        ASTNode node = Parser.parseLine(line, 0)[0];
+        return Expression.ast2Expression(node);
     }
+
     private SchemeValue<?> eval(String code, Frame env) throws IOException {
         Expression expr = parse(code);
         return expr.eval(env);
     }
+
     @Test
     public void evalTest() throws IOException {
         Frame global = InitEnv.getInstance();
@@ -79,12 +82,12 @@ public class ApplicationTest {
         Frame globalEnv = InitEnv.getInstance();
 
         String define = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))";
-        String run = "(fib 30)";
+        String run = "(fib 20)";
         eval(define, globalEnv);
 
         long startTime = System.currentTimeMillis();
         eval(run, globalEnv);
         long endTime = System.currentTimeMillis();
-        System.out.println(endTime - startTime + "ms");
+        System.out.println((endTime - startTime) / 1000.0 + "s");
     }
 }

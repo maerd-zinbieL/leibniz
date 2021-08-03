@@ -11,15 +11,6 @@ public class BooleanToken extends Token {
         this.value = value;
     }
 
-    public SchemeBoolean getSchemeValue() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return value.toString();
-    }
-
     public static boolean isBoolean(String line, int start) {
         return (line.startsWith("#t", start) || line.startsWith("#f", start)) &&
                 isDelimiterOrEOF(line, start + 2);
@@ -33,6 +24,15 @@ public class BooleanToken extends Token {
         } else {
             return new BooleanToken(new SchemeBoolean(false), lineNum, start, end);
         }
+    }
+
+    public SchemeBoolean getSchemeValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
     }
 
 }

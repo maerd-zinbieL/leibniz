@@ -15,6 +15,11 @@ import static org.junit.Assert.*;
 
 public class LambdaTest {
 
+    private Expression parse(String line) throws IOException {
+        ASTNode node = Parser.parseLine(line, 0)[0];
+        return Expression.ast2Expression(node);
+    }
+
     @Test
     public void isLambda() throws IOException {
         ASTNode node = Parser.parseLine("( lambda (x) (+ x (* x 2) 1))", 1)[0];
@@ -32,18 +37,18 @@ public class LambdaTest {
         Frame global = InitEnv.getInstance();
 
         String line = "(lambda (x) ((lambda (y) (+ x y)) x))";
-        Expression expr = Expression.parse(line, 1)[0];
+        Expression expr = parse(line);
         SchemeValue<?> lambda = expr.eval(global);
         assertEquals("( lambda ( x )  ( ( lambda ( y )  ( + x y )  )  x )  ) ", lambda.toString());
 
 
         line = "(define x (lambda (x y) (+ (* x x) (* y y))))";
-        expr = Expression.parse(line, 1)[0];
+        expr = parse(line);
         expr.eval(global);
-        expr = Expression.parse("x", 2)[0];
+        expr = parse("x");
         assertEquals("( lambda ( x y )  ( + ( * x x )  ( * y y )  )  ) ", expr.eval(global).toString());
 
-        expr = Expression.parse("(lambda (x) x) ", 1)[0];
+        expr = parse("(lambda (x) x) ");
         assertEquals("( lambda ( x )  x ) ", expr.eval(global).toString());
     }
 }

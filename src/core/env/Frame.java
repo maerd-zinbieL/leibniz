@@ -18,6 +18,22 @@ public class Frame {
         preFrame = null;
     }
 
+    public static void main(String[] args) {
+        Frame init = new Frame();
+        init.defineVariable("pi", new SchemeReal(3.14));
+
+        Frame next1 = new Frame();
+        next1.setPreFrame(init);
+
+        next1.defineVariable("pi2", new SchemeReal(6.28));
+
+        next1.defineVariable("pi", new SchemeInteger(0));
+
+        Frame next2 = new Frame();
+        next1.extendFrame(next2);
+
+    }
+
     public void setPreFrame(Frame preFrame) {
         this.preFrame = preFrame;
     }
@@ -78,21 +94,5 @@ public class Frame {
         }
         sb.append(current.varTable);
         return sb.toString();
-    }
-
-    public static void main(String[] args) {
-        Frame init = new Frame();
-        init.defineVariable("pi", new SchemeReal(3.14));
-
-        Frame next1 = new Frame();
-        next1.setPreFrame(init);
-
-        next1.defineVariable("pi2", new SchemeReal(6.28));
-
-        next1.defineVariable("pi", new SchemeInteger(0));
-
-        Frame next2 = new Frame();
-        next1.extendFrame(next2);
-
     }
 }

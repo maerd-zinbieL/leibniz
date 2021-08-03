@@ -1,6 +1,6 @@
 package core.value;
 
-public class SchemePunctuator extends SchemeValue<String>{
+public class SchemePunctuator extends SchemeValue<String> {
     public SchemePunctuator(String value) {
         this.value = value;
     }

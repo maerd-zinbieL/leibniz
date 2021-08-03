@@ -1,16 +1,16 @@
 package core.value;
 
-public class Primitive extends SchemeValue<Object>{
+public class Primitive extends SchemeValue<Object> {
     private final Action action;
-    public interface Action {
-        SchemeValue<?> apply(SchemeValue<?>[] arguments);
-    }
+
     public Primitive(Action action) {
         this.action = action;
     }
+
     public SchemeValue<?> apply(SchemeValue<?>[] arguments) {
         return action.apply(arguments);
     }
+
     @Override
     public Object getJavaValue() {
         return this;
@@ -19,6 +19,10 @@ public class Primitive extends SchemeValue<Object>{
     @Override
     public String toString() {
         return "#<primitive procedure>";
+    }
+
+    public interface Action {
+        SchemeValue<?> apply(SchemeValue<?>[] arguments);
     }
 }
 

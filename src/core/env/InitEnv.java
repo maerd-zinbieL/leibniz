@@ -12,6 +12,10 @@ public class InitEnv extends Frame {
         setup();
     }
 
+    public static InitEnv getInstance() {
+        return new InitEnv();
+    }
+
     private void setup() {
         defineVariable("pi", new SchemeReal(3.1415926));
 
@@ -37,13 +41,9 @@ public class InitEnv extends Frame {
             if (arguments.length != 2) {
                 throw new EvalException("incorrect number of arguments to: " + "<");
             }
-            boolean result = (double)arguments[0].getJavaValue()
-                    <  (double)arguments[1].getJavaValue();
+            boolean result = (double) arguments[0].getJavaValue()
+                    < (double) arguments[1].getJavaValue();
             return new SchemeBoolean(result);
         }));
-    }
-
-    public static InitEnv getInstance() {
-        return new InitEnv();
     }
 }

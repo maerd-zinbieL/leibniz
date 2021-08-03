@@ -4,20 +4,22 @@ import core.env.Frame;
 import core.env.InitEnv;
 import core.interpreter.expression.Expression;
 import core.value.SchemeValue;
-import parse.ast.ASTNode;
 import parse.Parser;
+import parse.ast.ASTNode;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class REPLEval {
-    private int lineCount;
     private final Frame global;
+    private int lineCount;
+
     public REPLEval() {
         lineCount = 0;
         global = InitEnv.getInstance();
     }
+
     public String evalLine(String line) throws IOException {
         if (line == null || line.equals("")) {
             lineCount++;

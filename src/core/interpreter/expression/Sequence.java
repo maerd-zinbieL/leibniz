@@ -10,12 +10,11 @@ import parse.ast.ASTNode;
 public class Sequence implements Expression {
 
     private final Expression[] expressions;
+
     public Sequence(Expression[] expressions) {
         this.expressions = expressions;
     }
-    public int getLength() {
-        return expressions.length;
-    }
+
     public Sequence(ASTNode node) {
         int childrenCount = node.getChildrenCount();
         if (childrenCount < 2) {
@@ -26,6 +25,27 @@ public class Sequence implements Expression {
             expressions[i - 1] = Expression.ast2Expression(node.getChild(i));
         }
 
+    }
+
+    public int getLength() {
+        return expressions.length;
+    }
+
+    @Override
+    public boolean isReducible() {
+        return true;
+    }
+
+    @Override
+    public Expression reduce(Frame env) {
+        Expression expr = null;
+        for (Expression expression : expressions) {
+            expr = expression;
+            while (expr.isReducible()) {
+                expr = expr.reduce(env);
+            }
+        }
+        return expr;
     }
 
     @Override
@@ -39,4 +59,5 @@ public class Sequence implements Expression {
         }
         return expressions[exprCount - 1].eval(env);
     }
+
 }

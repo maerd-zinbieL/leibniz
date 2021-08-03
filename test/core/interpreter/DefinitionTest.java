@@ -14,6 +14,10 @@ import java.io.IOException;
 import static org.junit.Assert.*;
 
 public class DefinitionTest {
+    private Expression parse(String line) throws IOException {
+        ASTNode node = Parser.parseLine(line, 0)[0];
+        return Expression.ast2Expression(node);
+    }
 
     @Test
     public void isDefinition() throws IOException {
@@ -29,16 +33,16 @@ public class DefinitionTest {
     public void eval() throws IOException {
         Frame global = InitEnv.getInstance();
 
-        Expression expr = Expression.parse("(define x 10)", 1)[0];
+        Expression expr = parse("(define x 10)");
         expr.eval(global);
 
-        expr = Expression.parse("x", 2)[0];
+        expr = parse("x");
         assertEquals(Variable.class, expr.getClass());
-        assertEquals("10",expr.eval(global).toString());
+        assertEquals("10", expr.eval(global).toString());
 
-        expr = Expression.parse("(define y x)", 3)[0];
+        expr = parse("(define y x)");
         expr.eval(global);
-        expr = Expression.parse("y", 4)[0];
+        expr = parse("y");
         assertEquals("10", expr.eval(global).toString());
 
     }

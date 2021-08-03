@@ -12,10 +12,6 @@ public class PunctuatorToken extends Token {
         this.value = new SchemePunctuator(value);
     }
 
-    public SchemePunctuator getSchemeValue() {
-        return value;
-    }
-
     private static boolean isTwoCharPunctuator(String line, int start) {
         return line.startsWith("#(", start) ||
                 line.startsWith(",@", start);
@@ -57,6 +53,10 @@ public class PunctuatorToken extends Token {
             value = line.substring(start, end);
         }
         return new PunctuatorToken(value, lineNum, start, end);
+    }
+
+    public SchemePunctuator getSchemeValue() {
+        return value;
     }
 
     @Override

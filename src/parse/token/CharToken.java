@@ -11,15 +11,6 @@ public class CharToken extends Token {
         this.value = value;
     }
 
-    public SchemeCharacter getSchemeValue() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return value.toString();
-    }
-
     public static boolean isCharacter(String line, int start) {
         return (line.startsWith("#\\", start) && isDelimiterOrEOF(line, start + 3)) ||
                 (line.startsWith("#\\space", start) && isDelimiterOrEOF(line, start + 7)) ||
@@ -45,6 +36,15 @@ public class CharToken extends Token {
         if (value == '\000')
             throw new LexerException("bad character at (" + lineNum + "," + end + ")");
         return new CharToken(new SchemeCharacter(value), lineNum, start, end);
+    }
+
+    public SchemeCharacter getSchemeValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
     }
 
 }

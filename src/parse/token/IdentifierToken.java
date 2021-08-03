@@ -2,21 +2,14 @@ package parse.token;
 
 import core.exception.LexerException;
 import core.value.SchemeIdentifier;
-import core.value.SchemeString;
-import io.ReadFile;
-
-import java.io.IOException;
 
 public class IdentifierToken extends Token {
 
     private final SchemeIdentifier value;
-    public IdentifierToken(String value, int lineNum, int colNum, int end) {
-        super(TokenType.Identifier,  lineNum, colNum, end);
-        this.value = new SchemeIdentifier(value);
-    }
 
-    public SchemeIdentifier getSchemeValue() {
-        return value;
+    public IdentifierToken(String value, int lineNum, int colNum, int end) {
+        super(TokenType.Identifier, lineNum, colNum, end);
+        this.value = new SchemeIdentifier(value);
     }
 
     private static boolean isSubsequent(String line, int start) {
@@ -108,6 +101,10 @@ public class IdentifierToken extends Token {
                 lineNum,
                 start,
                 end);
+    }
+
+    public SchemeIdentifier getSchemeValue() {
+        return value;
     }
 
     @Override
