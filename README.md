@@ -28,4 +28,6 @@
 4. ###### eval
 
    -[ ] 尾递归优化
+   -[ ] reduce test
+   -[ ] reduce too slow
    

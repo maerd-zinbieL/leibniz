@@ -40,9 +40,6 @@ public class If implements Expression {
         while (expr.isReducible()) {
             expr = expr.reduce(env);
         }
-        if (!Expression.isFinalReduceState(expr)) {
-            throw new ReduceException("bad reduce");
-        }
         SchemeValue<?> predicate = expr.eval(env);
         expr = isTrue(predicate) ? consequentExpr : alternativeExpr;
         while (expr.isReducible()) {

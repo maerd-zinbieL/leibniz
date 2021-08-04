@@ -1,6 +1,7 @@
 package core.interpreter.expression;
 
 import core.env.Frame;
+import core.env.InitEnv;
 import core.exception.EvalException;
 import core.value.Primitive;
 import core.value.SchemeClosure;
@@ -10,18 +11,39 @@ import parse.ast.ASTNode;
 import parse.ast.NodeType;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+
 
 public class Application implements Expression {
-    class ReduceStrategy {
-        private boolean calReducibility() {
-            // calculate reducibility
-            for (Expression expr : argumentsExpr) {
-                if (!expr.isReducible()) {
-                    return false;
-                }
-            }
-            return operatorExpr.isReducible();
+    private final Expression operatorExpr;
+    private final Expression[] argumentsExpr;
+    private final ReduceStrategy reduceStrategy;
+    private final EvalStrategy evalStrategy;
+    private final SchemeValue<?> result;
+    private static final HashMap<String, SchemeValue<?>> resultCache = new HashMap<>();
+
+    public Application(SchemeValue<?> result) {
+        operatorExpr = null;
+        argumentsExpr = null;
+        reduceStrategy = null;
+        evalStrategy = null;
+        this.result = result;
+    }
+
+    public Application(ASTNode app) {
+        int childrenCount = app.getChildrenCount();
+        argumentsExpr = new Expression[childrenCount - 3];
+        for (int i = 2; i < childrenCount - 1; i++) {
+            argumentsExpr[i - 2] = Expression.ast2Expression(app.getChild(i));
         }
+        operatorExpr = Expression.ast2Expression(app.getChild(1));
+        evalStrategy = new EvalStrategy();
+        reduceStrategy = new ReduceStrategy();
+        result = null;
+    }
+
+    class ReduceStrategy {
 
         private SchemeValue<?> reduceCompound(SchemeClosure operator, SchemeValue<?>[] arguments) {
             String[] parameters = getAppParameters(operator);
@@ -36,6 +58,7 @@ public class Application implements Expression {
         }
 
         private SchemeValue<?> reduceOperator(Frame env) {
+            assert operatorExpr != null;
             Expression operatorExprReduce = operatorExpr;
             while (operatorExprReduce.isReducible()) {
                 operatorExprReduce = operatorExprReduce.reduce(env);
@@ -44,6 +67,7 @@ public class Application implements Expression {
         }
 
         private SchemeValue<?>[] reduceArguments(Frame env) {
+            assert argumentsExpr != null;
             Expression[] argumentsExprReduce = new Expression[argumentsExpr.length];
             Expression expr;
             for (int i = 0; i < argumentsExprReduce.length; i++) {
@@ -60,23 +84,20 @@ public class Application implements Expression {
             return arguments;
         }
 
-        //        private Expression wrapReduceResult(SchemeValue<?> result) {
-//            if (result instanceof SchemeClosure) {
-//                return new Lambda(result);
-//            }
-//        }
         private Expression reduce(Frame env) {
 
             SchemeValue<?> operator = reduceOperator(env);
 
             SchemeValue<?>[] arguments = reduceArguments(env);
 
-            SchemeValue<?> result;
+            SchemeValue<?> reduceResult;
             if (operator.getClass() == Primitive.class) {
-                result = applyPrimitive((Primitive) operator, arguments);
+                reduceResult = applyPrimitive((Primitive) operator, arguments);
+                return new Application(reduceResult);
             }
             if (operator.getClass() == SchemeClosure.class) {
-                result = reduceCompound((SchemeClosure) operator, arguments);
+                reduceResult = reduceCompound((SchemeClosure) operator, arguments);
+                return new Application(reduceResult);
             }
             throw new EvalException(operatorExpr + " is not a procedure");
         }
@@ -91,43 +112,39 @@ public class Application implements Expression {
             }
             Sequence body = getAppBody(operator);
             Frame appEnv = getAppEnv(parameters, operator, arguments);
-            return body.eval(appEnv);
+            SchemeValue<?> evalResult = body.eval(appEnv);
+            cacheResult(arguments, operator, evalResult);
+            return evalResult;
         }
 
-        public SchemeValue<?> eval(Frame env) {
-            SchemeValue<?> operator = operatorExpr.eval(env);
+        private SchemeValue<?>[] evalAppArguments(Frame env) {
+            assert argumentsExpr != null;
             SchemeValue<?>[] arguments = new SchemeValue[argumentsExpr.length];
             for (int i = 0; i < arguments.length; i++) {
                 arguments[i] = argumentsExpr[i].eval(env);
             }
+            return arguments;
+        }
+
+        public SchemeValue<?> eval(Frame env) {
+            assert operatorExpr != null && argumentsExpr != null;
+            SchemeValue<?> operator = operatorExpr.eval(env);
+            SchemeValue<?>[] arguments = evalAppArguments(env);
 
             if (operator.getClass() == Primitive.class) {
                 return applyPrimitive((Primitive) operator, arguments);
             }
             if (operator.getClass() == SchemeClosure.class) {
-                return evalCompound((SchemeClosure) operator, arguments);
+                SchemeValue<?> evalResult = getCachedResult(arguments, (SchemeClosure) operator);
+                if (evalResult != null) {
+                    return evalResult;
+                } else {
+                    return evalCompound((SchemeClosure) operator, arguments);
+                }
             }
+
             throw new EvalException(operatorExpr + " is not a procedure");
         }
-    }
-
-    private final Expression operatorExpr;
-    private final Expression[] argumentsExpr;
-    private final ReduceStrategy reduceStrategy;
-    private final EvalStrategy evalStrategy;
-    // TODO: 2021/8/3 cache result
-
-
-    public Application(ASTNode app) {
-        int childrenCount = app.getChildrenCount();
-        argumentsExpr = new Expression[childrenCount - 3];
-        for (int i = 2; i < childrenCount - 1; i++) {
-            argumentsExpr[i - 2] = Expression.ast2Expression(app.getChild(i));
-        }
-
-        operatorExpr = Expression.ast2Expression(app.getChild(1));
-        evalStrategy = new EvalStrategy();
-        reduceStrategy = new ReduceStrategy();
     }
 
     private SchemeValue<?> applyPrimitive(Primitive operator, SchemeValue<?>[] arguments) {
@@ -157,13 +174,23 @@ public class Application implements Expression {
         return appEnv;
     }
 
+    private SchemeValue<?> getCachedResult(SchemeValue<?>[] arguments, SchemeClosure operator) {
+        String key = operator + ":" + Arrays.toString(arguments);
+        return resultCache.get(key);
+    }
+
+    private void cacheResult(SchemeValue<?>[] arguments, SchemeClosure operator, SchemeValue<?> result) {
+        String key = operator + ":" + Arrays.toString(arguments);
+        resultCache.put(key, result);
+    }
+
     public static boolean isApplication(ASTNode node) {
         return node.getType() == NodeType.LIST && node.getChildrenCount() > 2;
     }
 
     @Override
     public boolean isReducible() {
-        return reduceStrategy.calReducibility();
+        return result == null;
     }
 
     @Override
@@ -173,17 +200,9 @@ public class Application implements Expression {
 
     @Override
     public SchemeValue<?> eval(Frame env) {
-        return evalStrategy.eval(env);
+        if (result == null)
+            return evalStrategy.eval(env);
+        else
+            return result;
     }
-
-    private static Expression parse(String line) throws IOException {
-        ASTNode node = Parser.parseLine(line, 0)[0];
-        return Expression.ast2Expression(node);
-    }
-
-    private static SchemeValue<?> eval(String code, Frame env) throws IOException {
-        Expression expr = parse(code);
-        return expr.eval(env);
-    }
-
 }

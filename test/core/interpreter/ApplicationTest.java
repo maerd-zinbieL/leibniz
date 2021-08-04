@@ -5,7 +5,6 @@ import core.env.InitEnv;
 import core.exception.EvalException;
 import core.interpreter.expression.Application;
 import core.interpreter.expression.Expression;
-import core.value.SchemeClosure;
 import core.value.SchemeValue;
 import core.value.number.SchemeReal;
 import org.junit.Test;
@@ -35,11 +34,13 @@ public class ApplicationTest {
     @Test
     public void evalTest() throws IOException {
         Frame global = InitEnv.getInstance();
+        String code;
+        SchemeValue<?> result;
 
-        String code = "((lambda (a) a) pi)";
+        code = "((lambda (a) a) pi)";
         Expression expression = parse(code);
         assertEquals(Application.class, expression.getClass());
-        SchemeValue<?> result = expression.eval(global);
+        result = expression.eval(global);
         assertEquals(SchemeReal.class, result.getClass());
         assertEquals("3.1415926", result.toString());
 
@@ -93,15 +94,16 @@ public class ApplicationTest {
 
     @Test
     public void timeTest() throws IOException {
-        Frame globalEnv = InitEnv.getInstance();
+        Frame environment = InitEnv.getInstance();
 
         String define = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))";
-        String run = "(fib 20)";
-        eval(define, globalEnv);
+        eval(define, environment);
 
+        String run = "(fib 45)";
         long startTime = System.currentTimeMillis();
-        eval(run, globalEnv);
+        System.out.println(eval(run, environment));
         long endTime = System.currentTimeMillis();
-        System.out.println((endTime - startTime) / 1000.0 + "s");
+
+        System.out.println(endTime - startTime + "ms");
     }
 }

@@ -15,13 +15,14 @@ public interface Expression {
                 expression instanceof Literal ||
                 expression instanceof Definition ||
                 expression instanceof Lambda ||
+                expression instanceof Application ||
                 expression instanceof Variable;
     }
 
     static SchemeValue<?> getReduceResult(Expression expression, Frame env) {
-        if (!isFinalReduceState(expression)) {
-            throw new ReduceException("bad reduce");
-        }
+//        if (!isFinalReduceState(expression)) {
+//            throw new ReduceException("bad reduce");
+//        }
         return expression.eval(env);
     }
 
