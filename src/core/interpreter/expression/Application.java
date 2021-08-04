@@ -1,7 +1,6 @@
 package core.interpreter.expression;
 
 import core.env.Frame;
-import core.env.InitEnv;
 import core.exception.EvalException;
 import core.value.Primitive;
 import core.value.SchemeClosure;
@@ -24,14 +23,14 @@ public class Application implements Expression {
             return operatorExpr.isReducible();
         }
 
-        private SchemeValue<?> reduceCompound(SchemeClosure operator, Frame env, SchemeValue<?>[] arguments) {
+        private SchemeValue<?> reduceCompound(SchemeClosure operator, SchemeValue<?>[] arguments) {
             String[] parameters = getAppParameters(operator);
 
             if (parameters.length != arguments.length) {
                 throw new EvalException("incorrect number of arguments to procedure: " + operatorExpr);
             }
             Sequence body = getAppBody(operator);
-            Frame appEnv = getAppEnv(parameters, env, arguments);
+            Frame appEnv = getAppEnv(parameters, operator, arguments);
             Expression resultExpr = body.reduce(appEnv);
             return Expression.getReduceResult(resultExpr, appEnv);
         }
@@ -77,7 +76,7 @@ public class Application implements Expression {
                 result = applyPrimitive((Primitive) operator, arguments);
             }
             if (operator.getClass() == SchemeClosure.class) {
-                result = reduceCompound((SchemeClosure) operator, env, arguments);
+                result = reduceCompound((SchemeClosure) operator, arguments);
             }
             throw new EvalException(operatorExpr + " is not a procedure");
         }
@@ -91,7 +90,7 @@ public class Application implements Expression {
                 throw new EvalException("incorrect number of arguments to procedure: " + operatorExpr);
             }
             Sequence body = getAppBody(operator);
-            Frame appEnv = getAppEnv(parameters, operator.getEnv(), arguments);
+            Frame appEnv = getAppEnv(parameters, operator, arguments);
             return body.eval(appEnv);
         }
 
@@ -148,13 +147,13 @@ public class Application implements Expression {
         return new Sequence(operator.getBody());
     }
 
-    private Frame getAppEnv(String[] parameters, Frame env, SchemeValue<?>[] arguments) {
+    private Frame getAppEnv(String[] parameters, SchemeClosure operator, SchemeValue<?>[] arguments) {
         Frame appEnv = new Frame();
         for (int i = 0; i < arguments.length; i++) {
             String varName = parameters[i];
             appEnv.defineVariable(varName, arguments[i]);
         }
-        appEnv.setPreFrame(env);
+        appEnv.setPreFrame(operator.getEnv());
         return appEnv;
     }
 
@@ -187,8 +186,4 @@ public class Application implements Expression {
         return expr.eval(env);
     }
 
-    public static void main(String[] args) throws IOException {
-        Frame global = InitEnv.getInstance();
-
-    }
 }
