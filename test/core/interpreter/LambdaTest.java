@@ -4,6 +4,7 @@ import core.env.Frame;
 import core.env.InitEnv;
 import core.interpreter.expression.Expression;
 import core.interpreter.expression.Lambda;
+import core.value.SchemeClosure;
 import core.value.SchemeValue;
 import org.junit.Test;
 import parse.Parser;
@@ -39,16 +40,21 @@ public class LambdaTest {
         String line = "(lambda (x) ((lambda (y) (+ x y)) x))";
         Expression expr = parse(line);
         SchemeValue<?> lambda = expr.eval(global);
-        assertEquals("( lambda ( x )  ( ( lambda ( y )  ( + x y )  )  x )  ) ", lambda.toString());
+        String actual = ((SchemeClosure) lambda).getCode().toString();
+        assertEquals("( lambda ( x )  ( ( lambda ( y )  ( + x y )  )  x )  ) ", actual);
 
 
         line = "(define x (lambda (x y) (+ (* x x) (* y y))))";
         expr = parse(line);
         expr.eval(global);
         expr = parse("x");
-        assertEquals("( lambda ( x y )  ( + ( * x x )  ( * y y )  )  ) ", expr.eval(global).toString());
+        lambda = expr.eval(global);
+        actual = ((SchemeClosure) lambda).getCode().toString();
+        assertEquals("( lambda ( x y )  ( + ( * x x )  ( * y y )  )  ) ", actual);
 
         expr = parse("(lambda (x) x) ");
-        assertEquals("( lambda ( x )  x ) ", expr.eval(global).toString());
+        lambda = expr.eval(global);
+        actual = ((SchemeClosure) lambda).getCode().toString();
+        assertEquals("( lambda ( x )  x ) ", actual);
     }
 }

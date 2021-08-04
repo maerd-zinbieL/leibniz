@@ -26,6 +26,13 @@ public class SchemeClosure extends SchemeValue<ASTNode> {
         return code.getChild(2);
     }
 
+    public Frame getEnv() {
+        return env;
+    }
+
+    public ASTNode getCode() {
+        return code;
+    }
     @Override
     public ASTNode getJavaValue() {
         return code;
@@ -33,6 +40,6 @@ public class SchemeClosure extends SchemeValue<ASTNode> {
 
     @Override
     public String toString() {
-        return code.toString();
+        return "#<procedure>";
     }
 }

@@ -5,6 +5,7 @@ import core.env.InitEnv;
 import core.exception.EvalException;
 import core.interpreter.expression.Application;
 import core.interpreter.expression.Expression;
+import core.value.SchemeClosure;
 import core.value.SchemeValue;
 import core.value.number.SchemeReal;
 import org.junit.Test;
@@ -55,6 +56,19 @@ public class ApplicationTest {
         code = "(fib 20)";
         result = eval(code, global);
         assertEquals("6765", result.toString());
+
+        eval("(define add (lambda (x) (lambda (y) (+ x y))))", global);
+        eval("(define inc-1 (add 1))", global);
+        result = eval("(inc-1 9)", global);
+        assertEquals("10", result.toString());
+
+        eval("(define add (lambda (x) (lambda (y) (lambda (z) (+ x y z)))))", global);
+        eval("(define inc-1 (add 1))", global);
+        eval("(define inc-3 (inc-1 2))", global);
+
+        result = eval("(inc-3 10)", global);
+        assertEquals("13", result.toString());
+
     }
 
     @Test(expected = EvalException.class)
