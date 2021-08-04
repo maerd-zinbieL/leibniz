@@ -1,19 +1,13 @@
 package core.interpreter.expression;
 
 import core.env.Frame;
-import core.env.InitEnv;
 import core.exception.EvalException;
+import core.interpreter.Cache;
 import core.value.Primitive;
 import core.value.SchemeClosure;
 import core.value.SchemeValue;
-import parse.Parser;
 import parse.ast.ASTNode;
 import parse.ast.NodeType;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-
 
 public class Application implements Expression {
     private final Expression operatorExpr;
@@ -21,7 +15,7 @@ public class Application implements Expression {
     private final ReduceStrategy reduceStrategy;
     private final EvalStrategy evalStrategy;
     private final SchemeValue<?> result;
-    private static final HashMap<String, SchemeValue<?>> resultCache = new HashMap<>();
+    private static final Cache cache = new Cache();
 
     public Application(SchemeValue<?> result) {
         operatorExpr = null;
@@ -113,7 +107,7 @@ public class Application implements Expression {
             Sequence body = getAppBody(operator);
             Frame appEnv = getAppEnv(parameters, operator, arguments);
             SchemeValue<?> evalResult = body.eval(appEnv);
-            cacheResult(arguments, operator, evalResult);
+            cache.cacheResult(arguments, operator, evalResult);
             return evalResult;
         }
 
@@ -135,7 +129,7 @@ public class Application implements Expression {
                 return applyPrimitive((Primitive) operator, arguments);
             }
             if (operator.getClass() == SchemeClosure.class) {
-                SchemeValue<?> evalResult = getCachedResult(arguments, (SchemeClosure) operator);
+                SchemeValue<?> evalResult = cache.getResult(arguments, (SchemeClosure) operator);
                 if (evalResult != null) {
                     return evalResult;
                 } else {
@@ -172,16 +166,6 @@ public class Application implements Expression {
         }
         appEnv.setPreFrame(operator.getEnv());
         return appEnv;
-    }
-
-    private SchemeValue<?> getCachedResult(SchemeValue<?>[] arguments, SchemeClosure operator) {
-        String key = operator + ":" + Arrays.toString(arguments);
-        return resultCache.get(key);
-    }
-
-    private void cacheResult(SchemeValue<?>[] arguments, SchemeClosure operator, SchemeValue<?> result) {
-        String key = operator + ":" + Arrays.toString(arguments);
-        resultCache.put(key, result);
     }
 
     public static boolean isApplication(ASTNode node) {
