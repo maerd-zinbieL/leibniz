@@ -9,12 +9,12 @@ import parse.ast.ASTNode;
 import parse.ast.NodeType;
 
 public class Application implements Expression {
+    private static Fast.Cache cache = null;
     private final Expression operatorExpr;
     private final Expression[] argumentsExpr;
     private final ReduceStrategy reduceStrategy;
     private final EvalStrategy evalStrategy;
     private final SchemeValue<?> result;
-    private static Fast.Cache cache = null;
 
     public Application(SchemeValue<?> result) {
         operatorExpr = null;
@@ -34,6 +34,73 @@ public class Application implements Expression {
         evalStrategy = new EvalStrategy();
         reduceStrategy = new ReduceStrategy();
         result = null;
+    }
+
+    public static void setCache(Fast.Cache cache) {
+        Application.cache = cache;
+    }
+
+    public static boolean isApplication(ASTNode node) {
+        return node.getType() == NodeType.LIST && node.getChildrenCount() > 2;
+    }
+
+    private void cacheResult(SchemeValue<?>[] arguments, SchemeClosure operator, SchemeValue<?> result) {
+        if (cache != null) {
+            cache.cacheResult(arguments, operator, result);
+        }
+    }
+
+    private SchemeValue<?> getCachedResult(SchemeValue<?>[] arguments, SchemeClosure operator) {
+        if (cache == null) {
+            return null;
+        } else {
+            return cache.getResult(arguments, operator);
+        }
+    }
+
+    private SchemeValue<?> applyPrimitive(Primitive operator, SchemeValue<?>[] arguments) {
+        return operator.apply(arguments);
+    }
+
+    private String[] getAppParameters(SchemeClosure operator) {
+        ASTNode parameterNode = operator.getParameters();
+        String[] parameters = new String[parameterNode.getChildrenCount() - 2];
+        for (int i = 0; i < parameters.length; i++) {
+            parameters[i] = parameterNode.getChild(i + 1).toString();
+        }
+        return parameters;
+    }
+
+    private Sequence getAppBody(SchemeClosure operator) {
+        return new Sequence(operator.getBody());
+    }
+
+    private Frame getAppEnv(String[] parameters, SchemeClosure operator, SchemeValue<?>[] arguments) {
+        Frame appEnv = new Frame();
+        for (int i = 0; i < arguments.length; i++) {
+            String varName = parameters[i];
+            appEnv.defineVariable(varName, arguments[i]);
+        }
+        appEnv.setPreFrame(operator.getEnv());
+        return appEnv;
+    }
+
+    @Override
+    public boolean isReducible() {
+        return result == null;
+    }
+
+    @Override
+    public Expression reduce(Frame env) {
+        return reduceStrategy.reduce(env);
+    }
+
+    @Override
+    public SchemeValue<?> eval(Frame env) {
+        if (result == null)
+            return evalStrategy.eval(env);
+        else
+            return result;
     }
 
     class ReduceStrategy {
@@ -137,70 +204,5 @@ public class Application implements Expression {
             }
             throw new EvalException(operatorExpr + " is not a procedure");
         }
-    }
-
-    private void cacheResult(SchemeValue<?>[] arguments, SchemeClosure operator, SchemeValue<?> result) {
-        if (cache != null) {
-            cache.cacheResult(arguments, operator, result);
-        }
-    }
-
-    private SchemeValue<?> getCachedResult(SchemeValue<?>[] arguments, SchemeClosure operator) {
-        if (cache ==null) {
-            return null;
-        }else  {
-            return cache.getResult(arguments, operator);
-        }
-    }
-    private SchemeValue<?> applyPrimitive(Primitive operator, SchemeValue<?>[] arguments) {
-        return operator.apply(arguments);
-    }
-
-    private String[] getAppParameters(SchemeClosure operator) {
-        ASTNode parameterNode = operator.getParameters();
-        String[] parameters = new String[parameterNode.getChildrenCount() - 2];
-        for (int i = 0; i < parameters.length; i++) {
-            parameters[i] = parameterNode.getChild(i + 1).toString();
-        }
-        return parameters;
-    }
-
-    private Sequence getAppBody(SchemeClosure operator) {
-        return new Sequence(operator.getBody());
-    }
-
-    private Frame getAppEnv(String[] parameters, SchemeClosure operator, SchemeValue<?>[] arguments) {
-        Frame appEnv = new Frame();
-        for (int i = 0; i < arguments.length; i++) {
-            String varName = parameters[i];
-            appEnv.defineVariable(varName, arguments[i]);
-        }
-        appEnv.setPreFrame(operator.getEnv());
-        return appEnv;
-    }
-
-    public static void setCache(Fast.Cache cache) {
-        Application.cache = cache;
-    }
-    public static boolean isApplication(ASTNode node) {
-        return node.getType() == NodeType.LIST && node.getChildrenCount() > 2;
-    }
-
-    @Override
-    public boolean isReducible() {
-        return result == null;
-    }
-
-    @Override
-    public Expression reduce(Frame env) {
-        return reduceStrategy.reduce(env);
-    }
-
-    @Override
-    public SchemeValue<?> eval(Frame env) {
-        if (result == null)
-            return evalStrategy.eval(env);
-        else
-            return result;
     }
 }

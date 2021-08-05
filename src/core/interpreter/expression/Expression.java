@@ -42,7 +42,7 @@ public interface Expression {
         if (If.isIf(node)) {
             return new If(node);
         }
-        if(Begin.isBegin(node)) {
+        if (Begin.isBegin(node)) {
             return new Begin(node);
         }
         if (Fast.isFast(node)) {

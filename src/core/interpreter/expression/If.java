@@ -1,7 +1,6 @@
 package core.interpreter.expression;
 
 import core.env.Frame;
-import core.exception.ReduceException;
 import core.value.SchemeBoolean;
 import core.value.SchemeValue;
 import parse.ast.ASTNode;

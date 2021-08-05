@@ -2,9 +2,7 @@ package core.env;
 
 import core.exception.EvalException;
 import core.value.*;
-import core.value.number.SchemeInteger;
 import core.value.number.SchemeNumber;
-import core.value.number.SchemeReal;
 
 import java.util.HashMap;
 import java.util.Objects;

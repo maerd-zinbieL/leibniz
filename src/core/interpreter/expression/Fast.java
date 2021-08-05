@@ -22,14 +22,14 @@ public class Fast implements Expression {
         isReducible = false;
     }
 
-    private ASTNode getAppNode(ASTNode node) {
-        return node.getChild(2);
-    }
-
     public static boolean isFast(ASTNode node) {
         return node.getType() == NodeType.LIST &&
                 node.getChildrenCount() == 4 &&
                 node.getChild(1).toString().equals("fast");
+    }
+
+    private ASTNode getAppNode(ASTNode node) {
+        return node.getChild(2);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class Fast implements Expression {
     @Override
     public SchemeValue<?> eval(Frame env) {
         Application.setCache(new Cache());
-        SchemeValue<?> result =  app.eval(env);
+        SchemeValue<?> result = app.eval(env);
         Application.setCache(null);
         return result;
     }
