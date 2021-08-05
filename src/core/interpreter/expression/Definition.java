@@ -1,14 +1,11 @@
 package core.interpreter.expression;
 
 import core.env.Frame;
-import core.env.InitEnv;
 import core.value.SchemeUnspecific;
 import core.value.SchemeValue;
 import parse.ast.ASTNode;
 import parse.ast.NodeType;
 import parse.token.TokenType;
-
-import java.io.IOException;
 
 public class Definition implements Expression {
 

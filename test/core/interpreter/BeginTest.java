@@ -5,6 +5,7 @@ import core.env.InitEnv;
 import core.exception.EvalException;
 import core.interpreter.expression.Begin;
 import core.interpreter.expression.Expression;
+import core.value.number.SchemeReal;
 import org.junit.Test;
 import parse.Parser;
 import parse.ast.ASTNode;
@@ -41,6 +42,8 @@ public class BeginTest {
     @Test
     public void eval() throws IOException {
         Frame global = InitEnv.getInstance();
+        global.defineVariable("pi", new SchemeReal(3.1415926));
+
         String code = "(begin 1 2 3)";
         ASTNode node = Parser.parseLine(code, 1)[0];
         Expression expr = new Begin(node);

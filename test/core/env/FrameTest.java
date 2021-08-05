@@ -12,6 +12,7 @@ public class FrameTest {
     @Test
     public void defineLookup1() {
         Frame init = new Frame();
+
         init.defineVariable("pi", new SchemeReal(3.14));
         assertEquals("3.14", init.lookUpVariable("pi").toString());
         init.defineVariable("pi", new SchemeReal(2.718));

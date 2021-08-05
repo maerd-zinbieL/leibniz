@@ -127,6 +127,31 @@ public class SchemeReal extends SchemeNumber {
     }
 
     @Override
+    public SchemeNumber add(SchemeNumber other) {
+        return null;
+    }
+
+    @Override
+    public SchemeNumber sub(SchemeNumber other) {
+        return null;
+    }
+
+    @Override
+    public SchemeNumber div(SchemeNumber other) {
+        return null;
+    }
+
+    @Override
+    public SchemeNumber mul(SchemeNumber other) {
+        return null;
+    }
+
+    @Override
+    public SchemeNumber compare(SchemeNumber other) {
+        return null;
+    }
+
+    @Override
     public String toString() {
         String valueStr;
         String sign;

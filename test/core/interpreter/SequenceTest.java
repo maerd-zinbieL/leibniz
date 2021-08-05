@@ -5,6 +5,7 @@ import core.env.InitEnv;
 import core.exception.EvalException;
 import core.interpreter.expression.Expression;
 import core.interpreter.expression.Sequence;
+import core.value.number.SchemeReal;
 import org.junit.Test;
 import parse.Parser;
 import parse.ast.ASTNode;
@@ -26,6 +27,7 @@ public class SequenceTest {
     @Test
     public void eval() throws IOException {
         Frame env = InitEnv.getInstance();
+        env.defineVariable("pi", new SchemeReal(3.1415926));
 
         String code = "(pi)";
         ASTNode node = Parser.parseLine(code, 0)[0];
@@ -36,6 +38,7 @@ public class SequenceTest {
     @Test
     public void testEval() throws IOException {
         Frame env = InitEnv.getInstance();
+        env.defineVariable("pi", new SchemeReal(3.1415926));
 
         String code = "(pi 1 2 3)";
         ASTNode node = Parser.parseLine(code, 0)[0];
@@ -46,6 +49,8 @@ public class SequenceTest {
     @Test
     public void reduce() throws IOException {
         Frame global = InitEnv.getInstance();
+        global.defineVariable("pi", new SchemeReal(3.1415926));
+
         Sequence sequence = new Sequence(Parser.parseLine("(1 2 3 pi)", 1)[0]);
         Expression expression = sequence.reduce(global);
         assertTrue(Expression.isFinalReduceState(expression));

@@ -25,9 +25,12 @@
    - [ ] 处理副作用
    - [ ] 历史表达式
    
-4. ###### eval
+4. ###### interpreter
 
    -[ ] 尾递归优化
    -[ ] reduce test
    -[ ] reduce too slow
    
+5. ###### number
+   
+   -[ ] 四则运算和比较运算

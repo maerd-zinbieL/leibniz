@@ -34,6 +34,7 @@ public class ApplicationTest {
     @Test
     public void evalTest() throws IOException {
         Frame global = InitEnv.getInstance();
+        global.defineVariable("pi", new SchemeReal(3.1415926));
         String code;
         SchemeValue<?> result;
 

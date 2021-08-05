@@ -16,5 +16,14 @@ public abstract class SchemeNumber extends SchemeValue<Double> {
 
     public abstract SchemeNumber toInexact();
 
+    public abstract SchemeNumber add(SchemeNumber other);
+
+    public abstract SchemeNumber sub(SchemeNumber other);
+
+    public abstract SchemeNumber div(SchemeNumber other);
+
+    public abstract SchemeNumber mul(SchemeNumber other);
+
+    public abstract SchemeNumber compare(SchemeNumber other);
 }
 

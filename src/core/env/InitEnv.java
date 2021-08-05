@@ -17,7 +17,6 @@ public class InitEnv extends Frame {
     }
 
     private void setup() {
-        defineVariable("pi", new SchemeReal(3.1415926));
 
         defineVariable("+", new Primitive(arguments -> {
             double sum = 0.0;

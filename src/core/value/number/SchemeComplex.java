@@ -92,6 +92,31 @@ public class SchemeComplex extends SchemeNumber {
     }
 
     @Override
+    public SchemeNumber add(SchemeNumber other) {
+        return null;
+    }
+
+    @Override
+    public SchemeNumber sub(SchemeNumber other) {
+        return null;
+    }
+
+    @Override
+    public SchemeNumber div(SchemeNumber other) {
+        return null;
+    }
+
+    @Override
+    public SchemeNumber mul(SchemeNumber other) {
+        return null;
+    }
+
+    @Override
+    public SchemeNumber compare(SchemeNumber other) {
+        return null;
+    }
+
+    @Override
     public String toString() {
 
         // 如果虚数和实数都是exact的，返回两者的exact的表示。
