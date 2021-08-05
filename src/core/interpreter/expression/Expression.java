@@ -20,9 +20,9 @@ public interface Expression {
     }
 
     static SchemeValue<?> getReduceResult(Expression expression, Frame env) {
-//        if (!isFinalReduceState(expression)) {
-//            throw new ReduceException("bad reduce");
-//        }
+        if (!isFinalReduceState(expression)) {
+            throw new ReduceException("bad reduce");
+        }
         return expression.eval(env);
     }
 
@@ -41,6 +41,12 @@ public interface Expression {
         }
         if (If.isIf(node)) {
             return new If(node);
+        }
+        if(Begin.isBegin(node)) {
+            return new Begin(node);
+        }
+        if (Cache.isCache(node)) {
+            return new Cache(node);
         }
         if (Application.isApplication(node)) {
             return new Application(node);

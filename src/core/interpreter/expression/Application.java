@@ -2,7 +2,6 @@ package core.interpreter.expression;
 
 import core.env.Frame;
 import core.exception.EvalException;
-import core.interpreter.Cache;
 import core.value.Primitive;
 import core.value.SchemeClosure;
 import core.value.SchemeValue;
@@ -15,7 +14,7 @@ public class Application implements Expression {
     private final ReduceStrategy reduceStrategy;
     private final EvalStrategy evalStrategy;
     private final SchemeValue<?> result;
-    private static final Cache cache = new Cache();
+    private static Cache.Store cache = null;
 
     public Application(SchemeValue<?> result) {
         operatorExpr = null;
@@ -107,7 +106,7 @@ public class Application implements Expression {
             Sequence body = getAppBody(operator);
             Frame appEnv = getAppEnv(parameters, operator, arguments);
             SchemeValue<?> evalResult = body.eval(appEnv);
-            cache.cacheResult(arguments, operator, evalResult);
+            cacheResult(arguments, operator, evalResult);
             return evalResult;
         }
 
@@ -129,18 +128,30 @@ public class Application implements Expression {
                 return applyPrimitive((Primitive) operator, arguments);
             }
             if (operator.getClass() == SchemeClosure.class) {
-                SchemeValue<?> evalResult = cache.getResult(arguments, (SchemeClosure) operator);
+                SchemeValue<?> evalResult = getCachedResult(arguments, (SchemeClosure) operator);
                 if (evalResult != null) {
                     return evalResult;
                 } else {
                     return evalCompound((SchemeClosure) operator, arguments);
                 }
             }
-
             throw new EvalException(operatorExpr + " is not a procedure");
         }
     }
 
+    private void cacheResult(SchemeValue<?>[] arguments, SchemeClosure operator, SchemeValue<?> result) {
+        if (cache != null) {
+            cache.cacheResult(arguments, operator, result);
+        }
+    }
+
+    private SchemeValue<?> getCachedResult(SchemeValue<?>[] arguments, SchemeClosure operator) {
+        if (cache ==null) {
+            return null;
+        }else  {
+            return cache.getResult(arguments, operator);
+        }
+    }
     private SchemeValue<?> applyPrimitive(Primitive operator, SchemeValue<?>[] arguments) {
         return operator.apply(arguments);
     }
@@ -168,6 +179,9 @@ public class Application implements Expression {
         return appEnv;
     }
 
+    public static void setCache(Cache.Store cache) {
+        Application.cache = cache;
+    }
     public static boolean isApplication(ASTNode node) {
         return node.getType() == NodeType.LIST && node.getChildrenCount() > 2;
     }

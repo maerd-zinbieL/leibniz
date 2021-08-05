@@ -99,7 +99,7 @@ public class ApplicationTest {
         String define = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))";
         eval(define, environment);
 
-        String run = "(fib 45)";
+        String run = "(fib 15)";
         long startTime = System.currentTimeMillis();
         System.out.println(eval(run, environment));
         long endTime = System.currentTimeMillis();
