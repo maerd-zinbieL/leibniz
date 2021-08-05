@@ -45,8 +45,8 @@ public interface Expression {
         if(Begin.isBegin(node)) {
             return new Begin(node);
         }
-        if (Cache.isCache(node)) {
-            return new Cache(node);
+        if (Fast.isFast(node)) {
+            return new Fast(node);
         }
         if (Application.isApplication(node)) {
             return new Application(node);

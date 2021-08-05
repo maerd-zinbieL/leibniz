@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class CacheTest {
+public class FastTest {
     private ASTNode parse(String code) throws IOException {
         return Parser.parseLine(code, 0)[0];
     }
@@ -22,9 +22,9 @@ public class CacheTest {
 
     @Test
     public void isCache() throws IOException {
-        assertTrue(Cache.isCache(parse("(cache (fib 1))")));
-        assertFalse(Cache.isCache(parse("(cache (fib 1) (fib 2))")));
-        assertFalse(Cache.isCache(parse("(cache)")));
+        assertTrue(Fast.isFast(parse("(fast (fib 1))")));
+        assertFalse(Fast.isFast(parse("(fast (fib 1) (fib 2))")));
+        assertFalse(Fast.isFast(parse("(fast)")));
     }
 
     @Test(timeout = 1000)
@@ -34,7 +34,7 @@ public class CacheTest {
         String define = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))";
         eval(define, environment);
 
-        String run = "(cache (fib 45))";
+        String run = "(fast (fib 45))";
         long startTime = System.currentTimeMillis();
         System.out.println(eval(run, environment));
         long endTime = System.currentTimeMillis();

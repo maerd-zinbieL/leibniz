@@ -14,7 +14,7 @@ public class Application implements Expression {
     private final ReduceStrategy reduceStrategy;
     private final EvalStrategy evalStrategy;
     private final SchemeValue<?> result;
-    private static Cache.Store cache = null;
+    private static Fast.Cache cache = null;
 
     public Application(SchemeValue<?> result) {
         operatorExpr = null;
@@ -179,7 +179,7 @@ public class Application implements Expression {
         return appEnv;
     }
 
-    public static void setCache(Cache.Store cache) {
+    public static void setCache(Fast.Cache cache) {
         Application.cache = cache;
     }
     public static boolean isApplication(ASTNode node) {

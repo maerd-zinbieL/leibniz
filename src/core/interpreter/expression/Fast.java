@@ -2,7 +2,6 @@ package core.interpreter.expression;
 
 import core.env.Frame;
 import core.exception.InterpreterException;
-import core.exception.ParserException;
 import core.value.SchemeClosure;
 import core.value.SchemeValue;
 import parse.ast.ASTNode;
@@ -11,11 +10,11 @@ import parse.ast.NodeType;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class Cache implements Expression {
+public class Fast implements Expression {
     private final Expression app;
     private boolean isReducible;
 
-    public Cache(ASTNode node) {
+    public Fast(ASTNode node) {
         app = Expression.ast2Expression(getAppNode(node));
         if (!(app instanceof Application)) {
             throw new InterpreterException("invalid context for " + app);
@@ -27,10 +26,10 @@ public class Cache implements Expression {
         return node.getChild(2);
     }
 
-    public static boolean isCache(ASTNode node) {
+    public static boolean isFast(ASTNode node) {
         return node.getType() == NodeType.LIST &&
                 node.getChildrenCount() == 4 &&
-                node.getChild(1).toString().equals("cache");
+                node.getChild(1).toString().equals("fast");
     }
 
     @Override
@@ -40,7 +39,7 @@ public class Cache implements Expression {
 
     @Override
     public Expression reduce(Frame env) {
-        Application.setCache(new Store());
+        Application.setCache(new Cache());
         Expression result = app.reduce(env);
         isReducible = false;
         Application.setCache(null);
@@ -49,16 +48,16 @@ public class Cache implements Expression {
 
     @Override
     public SchemeValue<?> eval(Frame env) {
-        Application.setCache(new Store());
+        Application.setCache(new Cache());
         SchemeValue<?> result =  app.eval(env);
         Application.setCache(null);
         return result;
     }
 
-    static class Store {
+    static class Cache {
         private final HashMap<String, SchemeValue<?>> resultCache;
 
-        public Store() {
+        public Cache() {
             this.resultCache = new HashMap<>();
         }
 
