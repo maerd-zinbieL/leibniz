@@ -46,13 +46,13 @@ public class BeginTest {
 
         String code = "(begin 1 2 3)";
         ASTNode node = Parser.parseLine(code, 1)[0];
-        Expression expr = new Begin(node);
+        Expression expr = Expression.ast2Expression(node);
 
         assertEquals(3.0, expr.eval(global).getJavaValue());
 
         code = "(begin pi)";
         node = Parser.parseLine(code, 1)[0];
-        expr = new Begin(node);
+        expr = Expression.ast2Expression(node);
 
         assertEquals("3.1415926", expr.eval(global).toString());
     }
